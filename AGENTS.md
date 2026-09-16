@@ -3,3 +3,4 @@
 ## Reglas de Git
 
 - No hacer `commit` ni `push` de ningún cambio sin que el usuario lo solicite explícitamente.
+- Actualizar los archivos README.md y  AGENTS.md si es necesario.
