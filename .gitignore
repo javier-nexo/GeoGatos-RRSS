@@ -10,7 +10,12 @@ node_modules/
 # la ejecución, y no serviría para nada.
 # Las entradas de `dry-run` se pueden versionar sin riesgo: no cuentan como
 # publicación a la hora de decidir qué saltarse.
-registro/
+#
+# La línea siguiente DESACTIVA esa regla para el registro. La regla de arriba
+# queda como aviso, no como comportamiento: si alguna vez se quiere dejar de
+# versionar el registro, hay que borrar la excepción, no añadir una regla.
+!registro/
+!registro/*.jsonl
 
 # Bandeja de entrada: borradores de imágenes sin renombrar. La copia que se
 # publica y se sirve por GitHub Pages va a medios/<slug>/, que sí se versiona.
