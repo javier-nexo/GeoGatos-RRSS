@@ -433,6 +433,28 @@ así que cualquier token que acabe en un fichero acaba en internet.
 > el usuario no tiene tarea de publicación sobre esa página y el paso 5 no
 > sirve. Un rol de *Creador de contenido* basta; *Moderador* no.
 
+#### Si aparece un 403 sobre `publish_actions`
+
+```
+Facebook devolvió HTTP 403: (#200) The permission(s) publish_actions are not
+available. It has been deprecated.
+```
+
+`publish_actions` se retiró en 2018 y esta app **nunca lo pidió**, así que el
+mensaje no va de permisos. Lo que significa es que **el token pegado en
+`FACEBOOK_PAGE_TOKEN` es un token de usuario, no un token de página**: con un
+token de usuario, `/{page}/photos` se interpreta como publicar en el perfil
+personal, y ese es el camino que cerró aquel permiso.
+
+Se comprueba en el depurador de tokens:
+
+- *Expires* dice **Never** → es un token de página, bien
+- *Expires* dice una fecha → es un token de usuario, hay que rehacerlo
+
+Ojo con el orden: el token de larga duración del depurador es un token **de
+usuario**. Sirve para pedir el de página, no para publicar. Hay que usarlo en
+`/{PAGE_ID}?fields=access_token` y pegar **ese** resultado en el secret.
+
 ### Instagram — `INSTAGRAM_IG_ID`, `INSTAGRAM_PAGE_TOKEN`
 
 1. La cuenta de `@geogatosapp` debe ser **profesional**: Business o Creator.
@@ -454,6 +476,21 @@ así que cualquier token que acabe en un fichero acaba en internet.
 > Límites: **50 publicaciones por cuenta en 24 h**. Solo JPEG. Las imágenes
 > deben estar en URL pública. En carrusel, **todas se recortan al formato de la
 > primera**.
+
+#### Hay que esperar a que el contenedor esté listo
+
+`POST /{ig}/media` devuelve el `creation_id` al instante, pero Instagram
+**ingiere la imagen en segundo plano**: la descarga, la valida, y solo entonces
+el contenedor es publicable. Si se llama a `media_publish` antes, la respuesta es
+un `400 Media ID is not available` que no menciona esperar nada.
+
+Afecta a **imágenes, no solo a vídeo**, y es intermitente: una imagen pequeña
+suele estar lista antes de la siguiente llamada, así que en local funciona y el
+fallo llega con la primera imagen grande. Por eso el adaptador consulta
+`status_code` hasta `FINISHED` en **todos** los tipos de medio, sin atajo rápido.
+
+Error real del primer intento, por si aparece en otro sitio:
+`HTTP 400: Instagram (publicación) devolvió HTTP 400: Media ID is not available`.
 
 #### Dos trampas que no dan error visible
 

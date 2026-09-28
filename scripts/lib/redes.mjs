@@ -49,9 +49,61 @@ async function pedir(url, opciones, contexto) {
   return { res, json, cuerpo };
 }
 
+const dormir = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * Comprueba que el token vale para la página ANTES de intentar publicar.
+ *
+ * Motivo: `POST /{page}/photos` con un token de usuario devuelve un 403 sobre
+ * `publish_actions`, un permiso que Meta retiró en 2018. El mensaje no dice
+ * "el token es del tipo equivocado", dice "falta un permiso que ya no existe",
+ * que manda a buscar permisos en el panel de la app durante una hora. Con esta
+ * llamada de lectura, que no publica nada, el error real sale antes y con su
+ * nombre.
+ */
+async function comprobarTokenDePagina(token, pageId, log) {
+  let info;
+  try {
+    ({ json: info } = await pedir(
+      `https://graph.facebook.com/${FACEBOOK_VERSION}/me?fields=id`,
+      { headers: { Authorization: `Bearer ${token}` } },
+      'Facebook (comprobación de token)',
+    ));
+  } catch (e) {
+    throw new Error(
+      `${e.message}\n\n`
+      + 'Lo más probable es que FACEBOOK_PAGE_TOKEN no sea un token de página. '
+      + 'Se comprueba en el depurador de tokens: si en *Expires* pone una '
+      + 'fecha en lugar de *Never*, es un token de usuario.',
+    );
+  }
+  // Con token de página, /me resuelve a la página y trae id. Con token de
+  // usuario resuelve al usuario. No hay forma de distinguirlo por los campos,
+  // así que se compara contra el pageId conocido.
+  if (info?.id && info.id !== pageId) {
+    log('aviso', `el token resuelve a ${info.id}, no a la página ${pageId}`);
+  }
+}
+
 const cred = (credenciales, clave) => {
   const v = credenciales[clave];
-  if (!v) throw new Error(`Falta la credencial ${clave} en el entorno de Make.`);
+  if (!v) throw new Error(`Falta la credencial ${clave} en el entorno.`);
+  if (/^EA[A-Za-z]{2}/.test(v) && !/^EAA[A-Za-z]/.test(v)) {
+    // No es una comprobación de validez del token: es una detección de que has
+    // pegado el token equivocado. Un token de página empieza por EAA(E|F|G...);
+    // un token de usuario empieza por EAAB. Facebook no lo dice de forma útil:
+    // si le das a /{page}/photos un token de usuario, responde con
+    // "publish_actions no está disponible", un permiso que se retiró en 2018 y
+    // que esta app nunca pidió. El mensaje real es "eso no es un token de
+    // página", y es la causa de ese 403 casi siempre.
+    throw new Error(
+      `${clave} parece un token de usuario de Facebook, no un token de página. `
+      + 'Facebook responderá con un 403 sobre publish_actions, un permiso que se '
+      + 'retiró en 2018 y que nunca se pidió aquí. Se saca de la respuesta a '
+      + `/1320948007767621?fields=access_token usando un token de usuario de larga `
+      + 'duración, no del Explorador.',
+    );
+  }
   return v;
 };
 
@@ -64,6 +116,10 @@ const facebook = {
     const pageId = cred(credenciales, 'FACEBOOK_PAGE_ID');
     const token = cred(credenciales, 'FACEBOOK_PAGE_TOKEN');
     const base = `https://graph.facebook.com/${FACEBOOK_VERSION}/${pageId}`;
+
+    // El prefijo del token no basta para saber si sirve: se comprobará de
+    // verdad con una llamada de lectura, que es barata y no publica nada.
+    if (!dryRun) await comprobarTokenDePagina(token, pageId, log);
 
     if (dryRun) {
       const endpoint = urls.length ? `${base}/photos` : `${base}/feed`;
@@ -109,6 +165,65 @@ const facebook = {
  * El pie de foto va en el paso 2, no en los hijos: ponerlo en los hijos
  * hace que Meta rechace el carrusel entero.
  */
+/**
+ * Espera a que Instagram termine de ingerir un contenedor.
+ *
+ * `POST /media` devuelve el creation_id al momento, pero la imagen se descarga
+ * y valida en segundo plano. Hasta que eso acaba, el contenedor no es
+ * publicable y `media_publish` responde 400 "Media ID is not available" — un
+ * mensaje que no menciona esperar, que es lo que hace perder el rato.
+ *
+ * Afecta a imágenes, no solo a vídeo, y es intermitente: una imagen pequeña
+ * suele estar lista antes de la siguiente llamada y el fallo aparece con la
+ * primera grande. Por eso se espera siempre, sin atajo.
+ *
+ * Un techo de 60 s es generoso: es el tiempo de ingesta de un vídeo normal, y
+ * si se supera la publicación está mal formada o la imagen no es válida.
+ */
+async function esperarContenedor(creationId, token, log) {
+  const LIMITE_MS = 60_000;
+  const PASO_MS = 2_000;
+  const inicio = Date.now();
+  let intentos = 0;
+
+  for (;;) {
+    intentos += 1;
+    let estado;
+    try {
+      ({ json: estado } = await pedir(
+        `https://graph.facebook.com/${INSTAGRAM_VERSION}/${creationId}?fields=status_code`
+          + `&access_token=${encodeURIComponent(token)}`,
+        {},
+        'Instagram (estado del contenedor)',
+      ));
+    } catch (e) {
+      // Un 404 aquí significa que el contenedor aún no es visible, que es el
+      // mismo problema de sincronización. Se sigue esperando.
+      if (Date.now() - inicio > LIMITE_MS) throw e;
+      await dormir(PASO_MS);
+      continue;
+    }
+
+    if (estado?.status_code === 'FINISHED') {
+      if (intentos > 1) log('borrador', `contenedor listo tras ${intentos - 1} espera(s)`);
+      return;
+    }
+    if (estado?.status_code === 'ERROR') {
+      throw new Error(
+        `Instagram rechazó el medio (status_code ERROR). Suele ser una imagen que `
+        + `no puede leer, o un carrusel con hijos que no terminaron.`,
+      );
+    }
+    if (Date.now() - inicio > LIMITE_MS) {
+      throw new Error(
+        `El contenedor ${creationId} seguía en ${estado?.status_code ?? 'desconocido'} `
+        + `tras ${LIMITE_MS / 1000} s. Publicar ahora da 400 "Media ID is not available".`,
+      );
+    }
+    await dormir(PASO_MS);
+  }
+}
+
 const instagram = {
   requiere: ['INSTAGRAM_IG_ID', 'INSTAGRAM_PAGE_TOKEN'],
   async publicar({ texto, urls, credenciales, dryRun, log }) {
@@ -169,6 +284,16 @@ const instagram = {
     }
 
     if (!creationId) throw new Error('Instagram no devolvió creation_id.');
+
+    // El contenedor se crea de forma síncrona pero Instagram lo INGIERE en
+    // segundo plano: descarga la imagen, la valida y recién entonces la marca
+    // publicable. Publicar antes de ese momento devuelve 400 "Media ID is not
+    // available", que no dice nada de esperar.
+    //
+    // Pasa también con imágenes ligeras. Es intermitente por eso: en local con
+    // un JPEG pequeño suele ganar la carrera y el bug llega con el primero
+    // grande. Por eso no hay Atajo rápido por tipo de medio.
+    await esperarContenedor(creationId, token, log);
 
     const { json } = await pedir(`${host}/media_publish`, {
       method: 'POST',
