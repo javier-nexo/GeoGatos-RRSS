@@ -6,6 +6,11 @@ node_modules/
 # porque el runner de Make es efímero y este log no sobrevive a una ejecución.
 registro/
 
+# Bandeja de entrada: borradores de imágenes sin renombrar. La copia que se
+# publica y se sirve por GitHub Pages va a medios/<slug>/, que sí se versiona.
+entrada/*
+!entrada/README.md
+
 # Sistema
 .DS_Store
 Thumbs.db

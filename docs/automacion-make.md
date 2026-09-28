@@ -54,36 +54,85 @@ Además, TikTok exige que ese host tenga un **dominio verificado**: no sirve
 `raw.githubusercontent.com` porque no es tuyo. Sí sirve `tu-usuario.github.io`,
 que sí es tuyo.
 
-### Decisión tomada: este repo, público, sirviendo `/medios`
+### Decisión tomada: este repo, público, sirviendo desde `/root`
 
 El repo `javier-nexo/GeoGatos-RRSS` es **público** y GitHub Pages sirve la
-carpeta `medios/`. `rrss.config.yaml` queda así:
+raíz del repositorio. `rrss.config.yaml` queda así:
 
 ```yaml
 medios:
   base_url: "https://javier-nexo.github.io/GeoGatos-RRSS/medios"
 ```
 
-**Pasos que quedan por hacer en GitHub** (Settings → Pages):
+**Configuración en GitHub** (Settings → Pages → Build and deployment):
 
 | Campo | Valor |
 |---|---|
 | Source | Deploy from a branch |
 | Branch | `main` |
-| Folder | `/medios` |
+| Folder | **`/ (root)`** |
 
-Tarda unos minutos en la primera compilación. Cuando esté, comprueba que una
-imagen de `medios/<slug>/` carga en
-`https://javier-nexo.github.io/GeoGatos-RRSS/medios/<slug>/<fichero>`.
+> `/medios` no aparece en el desplegable, y no es que falte el push. GitHub
+> Pages con "Deploy from a branch" **solo admite `/` (root) o `/docs`**:
+> cualquier otra carpeta no es una opción de la interfaz. Como se publica la
+> raíz, las URLs conservan la carpeta `/medios` dentro del dominio.
 
-> Consecuencia de que el repo sea público: quedan visibles los borradores y los
-> textos aún sin publicar. Para un banco de contenido de marketing de un
-> producto público es aceptable, pero conviene saberlo.
+El mapping resultante, verificado:
+
+| Fichero en el repo | URL pública |
+|---|---|
+| `medios/<slug>/instagram-01.jpg` | `https://javier-nexo.github.io/GeoGatos-RRSS/medios/<slug>/instagram-01.jpg` |
+
+Que es exactamente lo que compone `base_url`. Puedes comprobarlo en cualquier
+momento:
+
+```bash
+curl -I https://javier-nexo.github.io/GeoGatos-RRSS/medios/<slug>/<fichero>
+```
+
+Tarda unos minutos en la primera compilación tras cada push.
+
+### Imprescindible: el fichero vacío `.nojekyll`
+
+En la raíz del repositorio hay un fichero de 0 bytes llamado `.nojekyll`. **No
+lo borres y no lo confundas con un resto.**
+
+Sin él, GitHub Pages pasa los ficheros por **Jekyll**, que está pensado para
+sitios web, no para servir binarios. Jekyll excluye del sitio todo fichero o
+carpeta que empiece por `_` o `.`, y transforma los `.md` en `.html`.
+
+Meta no se limita a que la URL responda: **Instagram descarga el fichero y
+comprueba su `content-type`**. Si Jekyll se come un `.jpg` o lo sirve como
+otra cosa, la publicación falla en el último paso, cuando ya no puedes
+corregirla desde el panel, y el error que devuelve Meta no menciona a Jekyll.
+`.nojekyll` desactiva Jekyll y GitHub sirve los ficheros tal cual.
+
+Al verificar una URL, mira los dos campos, no solo el `200`:
+
+| Campo | Tiene que ser |
+|---|---|
+| `HTTP` | `200` |
+| `content-type` | `image/jpeg` · `video/mp4` para TikTok |
+
+### Consecuencia: con `/root` se sirve todo el repo
+
+Al publicar desde la raíz, GitHub Pages sirve **todos** los ficheros versionados,
+no solo `medios/`. Eso incluye `manifiestos/`, los `.md` de cada red,
+`rrss.config.yaml` y el código de `scripts/`.
+
+Como el repo ya es público, esto **no expone nada nuevo**: todo eso ya está
+visible en github.com. Pero hay una regla que conviene tener presente:
+
+> Nunca escribas una credencial en un fichero del repositorio. Cualquier cosa
+> committeada acaba servido por `github.io`. Las credenciales van siempre por
+> variable de entorno en Make.
+
+`node_modules/` y `registro/` están en `.gitignore`, así que no se sirven.
 
 ### Alternativa si algún día cambia
 
-Un repositorio público solo de medios (`GeoGatos-Media`, Pages desde la raíz) y
-este repo privado. Solo habría que cambiar `medios.base_url`. El resto del
+Un repositorio público solo de medios (`GeoGatos-Media`, Pages desde la raíz)
+y este repo privado. Solo habría que cambiar `medios.base_url`. El resto del
 pipeline no se entera.
 
 ---

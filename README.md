@@ -15,11 +15,13 @@ GeoGatos-RRSS/
 ├── manifiestos/                 <- Contrato de publicación: un .yaml por día, es lo que lee Make
 │   ├── _plantilla.yaml          <- Plantilla de manifiesto con las 7 redes comentadas
 │   └── AAAA-MM-DD-tema.yaml
-├── medios/                      <- Dónde subes tú las imágenes y vídeos (ver medios/README.md)
-├── scripts/                     <- Validador y publicador
+├── entrada/                      <- Bandeja: tú sueltas aquí los .jpg sin renombrar
+├── medios/                       <- Copias ya renombradas por red, las que sirve GitHub Pages
+├── scripts/                     <- Validador, publicador y preparación de medios
 │   ├── validar-manifiesto.mjs   <- Comprueba límites por red antes de publicar
+│   ├── preparar-medios.mjs      <- Copia tus imágenes de entrada/ a medios/<slug>/ con el nombre de cada red
 │   ├── publicar.mjs             <- Publica en todas las redes; Make lo invoca
-│   └── lib/                     <- Núcleo compartido y adaptadores por red
+│   └── lib/                     <- Núcleo compartido, lectura de imágenes y adaptadores por red
 ├── Plantillas/                  <- Plantilla específica para cada red social
 │   ├── plantilla-facebook.md
 │   ├── plantilla-instagram.md
@@ -53,12 +55,15 @@ Hay dos formatos en el repo para cada publicación, y conviene no confundirlos:
 
 Flujo de un día de publicación:
 
-1. Eliges un tema de `banco-de-temas.md`.
-2. Pides la publicación y OpenCode genera los `.md` y el manifiesto.
-3. Subes los medios de las redes que se publican a `medios/<slug>/`, con la
-   nomenclatura de `medios/README.md`.
+1. **Sueltas tus imágenes en `entrada/`**, sin renombrar, en el orden que
+   quieras. Esa carpeta no se versiona; es tu bandeja.
+2. Pides la publicación y OpenCode elige el tema, genera los `.md` y el manifiesto.
+3. OpenCode corre `node scripts/preparar-medios.mjs --slug=<slug>`, que copia
+   tus imágenes a `medios/<slug>/` con el nombre que pide cada red, y te enseña
+   el reparto. La 1ª imagen va a `facebook-01` e `instagram-01`, la 2ª a
+   `instagram-02`, la 3ª a `instagram-03`.
 4. `node scripts/validar-manifiesto.mjs --todos`
-5. Cambias `estado: borrador` por `estado: listo` y haces push.
+5. Revisas, cambias `estado: borrador` por `estado: listo` y haces push.
 6. Make publica y deja constancia en `registro/publicaciones.jsonl`.
 
 ### Dónde se publica y dónde no
@@ -77,6 +82,8 @@ hay que pedir en cada plataforma y los bloqueos de cada red, está en
 ```bash
 npm install
 node scripts/validar-manifiesto.mjs --todos        # valida
+node scripts/preparar-medios.mjs --listar          # qué hay en la bandeja
+node scripts/preparar-medios.mjs --slug=<slug>     # copia y renombra tus imágenes
 node scripts/publicar.mjs --slug=<slug> --dry-run   # simula, sin publicar
 node --test scripts/validar-manifiesto.test.mjs     # tests del validador
 ```

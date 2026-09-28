@@ -17,11 +17,23 @@ medios:
   # Carpeta local donde depositas las imágenes y vídeos antes de publicarlas.
   carpeta: "medios"
 
+  # Bandeja de entrada: aquí sueltas las imágenes tal cual te llegan, sin
+  # renombrar. `scripts/preparar-medios.mjs` las copia a `medios/<slug>/` con
+  # el nombre que cada red necesita, en el orden en que las subiste.
+  #
+  # No se versiona (está en .gitignore): es un borrador local. Lo que se
+  # versiona es la copia de `medios/<slug>/`, que es la que sirve GitHub Pages.
+  entrada: "entrada"
+
   # Dominio base que se antepone a las rutas de los ficheros.
   #
-  # Este repo es público y sirve /medios con GitHub Pages. Para activarlo:
-  #   Settings → Pages → Source: Deploy from a branch
-  #              → Branch: main, Folder: /medios
+  # GitHub Pages con "Deploy from a branch" SOLO admite dos carpetas: `/` (root)
+  # o `/docs`. Cualquier otra, como /medios, no aparece en el desplegable
+  # porque la interfaz no la ofrece. Con /root el mapping es:
+  #
+  #   medios/<slug>/<fichero>  ->  https://javier-nexo.github.io/GeoGatos-RRSS/medios/<slug>/<fichero>
+  #
+  # que es justo lo que hay que poner aquí.
   #
   # CRÍTICO: este host es el que se verifica en TikTok (URL prefix) cuando
   # llegue el momento. raw.githubusercontent.com NO es verificable porque no es

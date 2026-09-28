@@ -156,6 +156,40 @@ export function resolverUrlMedio(rutaRelativa, baseUrl) {
 
 export const extensionDe = (ruta) => extname(ruta).slice(1).toLowerCase();
 
+/**
+ * Base pública de UNA publicación: `base_url` + el slug.
+ *
+ * Existe como función propia, y no como un `join` en el publicador, por un
+ * fallo que ya pasó: composing solo `base_url` devolvía
+ * `.../medios/facebook-01.jpg` cuando el fichero vive en
+ * `medios/<slug>/facebook-01.jpg`. Instagram se descargaba un 404 y el error
+ * que devolvía Meta no hablaba de rutas. El slug es parte de la URL y tiene
+ * que estar en un solo sitio.
+ */
+export function urlBasePublicacion(baseUrl, slug) {
+  const base = String(baseUrl ?? '').trim().replace(/\/+$/, '');
+
+  // Se valida antes de interpolar nada. Estas URLs acaban en manos de las APIs
+  // de Meta y de X con un token de acceso, y un error de espacios o de esquema
+  // se manifestaría como un 404 sin explicación en el momento de publicar.
+  if (!/^https?:\/\//.test(base)) {
+    throw new Error(`medios.base_url inválido: "${baseUrl}" debe empezar por https://`);
+  }
+  if (/\s/.test(base)) {
+    throw new Error(`medios.base_url contiene espacios: "${base}". ¿Se pegó con espacios de más?`);
+  }
+
+  const s = String(slug ?? '').trim();
+  if (!s) {
+    throw new Error('falta el slug para componer la URL de los medios');
+  }
+  if (!/^[\w.-]+$/.test(s)) {
+    throw new Error(`slug con caracteres no válidos para una URL: "${slug}"`);
+  }
+
+  return `${base}/${s}`;
+}
+
 // ---------------------------------------------------------------------------
 // Validación
 // ---------------------------------------------------------------------------

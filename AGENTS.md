@@ -37,6 +37,39 @@ los `.md`, el día no se publica; si generas solo el `.yaml`, nadie lo revisa.
   insistas al usuario con que los suba: los de las redes en standby son
   opcionales y el validador lo respeta.
 
+## La rutina de una publicación
+
+El usuario no prepara los ficheros de medios a mano. El flujo es:
+
+1. **El usuario** suelta sus `.jpg` en `entrada/`, sin renombrar, en el orden
+   que quiera. Esa carpeta está en `.gitignore`.
+2. **El agente** elige el tema del banco de temas, escribe los `.md` de las
+   siete redes, crea el manifiesto y corre:
+
+   ```bash
+   node scripts/preparar-medios.mjs --slug=<slug>           # copia
+   node scripts/preparar-medios.mjs --slug=<slug> --simular # solo enseña el reparto
+   node scripts/preparar-medios.mjs --listar                # qué hay en la bandeja
+   ```
+
+3. **El agente le enseña la tabla de reparto** y avisa de lo que detecte.
+4. **El usuario** revisa, pone `estado: listo` y hace push. Make publica.
+
+### El reparto de imágenes es posicional, y lo decidió el usuario
+
+La imagen *n* de la bandeja va al hueco *n* de la lista `medios` de cada red:
+
+| Imagen subida | Ficheros donde acaba |
+|---|---|
+| 1ª | `facebook-01.jpg` e `instagram-01.jpg` |
+| 2ª | `instagram-02.jpg` |
+| 3ª | `instagram-03.jpg` |
+
+Que la misma foto sirva para varias redes es **lo que se quiere**, no un
+fallo: no avises de ello. El orden de subida es el de fecha de modificación.
+
+Las redes en standby no se preparan salvo que se pase `--incluir-standby`.
+
 ## Estado de las redes
 
 A 2026-09-28 se publica en **Facebook, Instagram y X**. **LinkedIn, YouTube,
@@ -49,7 +82,7 @@ Para activar una red, quita su línea `standby`. No toques los manifiestos.
 
 ```bash
 node scripts/validar-manifiesto.mjs --todos
-node --test scripts/validar-manifiesto.test.mjs
+node --test scripts/validar-manifiesto.test.mjs scripts/preparar-medios.test.mjs
 node scripts/publicar.mjs --slug=<slug> --dry-run
 ```
 

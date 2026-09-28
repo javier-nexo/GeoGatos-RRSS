@@ -40,6 +40,7 @@ import { fileURLToPath } from 'node:url';
 import {
   cargarConfig, cargarManifiesto, validarManifiestoCompleto,
   componerTextoConHashtags, normalizarHashtags, resolverUrlMedio, estadoRed,
+  urlBasePublicacion,
 } from './lib/nucleo.mjs';
 import { REDES, ORDEN_PUBLICACION } from './lib/redes.mjs';
 
@@ -226,7 +227,10 @@ for (const nombre of ORDEN_PUBLICACION) {
 // Preparación de medios
 // ---------------------------------------------------------------------------
 const medDir = join(RAIZ, cfg.medios.carpeta, slug);
-const baseUrl = cfg.medios.base_url;
+// El slug forma parte de la URL: los ficheros viven en medios/<slug>/, así que
+// la base pública de esta publicación es base_url + slug. Sin esto, Instagram
+// recibe .../medios/facebook-01.jpg en vez de .../medios/<slug>/facebook-01.jpg.
+const baseUrl = urlBasePublicacion(cfg.medios.base_url, slug);
 
 const leerMedio = (rel) => {
   const partes = String(rel).replace(/\\/g, '/').split('/');

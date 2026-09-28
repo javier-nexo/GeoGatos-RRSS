@@ -6,7 +6,9 @@
   "description": "Banco de publicaciones y pipeline de publicación automatizada (OpenCode + Make) para GeoGatos",
   "scripts": {
     "validar": "node scripts/validar-manifiesto.mjs",
-    "validar:todo": "node scripts/validar-manifiesto.mjs --todos"
+    "validar:todo": "node scripts/validar-manifiesto.mjs --todos",
+    "medios": "node scripts/preparar-medios.mjs",
+    "test": "node --test scripts/validar-manifiesto.test.mjs scripts/preparar-medios.test.mjs"
   },
   "dependencies": {
     "yaml": "^2.6.1"
