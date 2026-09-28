@@ -61,9 +61,12 @@ Flujo de un día de publicación:
    quieras. Esa carpeta no se versiona; es tu bandeja.
 2. Pides la publicación y OpenCode elige el tema, genera los `.md` y el manifiesto.
 3. OpenCode corre `node scripts/preparar-medios.mjs --slug=<slug>`, que copia
-   tus imágenes a `medios/<slug>/` con el nombre que pide cada red, y te enseña
-   el reparto. La 1ª imagen va a `facebook-01` e `instagram-01`, la 2ª a
-   `instagram-02`, la 3ª a `instagram-03`.
+   tus imágenes a `medios/<slug>/` con el nombre que pide cada red, te enseña
+   el reparto y **vacía la bandeja** de lo que ya ha copiado. La 1ª imagen va a
+   `facebook-01` e `instagram-01`, la 2ª a `instagram-02`, la 3ª a
+   `instagram-03`. Lo que sobre se queda, con un aviso: puede que sea para la
+   siguiente publicación. Para borrarlo del todo,
+   `node scripts/preparar-medios.mjs --vaciar-entrada`.
 4. `node scripts/validar-manifiesto.mjs --todos`
 5. Revisas, cambias `estado: borrador` por `estado: listo` y haces push.
 6. El runner publica y deja constancia en `registro/publicaciones.jsonl`.

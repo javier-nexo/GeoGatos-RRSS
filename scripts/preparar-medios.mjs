@@ -25,11 +25,23 @@
  * `--simular` no toca el disco: imprime el reparto y los avisos para
  * revisarlos antes de copiar nada.
  *
+ * `--vaciar-entrada` borra además las imágenes que NO se han usado (por
+ * ejemplo, si subiste 5 y solo cupieron 3). Sin él, esas sobrantes se quedan
+ * y la próxima publicación las cuenta como imágenes tuyas, ocupando las
+ * posiciones equivocadas. Con él, se pierden.
+ *
+ * Tras copiar, la bandeja se vacía de las imágenes **consumidas**: ya están
+ * en `medios/<slug>/`, que sí se versiona, y si se dejan ahí la siguiente
+ * publicación vuelve a repartirlas desde el principio. Ver `limpiarEntrada`.
+ *
+ * `--vaciar-entrada` sin `--slug` borra la bandeja entera, sin manifiesto y sin
+ * copiar nada. Es como se limpian las sobras de una publicación descartada.
+ *
  * NO pone `estado: listo` ni hace commit. Eso es del usuario.
  */
 
-import { readFileSync, readdirSync, statSync, mkdirSync, copyFileSync, existsSync } from 'node:fs';
-import { join, extname } from 'node:path';
+import { readFileSync, readdirSync, statSync, mkdirSync, copyFileSync, unlinkSync, existsSync } from 'node:fs';
+import { join, extname, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { cargarConfig, cargarManifiesto, estadoRed, extensionDe } from './lib/nucleo.mjs';
@@ -178,15 +190,76 @@ function inspeccionarAsignaciones(asignaciones) {
 }
 
 // ---------------------------------------------------------------------------
+// Vaciar la bandeja
+// ---------------------------------------------------------------------------
+
+/**
+ * Borra de la bandeja las imágenes que ya están copiadas en `medios/<slug>/`.
+ *
+ * Por qué hay que hacerlo y no basta con dejar la bandeja quieta: el reparto es
+ * **posicional y ordenado por fecha de modificación**. Si las imágenes de la
+ * publicación anterior siguen en `entrada/`, la próxima ejecución las cuenta
+ * como las primeras y desplaza todo lo demás. Es decir, no son un estorbo
+ * visual: rompen el reparto de la publicación siguiente. Por eso se borran
+ * solas en cuanto están copiadas.
+ *
+ * Solo se borra lo **consumido**. Las imágenes que sobraron (subiste 5 y solo
+ * cupieron 3) no se tocan a menos que se pase `--vaciar-entrada`, porque puede
+ * que sean las de la publicación siguiente y borrarlas sería tirar el trabajo
+ * del usuario sin que lo pidiera.
+ *
+ * `medios/<slug>/` está versionado y en el push, así que lo borrado siempre
+ * se puede recuperar con `git checkout` mientras el commit exista.
+ *
+ * @param {string} dirEntrada
+ * @param {Array<{origenRuta: string}>} asignaciones
+ * @param {{vaciar?: boolean}} opciones
+ * @returns {{borradas: string[], sobrantes: string[], fallidas: Array<{nombre: string, error: string}>}}
+ */
+export function limpiarEntrada(dirEntrada, asignaciones, opciones = {}) {
+  const { vaciar = false } = opciones;
+  const consumidas = new Map();
+  for (const a of asignaciones) consumidas.set(a.origenRuta, a.origen);
+
+  const presentes = listarEntrada(dirEntrada);
+  const usadasRuta = new Set(consumidas.keys());
+  const sobrantes = presentes.filter((im) => !usadasRuta.has(im.ruta));
+
+  const aBorrar = vaciar ? presentes : presentes.filter((im) => usadasRuta.has(im.ruta));
+
+  const borradas = [];
+  const fallidas = [];
+  for (const im of aBorrar) {
+    try {
+      unlinkSync(im.ruta);
+      borradas.push(im.nombre);
+    } catch (e) {
+      // No se aborta: haber borrado 2 de 3 y no borrar el tercero no cambia
+      // nada del resultado de la publicación, que ya está escrita.
+      fallidas.push({ nombre: im.nombre, error: e.message });
+    }
+  }
+
+  return { borradas, sobrantes: sobrantes.filter((im) => !borradas.includes(im.nombre)).map((im) => im.nombre), fallidas };
+}
+
+// ---------------------------------------------------------------------------
 // CLI
 // ---------------------------------------------------------------------------
 
 function parsearArgs(argv) {
-  const args = { simular: false, listar: false, incluirStandby: false, json: false };
+  const args = {
+    simular: false,
+    listar: false,
+    incluirStandby: false,
+    vaciarEntrada: false,
+    json: false,
+  };
   for (const a of argv) {
     if (a === '--simular') args.simular = true;
     else if (a === '--listar') args.listar = true;
     else if (a === '--incluir-standby') args.incluirStandby = true;
+    else if (a === '--vaciar-entrada') args.vaciarEntrada = true;
     else if (a === '--json') args.json = true;
     else if (a.startsWith('--slug=')) args.slug = a.slice(7);
     else if (a.startsWith('--entrada=')) args.entrada = a.slice(10);
@@ -210,11 +283,45 @@ function listar(dirEntrada) {
   return 0;
 }
 
+/**
+ * Vacía la bandeja entera sin tocar ningún manifiesto.
+ *
+ * Para cuando sobran imágenes de una publicación anterior o de una que se
+ * descartó. No se usa el reparto: se borra lo que haya, que es lo que se pide.
+ */
+function vaciarBandeja(dirEntrada, { json = false } = {}) {
+  const imgs = listarEntrada(dirEntrada);
+  const { borradas, fallidas } = limpiarEntrada(dirEntrada, imgs.map((im) => ({ origenRuta: im.ruta, origen: im.nombre })), { vaciar: true });
+
+  if (json) {
+    console.log(JSON.stringify({ bandeja: dirEntrada, borradas, fallidas }, null, 2));
+    return fallidas.length ? 1 : 0;
+  }
+
+  if (!imgs.length) {
+    console.log(`No hay imágenes en ${dirEntrada}. Nada que borrar.`);
+    return 0;
+  }
+  console.log(`Bandeja: ${dirEntrada}\n`);
+  for (const n of borradas) console.log(`  borrada  ${n}`);
+  for (const f of fallidas) console.log(`  ! no se pudo borrar ${f.nombre}: ${f.error}`);
+  console.log(`\nBorradas ${borradas.length} imagen(es).`);
+  return fallidas.length ? 1 : 0;
+}
+
 function main() {
   const args = parsearArgs(process.argv.slice(2));
   const cfg = cargarConfig(RAIZ);
+  // `resolve` y no `join`: `join(RAIZ, 'C:\\temp\\x')` sale con la ruta
+  // absoluta pegada detrás de la del repo, que no existe. Con `resolve`, una
+  // ruta absoluta se respeta tal cual y una relativa se ancla en el repo.
+  const dirEntrada = resolve(RAIZ, args.entrada ?? cfg.medios.entrada ?? 'entrada');
 
-  if (args.listar) return listar(join(RAIZ, args.entrada ?? cfg.medios.entrada ?? 'entrada'));
+  if (args.listar) return listar(dirEntrada);
+
+  // Sin `--slug` no hay nada que preparar, pero `--vaciar-entrada` sí sirve
+  // solo: es como se limpian las sobras de una publicación descartada.
+  if (args.vaciarEntrada && !args.slug) return vaciarBandeja(dirEntrada, { json: args.json });
 
   if (!args.slug) {
     console.error('Falta --slug=<slug>. Usa --listar para ver la bandeja.');
@@ -228,7 +335,6 @@ function main() {
   }
   const manifiesto = cargarManifiesto(rutaManifiesto);
 
-  const dirEntrada = join(RAIZ, args.entrada ?? cfg.medios.entrada ?? 'entrada');
   const dirDestino = join(RAIZ, cfg.medios.carpeta, args.slug);
   const imagenes = listarEntrada(dirEntrada);
 
@@ -298,6 +404,25 @@ function main() {
     copyFileSync(a.origenRuta, join(dirDestino, a.destino));
   }
   console.log(`\nCopiados ${asignaciones.length} ficheros en ${dirDestino}`);
+
+  // La bandeja se vacía aquí, y no al final, a propósito: si el borrado va
+  // mal no se pierde el trabajo de copiar, que es lo caro. Lo que se pierde es
+  // una imagen sin borrar, y eso se avisa.
+  const limpieza = limpiarEntrada(dirEntrada, asignaciones, { vaciar: args.vaciarEntrada });
+  if (limpieza.borradas.length) {
+    console.log(`Bandeja vaciada de ${limpieza.borradas.length} imagen(es) ya copiadas.`);
+  }
+  for (const f of limpieza.fallidas) {
+    console.log(`  ! no se pudo borrar ${f.nombre}: ${f.error}`);
+  }
+  if (limpieza.sobrantes.length) {
+    console.log(`\nEn la bandeja quedan ${limpieza.sobrantes.length} imagen(es) sin usar:`);
+    for (const n of limpieza.sobrantes) console.log(`  - ${n}`);
+    console.log('  Se quedan ahí a propósito: pueden ser las de la próxima publicación.');
+    console.log('  Mientras sigan ahí cuentan como las primeras del reparto, así que');
+    console.log('  conviene quitarlas antes de la siguiente. Para borrarlas del todo:');
+    console.log('    node scripts/preparar-medios.mjs --vaciar-entrada');
+  }
 
   // La URL pública es lo que consumirán Instagram y TikTok. Se muestra porque
   // es el paso que falla en silencio si GitHub Pages no ha republished.

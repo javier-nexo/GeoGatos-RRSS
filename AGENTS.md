@@ -47,10 +47,17 @@ El usuario no prepara los ficheros de medios a mano. El flujo es:
    siete redes, crea el manifiesto y corre:
 
    ```bash
-   node scripts/preparar-medios.mjs --slug=<slug>           # copia
+   node scripts/preparar-medios.mjs --slug=<slug>           # copia y vacía lo copiado
    node scripts/preparar-medios.mjs --slug=<slug> --simular # solo enseña el reparto
    node scripts/preparar-medios.mjs --listar                # qué hay en la bandeja
+   node scripts/preparar-medios.mjs --vaciar-entrada        # vacía la bandeja entera
    ```
+
+   Tras copiar, el script borra de `entrada/` las imágenes consumidas. No es
+   opcional: el reparto es posicional y ordenado por fecha, así que una imagen
+   de la publicación anterior que se queda en la bandeja ocupa el primer hueco
+   de la siguiente. Las sobrantes no se tocan salvo con `--vaciar-entrada`,
+   porque pueden ser las de la publicación siguiente.
 
 3. **El agente le enseña la tabla de reparto** y avisa de lo que detecte.
 4. **El usuario** revisa, pone `estado: listo` y hace push. El runner publica.

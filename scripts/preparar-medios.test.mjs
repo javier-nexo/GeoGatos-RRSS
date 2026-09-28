@@ -10,7 +10,7 @@
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, writeFileSync, readFileSync, mkdirSync, utimesSync } from 'node:fs';
+import { mkdtempSync, writeFileSync, readFileSync, mkdirSync, utimesSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
@@ -24,7 +24,7 @@ import {
   proporcion, proporcionesCompatibles,
 } from './lib/imagenes.mjs';
 import { urlBasePublicacion, resolverUrlMedio, redesYaPublicadas } from './lib/nucleo.mjs';
-import { planearReparto, listarEntrada } from './preparar-medios.mjs';
+import { planearReparto, listarEntrada, limpiarEntrada } from './preparar-medios.mjs';
 
 // ---------------------------------------------------------------------------
 // Utilidades para construir ficheros de prueba
@@ -485,4 +485,97 @@ test('un manifiesto sin bloque publicacion se rechaza', () => {
   const r = actualizar(ruta, '--estado=publicado');
   assert.notEqual(r.codigo, 0);
   assert.match(r.salida, /publicacion/);
+});
+
+// ---------------------------------------------------------------------------
+// Vaciado de la bandeja
+// ---------------------------------------------------------------------------
+
+/** Bandeja con `n` JPEGs, con mtimes escalonados para que el orden sea claro. */
+function bandejaCon(nombres) {
+  const dir = mkdtempSync(join(tmpdir(), 'geogatos-bandeja-'));
+  nombres.forEach((nombre, i) => {
+    writeFileSync(join(dir, nombre), jpegDe(800, 600));
+    // mtime creciente: el reparto posicional ordena por esto.
+    const t = new Date(1_700_000_000_000 + i * 60_000);
+    utimesSync(join(dir, nombre), t, t);
+  });
+  return dir;
+}
+
+test('limpiarEntrada borra solo las imágenes consumidas', () => {
+  const dir = bandejaCon(['a.jpg', 'b.jpg', 'c.jpg']);
+  const imgs = listarEntrada(dir);
+  assert.equal(imgs.length, 3);
+
+  // Se "consumen" la primera y la segunda: la tercera sobró.
+  const asignaciones = imgs.slice(0, 2).map((im) => ({ origenRuta: im.ruta, origen: im.nombre }));
+  const r = limpiarEntrada(dir, asignaciones);
+
+  assert.deepEqual(r.borradas.sort(), ['a.jpg', 'b.jpg']);
+  assert.deepEqual(r.sobrantes, ['c.jpg']);
+  assert.equal(existsSync(join(dir, 'a.jpg')), false);
+  assert.equal(existsSync(join(dir, 'c.jpg')), true);
+  assert.equal(r.fallidas.length, 0);
+});
+
+test('limpiarEntrada con vaciar borra también las sobrantes', () => {
+  const dir = bandejaCon(['a.jpg', 'b.jpg', 'c.jpg']);
+  const imgs = listarEntrada(dir);
+  const asignaciones = imgs.slice(0, 1).map((im) => ({ origenRuta: im.ruta, origen: im.nombre }));
+
+  const r = limpiarEntrada(dir, asignaciones, { vaciar: true });
+
+  assert.equal(r.borradas.length, 3);
+  assert.deepEqual(r.sobrantes, []);
+  assert.deepEqual(listarEntrada(dir), []);
+});
+
+test('limpiarEntrada no toca el README de la bandeja', () => {
+  const dir = bandejaCon(['a.jpg', 'b.jpg']);
+  writeFileSync(join(dir, 'README.md'), '# no borrar\n');
+  const imgs = listarEntrada(dir);
+  const asignaciones = imgs.map((im) => ({ origenRuta: im.ruta, origen: im.nombre }));
+
+  const r = limpiarEntrada(dir, asignaciones, { vaciar: true });
+
+  assert.equal(r.borradas.length, 2);
+  assert.equal(existsSync(join(dir, 'README.md')), true);
+});
+
+test('limpiarEntrada deduplica cuando la misma imagen va a varias redes', () => {
+  // Es el caso normal: la 1ª imagen es facebook-01 e instagram-01, así que
+  // aparece dos veces en el reparto y solo hay un fichero que borrar.
+  const dir = bandejaCon(['a.jpg', 'b.jpg', 'c.jpg']);
+  const imgs = listarEntrada(dir);
+  const [primera, segunda, tercera] = imgs;
+  const asignaciones = [
+    { origenRuta: primera.ruta, origen: primera.nombre, destino: 'facebook-01.jpg' },
+    { origenRuta: primera.ruta, origen: primera.nombre, destino: 'instagram-01.jpg' },
+    { origenRuta: segunda.ruta, origen: segunda.nombre, destino: 'instagram-02.jpg' },
+    { origenRuta: tercera.ruta, origen: tercera.nombre, destino: 'instagram-03.jpg' },
+  ];
+
+  const r = limpiarEntrada(dir, asignaciones);
+
+  assert.equal(r.borradas.length, 3);
+  assert.deepEqual(listarEntrada(dir), []);
+});
+
+test('limpiarEntrada sobre una bandeja ya vacía no falla', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'geogatos-bandeja-vacia-'));
+  const r = limpiarEntrada(dir, [{ origenRuta: join(dir, 'nunca.jpg'), origen: 'nunca.jpg' }]);
+  assert.deepEqual(r.borradas, []);
+  assert.deepEqual(r.fallidas, []);
+});
+
+test('el CLI con --vaciar-entrada y sin --slug vacía la bandeja', () => {
+  const dir = bandejaCon(['a.jpg', 'b.jpg', 'c.jpg']);
+  const r = execFileSync(
+    process.execPath,
+    [join(RAIZ, 'scripts', 'preparar-medios.mjs'), `--entrada=${dir}`, '--vaciar-entrada'],
+    { encoding: 'utf8' },
+  );
+  assert.match(r, /Borradas 3 imagen/);
+  assert.deepEqual(listarEntrada(dir), []);
 });
