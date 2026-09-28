@@ -55,9 +55,11 @@ plataformas:
 
   # --- X: 1 párrafo, máximo 280 caracteres -----------------------------
   # OJO: en self-serve X admite UN SOLO hashtag. El texto incluye el CTA.
+  # El CTA no puede apuntar a Medium: esa red está en standby y no se publica,
+  # así que un enlace ahí sería un article muerto desde el primer día.
   x:
     texto: |-
-      Una gata sin esterilizar puede dejar +100 descendientes en la calle. 💔 Esterilizar salva vidas: menos camadas abandonadas, menos tumores y peleas, y una colonia que se estabiliza sola. Lee el artículo completo en Medium: [enlace]
+      Una gata sin esterilizar puede dejar +100 descendientes en la calle. 💔 Esterilizar salva vidas: menos camadas abandonadas, menos tumores y peleas, y una colonia que se estabiliza sola. Más info en el link de la bio.
     hashtags: ["GeoGatos"]
     medios: ["x-01.jpg"]
 

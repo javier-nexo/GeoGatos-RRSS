@@ -11,7 +11,7 @@ Cada publicación existe en dos formatos, y no son intercambiables:
 
 - Los `.md` de cada red (`facebook/`, `instagram/`, …) son para **leerse**.
   Admiten notas, ideas de assets y contexto. Se editan a mano sin miedo.
-- El `.yaml` de `manifiestos/<slug>.yaml` es el **contrato que consume Make**.
+- El `.yaml` de `manifiestos/<slug>.yaml` es el **contrato que consume el runner**.
   Es lo único que se publica.
 
 Al generar una publicación hay que escribir **las dos cosas**. Si generas solo
@@ -53,7 +53,7 @@ El usuario no prepara los ficheros de medios a mano. El flujo es:
    ```
 
 3. **El agente le enseña la tabla de reparto** y avisa de lo que detecte.
-4. **El usuario** revisa, pone `estado: listo` y hace push. Make publica.
+4. **El usuario** revisa, pone `estado: listo` y hace push. El runner publica.
 
 ### El reparto de imágenes es posicional, y lo decidió el usuario
 
@@ -74,9 +74,28 @@ Las redes en standby no se preparan salvo que se pase `--incluir-standby`.
 
 A 2026-09-28 se publica en **Facebook, Instagram y X**. **LinkedIn, YouTube,
 TikTok y Medium están en standby**: se les escribe el contenido y se valida
-igual, pero Make no publica ahí. Los motivos están en `rrss.config.yaml`.
+igual, pero el runner no publica ahí. Los motivos están en `rrss.config.yaml`.
 
 Para activar una red, quita su línea `standby`. No toques los manifiestos.
+
+## Publicación automática
+
+Quien publica es un workflow de GitHub Actions
+(`.github/workflows/publicar.yml`), no Make: el módulo de Make que ejecuta
+scripts no está disponible en su plan gratuito. Los detalles están en
+`docs/automacion-make.md`.
+
+Lo que el agente tiene que saber:
+
+- **El push es el disparador.** El workflow solo publica manifiestos en
+  `estado: listo`. Cualquier otro push no hace nada.
+- **Un manifiesto a medias queda en `estado: error`**, nunca en `publicado`, y
+  no se reintenta solo. Volver a `listo` es del usuario.
+- **`registro/publicaciones.jsonl` se versiona a propósito.** `publicar.mjs` lo
+  lee antes de publicar y no repite una red que ya consta. No lo añadas a
+  `.gitignore` ni lo limpies: es lo único que evita duplicados cuando una
+  publicación falla a medias.
+- **No hay reintentos automáticos ni los pongas.** Publicar es irreversible.
 
 ## Antes de dar cualquier cosa por terminada
 
@@ -90,6 +109,11 @@ El validador es la barrera que evita que salga un post malo. El `--dry-run` es
 la única forma de comprobar el pipeline sin gastar una publicación real. Si un
 cambio en `scripts/lib/` altera lo que se publica, hay que actualizar también
 los tests: un validador que pasa de más es peor que no tener validador.
+
+Si tocas `.github/workflows/publicar.yml`, extráelo a un `.sh` y pásalo por
+`bash -n`, y simula el bucle con manifiestos de prueba. La lógica de "qué pasa
+cuando algo falla a medias" no se ve leyendo el YAML, y un error ahí sale como
+un post duplicado en tu perfil.
 
 ## Datos y hechos
 

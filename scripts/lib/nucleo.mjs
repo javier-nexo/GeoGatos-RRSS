@@ -11,7 +11,8 @@
  *   cargarConfig, cargarManifiesto
  *   componerTexto, componerTextoConHashtags, normalizarHashtags
  *   longitudPonderadaX
- *   resolverUrlMedio
+ *   resolverUrlMedio, urlBasePublicacion
+ *   redesYaPublicadas
  *   validarManifiestoCompleto
  */
 
@@ -188,6 +189,61 @@ export function urlBasePublicacion(baseUrl, slug) {
   }
 
   return `${base}/${s}`;
+}
+
+// ---------------------------------------------------------------------------
+// Idempotencia
+// ---------------------------------------------------------------------------
+/**
+ * Lee el registro de publicaciones y dice qué redes de un slug ya salieron.
+ *
+ * Por qué esto existe. El estado del manifiesto es por publicación, no por
+ * red: solo tiene un `estado` para todas las plataformas. Si Facebook va bien
+ * e Instagram falla, el manifiesto se queda en `listo` y la siguiente
+ * ejecución vuelve a publicar en Facebook. Duplicado, y no como error
+ * visible sino como post repetido en el perfil.
+ *
+ * El registro sí guarda el detalle por red, así que es el único sitio donde
+ * se puede saber qué quedó a medias. Por eso hay que versionarlo: si vive
+ * solo en el disco del runner, se pierde al terminar la ejecución y no sirve
+ * para nada.
+ *
+ * Solo cuentan las entradas de modo `real`. Una simulación no publicó nada y
+ * no debe bloquear una publicación de verdad.
+ *
+ * @param {string} rutaRegistro  Ruta del JSONL. Si no existe, no hay nada hecho.
+ * @param {string} slug          Slug del manifiesto.
+ * @returns {Map<string, string>} red -> ISO timestamp de su publicación
+ */
+export function redesYaPublicadas(rutaRegistro, slug) {
+  const hechas = new Map();
+  if (!existsSync(rutaRegistro)) return hechas;
+
+  let crudo;
+  try {
+    crudo = readFileSync(rutaRegistro, 'utf8');
+  } catch {
+    // Un registro ilegible no puede ser motivo para impedir publicar: lo
+    // peor que hace es duplicar una publicación, y eso se ve y se corrige.
+    return hechas;
+  }
+
+  for (const linea of crudo.split('\n')) {
+    const t = linea.trim();
+    if (!t) continue;
+    let e;
+    try {
+      e = JSON.parse(t);
+    } catch {
+      continue; // Una línea corrupta no debe tirar el registro entero.
+    }
+    if (e?.modo !== 'real' || e?.slug !== slug) continue;
+    for (const p of e.publicadas ?? []) {
+      if (p?.red && !hechas.has(p.red)) hechas.set(p.red, e.timestamp ?? '');
+    }
+  }
+
+  return hechas;
 }
 
 // ---------------------------------------------------------------------------

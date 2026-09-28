@@ -1,0 +1,155 @@
+# Publica los manifiestos que el usuario ha puesto en `listo`.
+#
+# El disparador es el mismo `push` que usaría Make, y el filtro es el mismo
+# `estado: "listo"`. Lo único que cambia es quién ejecuta `publicar.mjs`.
+#
+# Tres detalles de este fichero no son obvios y por eso están comentados:
+#
+#   1. El paso que registra lleva `if: always()`. Es lo que impide duplicar
+#      publicaciones. Sin él, un fallo a medias (Facebook sale, Instagram
+#      peta) deja el manifiesto en `listo` y el siguiente push vuelve a postear
+#      en Facebook. Ese commit tiene que ocurrir también al fallar.
+#   2. No hay reintentos automáticos. Publicar es irreversible: si la respuesta
+#      se pierde, un reintento puede dejar dos posts iguales en el perfil.
+#   3. Un manifiesto que se publica a medias se marca `error`, no `publicado`.
+#      El registro ya impide repetir lo que sí salió, pero volver a poner el
+#      estado en `listo` tiene que ser decisión de una persona.
+#
+# El commit de este bot no vuelve a disparar el workflow: GitHub no lanza
+# ejecuciones nuevas para pushes hechos con su propio GITHUB_TOKEN. Si algún
+# día eso cambiara, el ciclo seguiría convergiendo (la segunda vuelta no
+# encuentra nada en `listo` y no toca nada), pero habría una ejecución vacía
+# por publicación.
+
+name: Publicar
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'manifiestos/*.yaml'
+  # Para probar el montaje a mano sin subir un manifiesto a `listo`.
+  workflow_dispatch:
+
+# Dos pushes seguidos no pueden publicar a la vez. Sin esto, ambos runners
+# clonan el mismo estado, los dos ven `listo` y se publica dos veces.
+concurrency:
+  group: publicar-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write   # hace falta para reescribir manifiesto y registro
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    # Margen para clonar, instalar y publicar en tres redes.
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Publicar los manifiestos en listo
+        env:
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          FACEBOOK_PAGE_TOKEN: ${{ secrets.FACEBOOK_PAGE_TOKEN }}
+          INSTAGRAM_IG_ID: ${{ secrets.INSTAGRAM_IG_ID }}
+          INSTAGRAM_PAGE_TOKEN: ${{ secrets.INSTAGRAM_PAGE_TOKEN }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+        run: |
+          set -uo pipefail
+
+          # El paso que registra lee este fichero. Vive en /tmp porque no debe
+          # acabar en el commit: es estado de esta ejecución, no del repositorio.
+          : > /tmp/resultados.txt
+          fallos=0
+          encontrados=0
+
+          for f in manifiestos/*.yaml; do
+            [ -e "$f" ] || continue
+            slug="$(basename "$f" .yaml)"
+
+            # La plantilla no se publica nunca.
+            case "$slug" in _*) continue ;; esac
+
+            # Tolera el estado con o sin comillas. `actualizar-estado.mjs`
+            # respeta el estilo de la cadena original, pero si un editor lo
+            # deja pelado, este filtro no debe dejar de reconocer `listo` y
+            # saltarse la publicación en silencio.
+            if ! grep -qE 'estado:[[:space:]]*"?(listo)"?[[:space:]]*$' "$f"; then
+              echo "- $slug: no esta en listo, se salta"
+              continue
+            fi
+
+            encontrados=$((encontrados + 1))
+            echo "::group::Publicando $slug"
+
+            if node scripts/publicar.mjs --slug="$slug" --json > /tmp/salida.json 2>/tmp/error.txt; then
+              echo "$slug ok" >> /tmp/resultados.txt
+              echo "  publicado"
+            else
+              # No se aborta el bucle: si un manifiesto falla, los demas siguen
+              # siendo publicaciones validas y se pueden hacer.
+              fallos=$((fallos + 1))
+              echo "$slug fallo" >> /tmp/resultados.txt
+              echo "  ::error::fallo al publicar $slug"
+              cat /tmp/salida.json 2>/dev/null || cat /tmp/error.txt || true
+            fi
+
+            echo "::endgroup::"
+          done
+
+          echo "---"
+          echo "en listo: $encontrados | con fallo: $fallos"
+          if [ "$encontrados" -gt 0 ] && [ "$fallos" -gt 0 ]; then
+            echo "::error::Publicaciones a medias. El registro guarda lo que si salio, asi que reintentar no duplica."
+            exit 1
+          fi
+
+      # La idempotencia vive aquí. Va con `always()` a propósito: si la
+      # publicación de arriba falla a medias, este commit sigue escribiendo las
+      # redes que SI salieron, y la siguiente vuelta las salta.
+      - name: Registrar y actualizar el estado
+        if: always()
+        run: |
+          git config user.name "geogatos-bot"
+          git config user.email "geogatos-bot@users.noreply.github.com"
+
+          # Si el paso anterior murió antes de crear el fichero, este paso
+          # tiene que poder terminar en paz. Con `set -e` de Actions, un
+          # `while read` sobre un fichero inexistente abortaría el paso, y con
+          # él el commit que evita el duplicado.
+          [ -f /tmp/resultados.txt ] || : > /tmp/resultados.txt
+
+          while read -r slug veredicto; do
+            [ -n "$slug" ] || continue
+            if [ "$veredicto" = "ok" ]; then
+              node scripts/actualizar-estado.mjs --slug="$slug" --estado=publicado
+            else
+              # A medias: no se puede marcar como publicado. El registro ya
+              # protege lo que sí salió, y volver a `listo` es del usuario.
+              node scripts/actualizar-estado.mjs --slug="$slug" --estado=error
+            fi
+          done < /tmp/resultados.txt
+
+          # `git add -A` y no `git add manifiestos registro`: si no se publicó
+          # nada, registro/ no existe y un pathspec concreto aborta el paso con
+          # "pathspec did not match any files". Como Actions corre los pasos con
+          # `set -e`, eso dejaría el manifiesto sin marcar, que es justo el
+          # escenario que evita el duplicado. En un checkout limpio lo único sin
+          # versionar aquí es lo que han producido estos pasos.
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No habia nada que registrar."
+            exit 0
+          fi
+
+          git commit -q -m "Registro de publicacion automatica"
+          git push origin HEAD:main

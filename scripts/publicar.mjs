@@ -28,8 +28,15 @@
  * Opciones:
  *   --dry-run        No hace ninguna petición. Imprime lo que haría.(default si no hay credenciales)
  *   --redes=a,b      Limita la publicación a esas redes.
- *   --json           Salida en JSON, para que Make la consuma.
+ *   --json           Salida en JSON, para que el runner la consuma.
  *   --forzar-estado  Publica aunque el manifiesto no esté en `listo`.
+ *   --reintentar     Vuelve a publicar lo que ya figure en el registro.
+ *
+ * Idempotencia:
+ *   Una red que ya consta en `salida.registro` para este slug no se repite,
+ *   porque el estado del manifiesto es de la publicación entera y no sabe
+ *   decir "Facebook salió, Instagram no". Por eso el registro tiene que estar
+ *   versionado. Con `--reintentar` se ignora esa protección.
  *
  * Códigos de salida:
  *   0  todo correcto (puede haber redes saltadas)
@@ -44,7 +51,7 @@ import { fileURLToPath } from 'node:url';
 import {
   cargarConfig, cargarManifiesto, validarManifiestoCompleto,
   componerTextoConHashtags, normalizarHashtags, resolverUrlMedio, estadoRed,
-  urlBasePublicacion,
+  urlBasePublicacion, redesYaPublicadas,
 } from './lib/nucleo.mjs';
 import { REDES, ORDEN_PUBLICACION } from './lib/redes.mjs';
 
@@ -54,11 +61,12 @@ const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..');
 // Argumentos
 // ---------------------------------------------------------------------------
 function parseArgs(argv) {
-  const out = { dryRun: false, json: false, forzar: false };
+  const out = { dryRun: false, json: false, forzar: false, reintentar: false };
   for (const a of argv) {
     if (a === '--dry-run') out.dryRun = true;
     else if (a === '--json') out.json = true;
     else if (a === '--forzar-estado') out.forzar = true;
+    else if (a === '--reintentar') out.reintentar = true;
     else if (a.startsWith('--manifiesto=')) out.manifiesto = a.slice(13);
     else if (a.startsWith('--slug=')) out.slug = a.slice(7);
     else if (a.startsWith('--redes=')) out.redes = a.slice(8).split(',').map((s) => s.trim()).filter(Boolean);
@@ -225,6 +233,47 @@ for (const nombre of ORDEN_PUBLICACION) {
   }
 
   redesAEjecutar.push(nombre);
+}
+
+// ---------------------------------------------------------------------------
+// Idempotencia: no repetir lo que ya salió
+// ---------------------------------------------------------------------------
+/**
+ * Publicar es irreversible. Si una ejecución publica Facebook y falla en
+ * Instagram, el manifiesto sigue en `listo` y la siguiente vuelta publicaría
+ * Facebook otra vez. El estado del manifiesto no distingue "publicado a medias"
+ * de "sin publicar", así que quien decide es el registro, que sí guarda el
+ * detalle por red.
+ *
+ * Solo aplica a ejecuciones reales: una simulación no publicó nada, aunque haya
+ * entradas suyas en el registro.
+ */
+const rutasRegistro = join(RAIZ, cfg.salida?.registro ?? 'registro/publicaciones.jsonl');
+const yaHechas = dryRun || args.reintentar
+  ? new Map()
+  : redesYaPublicadas(rutasRegistro, slug);
+
+if (yaHechas.size) {
+  const pendientes = redesAEjecutar.filter((r) => !yaHechas.has(r));
+  for (const hecha of yaHechas.keys()) {
+    // Solo se salta si esta red iba a publicarse ahora: si el usuario la
+    // seleccionó a mano, su decisión manda sobre el registro.
+    if (redesAEjecutar.includes(hecha)) {
+      saltadas.push({
+        red: hecha,
+        motivo: `ya publicada el ${yaHechas.get(hecha) || 'anterior'} — no se repite`,
+      });
+    }
+  }
+  redesAEjecutar.length = 0;
+  redesAEjecutar.push(...pendientes);
+  if (!args.json) {
+    for (const hecha of yaHechas.keys()) {
+      if (!redesAEjecutar.includes(hecha)) {
+        console.log(`  · ${hecha}: ya estaba publicada, se salta (--reintentar para repetirla)`);
+      }
+    }
+  }
 }
 
 // ---------------------------------------------------------------------------

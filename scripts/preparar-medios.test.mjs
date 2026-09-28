@@ -10,15 +10,20 @@
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, writeFileSync, mkdirSync, utimesSync } from 'node:fs';
-import { join } from 'node:path';
+import { mkdtempSync, writeFileSync, readFileSync, mkdirSync, utimesSync } from 'node:fs';
+import { join, dirname } from 'node:path';
 import { tmpdir } from 'node:os';
+import { fileURLToPath } from 'node:url';
+import { execFileSync } from 'node:child_process';
+import { parse } from 'yaml';
+
+const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 import {
   inspeccionarImagen, leerDimensionesJpeg, leerDimensionesPng,
   proporcion, proporcionesCompatibles,
 } from './lib/imagenes.mjs';
-import { urlBasePublicacion, resolverUrlMedio } from './lib/nucleo.mjs';
+import { urlBasePublicacion, resolverUrlMedio, redesYaPublicadas } from './lib/nucleo.mjs';
 import { planearReparto, listarEntrada } from './preparar-medios.mjs';
 
 // ---------------------------------------------------------------------------
@@ -255,4 +260,229 @@ test('la bandeja ignora el README y los ficheros que no son imágenes', () => {
   writeFileSync(join(dir, 'foto.jpg'), jpegDe(50, 50));
 
   assert.deepEqual(listarEntrada(dir).map((i) => i.nombre), ['foto.jpg']);
+});
+
+// ---------------------------------------------------------------------------
+// Idempotencia: qué redes ya se publicaron
+//
+// El caso que justifica todo esto: Facebook se publica, Instagram falla. El
+// manifiesto sigue en `listo` porque su estado es único para la publicación
+// entera. Sin esto, la siguiente vuelta volvería a postear en Facebook.
+// ---------------------------------------------------------------------------
+
+/** Escribe un registro JSONL de prueba y devuelve su ruta. */
+function registroDe(lineas) {
+  const dir = mkdtempSync(join(tmpdir(), 'geogatos-registro-'));
+  const ruta = join(dir, 'publicaciones.jsonl');
+  writeFileSync(ruta, lineas.map((o) => JSON.stringify(o)).join('\n') + '\n');
+  return ruta;
+}
+
+const entradaReal = (slug, redes, ts = '2026-10-05T10:00:00.000Z') => ({
+  timestamp: ts, slug, modo: 'real',
+  publicadas: redes.map((red) => ({ red, url: `https://ejemplo/${red}` })),
+});
+
+test('el registro dice qué redes ya se publicaron de verdad', () => {
+  const ruta = registroDe([entradaReal('2026-10-05-tema', ['facebook', 'x'])]);
+  const hechas = redesYaPublicadas(ruta, '2026-10-05-tema');
+
+  assert.deepEqual([...hechas.keys()].sort(), ['facebook', 'x']);
+  assert.equal(hechas.get('facebook'), '2026-10-05T10:00:00.000Z');
+});
+
+test('una simulacion no cuenta como publicacion', () => {
+  // Este es el fallo que daria: en local se hace --dry-run un par de veces, se
+  // versiona el registro, y luego la publicacion real se saltaria todo.
+  const ruta = registroDe([
+    { ...entradaReal('2026-10-05-tema', ['facebook', 'instagram']), modo: 'dry-run' },
+  ]);
+
+  assert.equal(redesYaPublicadas(ruta, '2026-10-05-tema').size, 0);
+});
+
+test('un registro de otra publicacion no afecta a esta', () => {
+  const ruta = registroDe([
+    entradaReal('2026-10-05-tema', ['facebook']),
+    entradaReal('2026-10-12-otro', ['facebook', 'instagram', 'x']),
+  ]);
+
+  assert.deepEqual([...redesYaPublicadas(ruta, '2026-10-05-tema').keys()], ['facebook']);
+});
+
+test('una entrada solo parcialmente publicada solo marca lo que salio', () => {
+  // El caso real: Facebook si, Instagram no. Hay que devolver solo Facebook,
+  // o Instagram se saltaria para siempre.
+  const ruta = registroDe([{
+    timestamp: '2026-10-05T10:00:00.000Z',
+    slug: '2026-10-05-tema',
+    modo: 'real',
+    ok: false,
+    publicadas: [{ red: 'facebook', url: 'https://ejemplo/fb' }],
+    fallos: [{ red: 'instagram', error: 'Meta 500' }],
+  }]);
+
+  const hechas = redesYaPublicadas(ruta, '2026-10-05-tema');
+  assert.deepEqual([...hechas.keys()], ['facebook']);
+  assert.equal(hechas.has('instagram'), false);
+});
+
+test('un registro inexistente no inventa redes publicadas', () => {
+  const hechas = redesYaPublicadas(join(tmpdir(), 'no-existe-este-registro.jsonl'), 'x');
+  assert.equal(hechas.size, 0);
+});
+
+test('una linea corrupta no tira el resto del registro', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'geogatos-registro-roto-'));
+  const ruta = join(dir, 'publicaciones.jsonl');
+  writeFileSync(
+    ruta,
+    [
+      JSON.stringify(entradaReal('t', ['facebook'])),
+      '{esto no es json',
+      '',
+      '   ',
+      JSON.stringify(entradaReal('t', ['x'])),
+    ].join('\n'),
+  );
+
+  assert.deepEqual([...redesYaPublicadas(ruta, 't').keys()].sort(), ['facebook', 'x']);
+});
+
+test('si una red se publico dos veces se queda la primera marca', () => {
+  // Un reintento manual duplica la linea. Da igual: lo que importa es que la
+  // red consta, y que conste con la fecha del primer intento.
+  const ruta = registroDe([
+    entradaReal('t', ['facebook'], '2026-10-05T10:00:00.000Z'),
+    entradaReal('t', ['facebook'], '2026-10-05T11:00:00.000Z'),
+  ]);
+
+  assert.equal(redesYaPublicadas(ruta, 't').get('facebook'), '2026-10-05T10:00:00.000Z');
+});
+
+// ---------------------------------------------------------------------------
+// Devolver el estado al manifiesto
+//
+// El manifiesto es la única memoria que sobrevive entre ejecuciones. El
+// registro evita duplicados, pero sin escribir el estado el documento se
+// queda en `listo` para siempre y la siguiente vuelta parece una publicación
+// nueva.
+// ---------------------------------------------------------------------------
+
+/** Escribe un manifiesto de prueba con comentarios, como los de verdad. */
+function manifiestoDePrueba() {
+  const dir = mkdtempSync(join(tmpdir(), 'geogatos-estado-'));
+  const ruta = join(dir, 'manifiesto.yaml');
+  writeFileSync(ruta, [
+    '# Comentario de cabecera que explica el fichero.',
+    '',
+    'slug: "2026-10-05-tema"',
+    '',
+    'publicacion:',
+    '  fecha: "2026-10-05"',
+    '  # El estado lo cambia el runner, nunca el agente.',
+    '  estado: "listo"',
+    '  hora: "10:00"',
+    '',
+    'plataformas:',
+    '',
+    '  # --- Facebook ---',
+    '  facebook:',
+    '    texto: "Hola"',
+    '    hashtags: ["GeoGatos"]',
+    '    medios: ["facebook-01.jpg"]',
+    '',
+  ].join('\n'));
+  return ruta;
+}
+
+/** Ejecuta actualizar-estado.mjs y devuelve {codigo, salida}. */
+function actualizar(ruta, ...extra) {
+  try {
+    const salida = execFileSync('node', [
+      join(RAIZ, 'scripts', 'actualizar-estado.mjs'),
+      `--manifiesto=${ruta}`, ...extra,
+    ], { encoding: 'utf8' });
+    return { codigo: 0, salida };
+  } catch (e) {
+    return { codigo: e.status, salida: (e.stdout ?? '') + (e.stderr ?? '') };
+  }
+}
+
+test('escribir el estado conserva los comentarios del manifiesto', () => {
+  // Si esto falla, un runner automático que publica a diario va borrando
+  // poco a poco las notas de un documento que alguien escribe a mano.
+  const ruta = manifiestoDePrueba();
+  const antesDe = readFileSync(ruta, 'utf8');
+  const r = actualizar(ruta, '--estado=publicado', '--json');
+  assert.equal(r.codigo, 0, r.salida);
+
+  const despues = readFileSync(ruta, 'utf8');
+  for (const linea of antesDe.split('\n').filter((l) => l.trim().startsWith('#'))) {
+    assert.ok(despues.includes(linea), `se perdió el comentario: ${linea}`);
+  }
+  assert.match(despues, /estado: "publicado"/);
+  assert.match(despues, /publicado_en: \d{4}-\d{2}-\d{2}T/);
+});
+
+test('escribir el estado no toca el texto de las plataformas', () => {
+  const ruta = manifiestoDePrueba();
+  actualizar(ruta, '--estado=publicado');
+
+  // Se comparan valores parseados, no el texto: reescribir reformatea el
+  // documento, y un test que compruebe el formato fallaría sin que hubiera
+  // cambiado nada de lo que importa.
+  const m = parse(readFileSync(ruta, 'utf8'));
+  assert.equal(m.plataformas.facebook.texto, 'Hola');
+  assert.deepEqual(m.plataformas.facebook.hashtags, ['GeoGatos']);
+  assert.deepEqual(m.plataformas.facebook.medios, ['facebook-01.jpg']);
+  assert.equal(m.publicacion.hora, '10:00');
+  assert.equal(m.publicacion.fecha, '2026-10-05');
+});
+
+test('escribir el estado deja constancia de las urls por red', () => {
+  const ruta = manifiestoDePrueba();
+  const r = actualizar(
+    ruta, '--estado=publicado',
+    '--resultados=[{"red":"facebook","ok":true,"url":"https://fb/1","id":"77"}]',
+  );
+  assert.equal(r.codigo, 0, r.salida);
+
+  const m = parse(readFileSync(ruta, 'utf8'));
+  assert.equal(m.publicacion.resultados.length, 1);
+  assert.deepEqual(m.publicacion.resultados[0], {
+    red: 'facebook', ok: true, url: 'https://fb/1', id: '77',
+  });
+});
+
+test('un estado que no existe se rechaza sin escribir nada', () => {
+  // Publicar por error en un estado inventado movería el manifiesto a un
+  // estado que ni el validador ni el publicador reconocen.
+  const ruta = manifiestoDePrueba();
+  const antes = readFileSync(ruta, 'utf8');
+  const r = actualizar(ruta, '--estado=inventado');
+
+  assert.notEqual(r.codigo, 0);
+  assert.match(r.salida, /inv/i);
+  assert.equal(readFileSync(ruta, 'utf8'), antes, 'el manifiesto no debía cambiar');
+});
+
+test('un manifiesto ilegible se rechaza sin escribir nada', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'geogatos-estado-roto-'));
+  const ruta = join(dir, 'm.yaml');
+  writeFileSync(ruta, 'slug: "x"\n  estado: roto\n\tno soy yaml');
+
+  const r = actualizar(ruta, '--estado=publicado');
+  assert.notEqual(r.codigo, 0);
+  assert.equal(readFileSync(ruta, 'utf8'), 'slug: "x"\n  estado: roto\n\tno soy yaml');
+});
+
+test('un manifiesto sin bloque publicacion se rechaza', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'geogatos-estado-sin-bloque-'));
+  const ruta = join(dir, 'm.yaml');
+  writeFileSync(ruta, 'slug: "x"\nplataformas: {}\n');
+
+  const r = actualizar(ruta, '--estado=publicado');
+  assert.notEqual(r.codigo, 0);
+  assert.match(r.salida, /publicacion/);
 });

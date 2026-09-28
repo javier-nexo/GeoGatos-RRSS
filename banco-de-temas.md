@@ -86,7 +86,7 @@ Temas educativos sobre el método **Capturar-Esterilizar-Retornar** y la gestió
   - De dónde viene el CER y por qué se usa en todo el mundo.
   - El CER en una frase.
 
-- **2.2 Por qué esterilizar** — Beneficios para la salud de los gatos y control de la población.
+- **2.2 Por qué esterilizar** — Beneficios para la salud de los gatos y control de la población. *(usado el 2026-09-16)*
   - Estabiliza la población de la colonia.
   - Reduce peleas, ruidos y marcaje.
   - Beneficios de salud para los propios gatos.

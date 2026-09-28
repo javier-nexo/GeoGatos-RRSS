@@ -1,9 +1,15 @@
 # Dependencias
 node_modules/
 
-# Registro de ejecuciones: se regenera en cada publicación.
-# El historial que importa vive en los manifiestos (estado: publicado + URL),
-# porque el runner de Make es efímero y este log no sobrevive a una ejecución.
+# Registro de publicaciones: SE VERSIONA a propósito, y no es un descuido.
+# El estado del manifiesto es único para toda la publicación, así que no sabe
+# decir "Facebook salió y Instagram no". Cuando eso pasa, el manifiesto se
+# queda en `listo` y la siguiente vuelta republicaría Facebook. El registro sí
+# guarda el detalle por red, y es lo único que permite reanudar sin duplicar.
+# Si este registro viviera solo en el disco del runner se perdería al terminar
+# la ejecución, y no serviría para nada.
+# Las entradas de `dry-run` se pueden versionar sin riesgo: no cuentan como
+# publicación a la hora de decidir qué saltarse.
 registro/
 
 # Bandeja de entrada: borradores de imágenes sin renombrar. La copia que se

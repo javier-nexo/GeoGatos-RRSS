@@ -22,19 +22,19 @@ Cómo se encadena OpenCode → medios → Make para publicar en todas las redes.
               │                        el nombre que pide cada red, y te
               │                        enseña el reparto
               ▼
-  5. TÜ validas                        npm run validar
+  5. TÚ validas                        npm run validar
               │
   6. TÚ cambias a `listo` y haces push
               │
-  7. MAKE lee el manifiesto y publica en cada red activa
+  7. EL RUNNER publica en cada red activa
               │
-  8. MAKE deja constancia           registro/publicaciones.jsonl
-                                   + estado → `publicado`
+  8. EL RUNNER deja constancia    registro/publicaciones.jsonl
+                                   + estado → `publicado` o `error`
 ```
 
-El punto clave: **el manifiesto es el contrato**. OpenCode no publica, Make no
-interpreta. El manifiesto dice qué texto va en cada red y qué fichero va con
-él, y ambos programas leen exactamente el mismo fichero.
+El punto clave: **el manifiesto es el contrato**. OpenCode no publica, y el
+runner no interpreta. El manifiesto dice qué texto va en cada red y qué fichero
+va con él, y ambos programas leen exactamente el mismo fichero.
 
 OpenCode **nunca** pone `estado: listo` ni hace commit. Ese paso es del
 usuario, y es la única barrera real contra una publicación sin revisar.
@@ -163,21 +163,21 @@ pipeline no se entera.
 
 ---
 
-## 3. El escenario de Make
+## 3. El runner de publicación
 
-> **Lee antes el apartado 3.1.** Hay una advertencia real sobre el plan
-> gratuito que puede hacer que este diseño no te sirva, y una alternativa que
-> probablemente encaje mejor.
+> **Decisión tomada: se usa GitHub Actions, no Make.** La 3.1 explica por qué;
+> la 3.2 es la vía montada. La 3.3 queda como referencia por si algún día se
+> decide pagar el plan Core.
 
 Toda la lógica de publicación está en `scripts/publicar.mjs`, que se puede
-probar en local sin tocar ninguna cuenta ni gastar un solo post. Make solo se
-limita a dispararlo y a leer el resultado.
+probar en local sin tocar ninguna cuenta ni gastar un solo post. El runner solo
+se limita a dispararlo y a leer el resultado.
 
 Esto es deliberado. Un escenario con un módulo por red y uno por cada paso de
 subida de medios se gasta el presupuesto de créditos en unas pocas
 publicaciones; este consume unos pocos por publicación.
 
-### 3.1 Antes de construirlo: comprueba tu plan
+### 3.1 Por qué se descartó Make
 
 Datos verificados en la página oficial de planes de Make:
 
@@ -191,13 +191,13 @@ Datos verificados en la página oficial de planes de Make:
 | Registro de ejecuciones | 7 días | 30 días |
 | Make Code App (ejecutar código) | **no** | sí |
 
-Dos filas de esa tabla importan de verdad para este diseño:
+Dos filas de esa tabla importan de verdad:
 
-1. **No se ha podido confirmar que el módulo `Run a script` exista en el plan
-   gratuito.** No aparece en la lista de características de ningún nivel. Es
-   el módulo que ejecuta `node scripts/publicar.mjs`, así que sin él el
-   escenario no tiene sentido. Compruébalo tú: si al buscarlo te pide subir de
-   plan, párate y usa la [alternativa de la sección 3.2](#32-alternativa-github-actions).
+1. **El módulo `Run a script` no aparece en la lista de características de
+   ningún nivel.** Es el módulo que ejecuta `node scripts/publicar.mjs`, así
+   que sin él el escenario no tiene sentido. La otra vía de Make para ejecutar
+   código, *Make Code App*, está marcada como Core+. Sin poder confirmarlo en
+   una cuenta real, un diseño que depende de ese módulo es una apuesta.
 
 2. **5 minutos de ejecución es un margen estrecho.** El runner es efímero, así
    que cada ejecución clona el repo y ejecuta `npm ci` antes de publicar. El
@@ -206,75 +206,58 @@ Dos filas de esa tabla importan de verdad para este diseño:
    ejecución a mitad, te queda un post publicado en una red y no en otra, sin
    estado actualizado: el peor resultado posible.
 
-### 3.2 Alternativa: GitHub Actions
+Ninguno de los dos problemas es de configuración: son del plan. Se pueden
+resolver pagando Core, y por eso la 3.3 sigue aquí.
 
-Si el punto 1 o el 2 te impiden usar Make, esta alternativa gana en todo salvo
-en una cosa: pierdes el panel visual de ejecuciones de Make y ganas un
-historial por commit en la pestaña *Actions* del repo.
+### 3.2 La vía elegida: GitHub Actions
 
-Ventajas frente a Make:
+Se descartó Make por dos motivos verificados:
 
-- **Gratis e ilimitado** en repositorios públicos. Nada de créditos.
-- Node.js nativo: no hay que clonar ni instalar nada, el runner ya trae Node.
-- Los secretos viven en *Settings → Secrets* del repo. Ni una variable que
-  inyectar a mano.
-- El disparador es el mismo `push`, con el mismo filtro de `estado: "listo"`.
-- `scripts/publicar.mjs` **no cambia ni una línea**. Solo cambia quién lo llama.
+- El módulo `Run a script`, que es el único capaz de ejecutar
+  `node scripts/publicar.mjs`, no aparece en la lista de características de
+  ningún nivel de la página oficial de planes. La otra opción, Make Code App,
+  está marcada como Core+ de pago.
+- Los 5 minutos de ejecución del plan gratuito son un margen estrecho para
+  clonar, instalar y publicar en tres redes, con el runner siendo efímero.
 
-Si eliges esta vía, el workflow es este (`.github/workflows/publicar.yml`):
+GitHub Actions es gratis e ilimitado en repositorios públicos, el runner ya
+trae Node, y los secretos viven en los settings del repo.
+`scripts/publicar.mjs` no cambia ni una línea: solo cambia quién lo llama.
 
-```yaml
-name: Publicar
+El workflow está en `.github/workflows/publicar.yml`. Los secretos se añaden en
+*Settings → Secrets and variables → Actions → New repository secret*, uno por
+variable: `FACEBOOK_PAGE_ID`, `FACEBOOK_PAGE_TOKEN`, `INSTAGRAM_IG_ID`,
+`INSTAGRAM_PAGE_TOKEN`, `X_ACCESS_TOKEN`.
 
-on:
-  push:
-    branches: [main]
-    paths:
-      - 'manifiestos/*.yaml'
+#### Cómo evitar publicaciones duplicadas
 
-jobs:
-  publicar:
-    runs-on: ubuntu-latest
-    # Publicar es irreversible: nunca reintentes solo, o duplicas el post.
-    timeout-minutes: 10
+Es el riesgo serio de esto, y tiene dos capas. Sin las dos, un fallo a medias
+termina en un post repetido en el perfil.
 
-    steps:
-      - uses: actions/checkout@v4
+**Capa 1 — el registro.** El estado del manifiesto es único para la publicación
+entera, así que no sabe decir "Facebook salió, Instagram no". Cuando eso pasa,
+el manifiesto se queda en `listo` y la siguiente vuelta republicaría Facebook.
+Por eso `registro/publicaciones.jsonl` **se versiona** y `publicar.mjs` lo lee
+antes de empezar: una red que ya consta ahí no se repite. Se salta con
+`--reintentar`.
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: npm
+Por eso `registro/` dejó de estar en `.gitignore`. Si viviera solo en el disco
+del runner se perdería al terminar la ejecución y no serviría para nada.
 
-      - run: npm ci --omit=dev
+**Capa 2 — el `if: always()`.** El paso que registra el resultado y actualiza el
+estado lleva `if: always()`, así que su commit ocurre también cuando la
+publicación falla. Si se publicara a medias, se marca `error` y no
+`publicado`, y el registro ya impide repetir lo que sí salió. Volver a poner el
+estado en `listo` es decisión de una persona, nunca del bot.
 
-      # El mismo filtro que el módulo 5 de Make: solo `listo` publica.
-      - name: Publicar los manifiestos en listo
-        env:
-          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
-          FACEBOOK_PAGE_TOKEN: ${{ secrets.FACEBOOK_PAGE_TOKEN }}
-          INSTAGRAM_IG_ID: ${{ secrets.INSTAGRAM_IG_ID }}
-          INSTAGRAM_PAGE_TOKEN: ${{ secrets.INSTAGRAM_PAGE_TOKEN }}
-          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
-        run: |
-          set -euo pipefail
-          for f in manifiestos/*.yaml; do
-            [ -e "$f" ] || continue
-            slug="$(basename "$f" .yaml)"
-            case "$slug" in _*) continue ;; esac
-            if grep -q 'estado: *"listo"' "$f"; then
-              echo "::group::Publicando $slug"
-              node scripts/publicar.mjs --slug="$slug" --json
-              echo "::endgroup::"
-            else
-              echo "$slug: no esta en listo, se salta"
-            fi
-          done
-```
+Tres detalles del workflow que no son evidentes:
 
-Los secretos se añaden en *Settings → Secrets and variables → Actions →
-New repository secret*, uno por variable. En el log saldrán trocitos de
-token, nunca el token completo.
+| Detalle | Por qué |
+|---|---|
+| `concurrency` sin `cancel-in-progress` | Dos pushes seguidos no publican a la vez. Si no, los dos runners ven `listo` y se publica dos veces. |
+| Sin reintentos automáticos | Publicar es irreversible. Si la respuesta se pierde, un retry puede dejar dos posts iguales. |
+| `git add -A` y no un pathspec | Si no se publicó nada, `registro/` no existe y `git add registro` aborta el paso con `set -e`, dejando el manifiesto sin marcar. |
+| El commit del bot no se re-dispara | GitHub no lanza ejecuciones para pushes hechos con su propio `GITHUB_TOKEN`. |
 
 ### 3.3 El escenario de Make, módulo a módulo
 
@@ -418,10 +401,10 @@ dependencias de producción, solo scripts. Si algún día se añade una, con
 
 Se inyectan como variables de entorno. **Nunca en el repositorio.**
 
-- Con Make: en el propio módulo, o en la conexión si es la misma para todas
-  las ejecuciones.
 - Con GitHub Actions: *Settings → Secrets and variables → Actions*. Son las
   mismas variables; `publicar.mjs` no distingue entre un runner y otro.
+- Con Make: en el propio módulo, o en la conexión si es la misma para todas
+  las ejecuciones.
 
 El repositorio es público y GitHub Pages sirve **todo** lo que hay en la raíz,
 así que cualquier token que acabe en un fichero acaba en internet.
@@ -520,7 +503,7 @@ app, en lugar de crear vídeos vacíos en público.
 ## 7. Estado real de cada plataforma
 
 Estado a **2026-09-28**. La columna "standby" significa que el contenido se
-escribe y se valida, pero Make no recibe la orden de publicar en esa red.
+escribe y se valida, pero el runner no recibe la orden de publicar en esa red.
 
 | Red | Se publica | Standby | Motivo / qué falta |
 |---|---|---|---|
@@ -544,7 +527,7 @@ linkedin:
 
 Y tiene dos efectos:
 
-1. **Make no publica ahí.** Aparece en el resumen de la ejecución como
+1. **El runner no publica ahí.** Aparece en el resumen de la ejecución como
    `standby`, con el motivo, para que quede constancia.
 2. **No te exige subir sus medios.** El validador avisa de los que faltan en
    lugar de bloquear. Eso evita que "standby" te obligue a hacer el trabajo de
@@ -580,7 +563,14 @@ Para publicar en una red en standby, quita su línea `standby` de
 
 6. **Marcas `estado: listo`** y haces push.
 
-7. **El runner publica.** No tienes que hacer nada más.
+7. **El runner publica.** No tienes que hacer nada más. El workflow aparece en
+   la pestaña *Actions* del repo; si falla, está el log.
+
+> Si se publica a medias (una red sí y otra no), el manifiesto queda en
+> `estado: error` y **no** vuelve a publicar solo. El registro ya impide repetir
+> lo que sí salió, así que si quieres reintentar solo lo que falta, pon el
+> estado en `listo` otra vez y haz push: las redes que ya salieron se saltan
+> solas.
 
 ### El reparto de imágenes, en una tabla
 
@@ -646,6 +636,9 @@ irreversible.
 
 | Síntoma | Causa habitual |
 |---|---|
+| Se publica dos veces en la misma red | El manifiesto se quedó en `listo` tras un fallo parcial. Pasa a `error`, y no a `listo`, para reintentar. |
+| El bot no marca el manifiesto | `registro/` no existía y `git add registro` abortaba el paso. Ya está en `git add -A`. |
+| Un manifiesto se salta con "ya publicada" y tú no lo has publicado | Hay una entrada `real` de ese slug en `registro/publicaciones.jsonl`. Bórrala, o usa `--reintentar`. |
 | Instagram falla al publicar pero el contenedor se creó bien | El fichero era PNG. Meta solo admite JPEG. |
 | Meta devuelve 404 al descargar la imagen | La URL no lleva el slug: `.../medios/instagram-01.jpg` en vez de `.../medios/<slug>/...`. Comprueba con `urlBasePublicacion()`. |
 | Meta dice que no puede leer el fichero, y el 200 es correcto | El `content-type` no es `image/jpeg`. Suele ser Jekyll: comprueba que exista `.nojekyll`. |

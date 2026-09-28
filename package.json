@@ -3,11 +3,13 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Banco de publicaciones y pipeline de publicación automatizada (OpenCode + Make) para GeoGatos",
+  "description": "Banco de publicaciones y pipeline de publicación automatizada (OpenCode + GitHub Actions) para GeoGatos",
   "scripts": {
     "validar": "node scripts/validar-manifiesto.mjs",
     "validar:todo": "node scripts/validar-manifiesto.mjs --todos",
     "medios": "node scripts/preparar-medios.mjs",
+    "estado": "node scripts/actualizar-estado.mjs",
+    "publicar": "node scripts/publicar.mjs",
     "test": "node --test scripts/validar-manifiesto.test.mjs scripts/preparar-medios.test.mjs"
   },
   "dependencies": {
