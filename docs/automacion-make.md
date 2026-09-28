@@ -54,50 +54,37 @@ Además, TikTok exige que ese host tenga un **dominio verificado**: no sirve
 `raw.githubusercontent.com` porque no es tuyo. Sí sirve `tu-usuario.github.io`,
 que sí es tuyo.
 
-**Atención:** GitHub Pages en plan gratuito **solo funciona con repositorios
-públicos**, y este repo es privado. Tienes dos caminos:
+### Decisión tomada: este repo, público, sirviendo `/medios`
 
-### Opción A — repo de medios público (recomendada)
-
-Crea un repositorio **público y vacío**, por ejemplo `GeoGatos-Media`, con
-GitHub Pages activado y fuente *Deploy from a branch* → `main` → `/ (root)`.
-
-```
-javier-nexo/GeoGatos-Media/            (público, solo binarios)
-└── 2026-09-16-por-que-esterilizar/
-    ├── instagram-01.jpg
-    └── tiktok-01.mp4
-
-javier-nexo/GeoGatos-RRSS/             (privado, contenido y manifiestos)
-├── manifiestos/
-└── scripts/
-```
-
-Ventajas: el contenido y los borradores siguen privados; solo se hace público
-lo que va a ser público igualmente. Desventaja: hay que subir los medios a dos
-repos.
-
-Configura `medios.base_url` así:
+El repo `javier-nexo/GeoGatos-RRSS` es **público** y GitHub Pages sirve la
+carpeta `medios/`. `rrss.config.yaml` queda así:
 
 ```yaml
-base_url: "https://javier-nexo.github.io/GeoGatos-Media"
+medios:
+  base_url: "https://javier-nexo.github.io/GeoGatos-RRSS/medios"
 ```
 
-Y en `medios/README.md` (esta repo) no hace falta tocar nada: en local
-compruebas que los ficheros existen, y Make usa la URL pública.
+**Pasos que quedan por hacer en GitHub** (Settings → Pages):
 
-### Opción B — este repo pasa a ser público
+| Campo | Valor |
+|---|---|
+| Source | Deploy from a branch |
+| Branch | `main` |
+| Folder | `/medios` |
 
-Hacer público `GeoGatos-RRSS` y activar Pages con fuente `main` → `/medios`.
+Tarda unos minutos en la primera compilación. Cuando esté, comprueba que una
+imagen de `medios/<slug>/` carga en
+`https://javier-nexo.github.io/GeoGatos-RRSS/medios/<slug>/<fichero>`.
 
-```yaml
-base_url: "https://javier-nexo.github.io/GeoGatos-RRSS/medios"
-```
+> Consecuencia de que el repo sea público: quedan visibles los borradores y los
+> textos aún sin publicar. Para un banco de contenido de marketing de un
+> producto público es aceptable, pero conviene saberlo.
 
-Ventaja: un solo repositorio, un solo push. Desventaja: quedan públicos los
-borradores y textos sin publicar.
+### Alternativa si algún día cambia
 
-**Da igual cuál elijas**: el resto del pipeline solo lee `medios.base_url`.
+Un repositorio público solo de medios (`GeoGatos-Media`, Pages desde la raíz) y
+este repo privado. Solo habría que cambiar `medios.base_url`. El resto del
+pipeline no se entera.
 
 ---
 
@@ -334,15 +321,43 @@ app, en lugar de crear vídeos vacíos en público.
 
 ## 7. Estado real de cada plataforma
 
-| Red | Automatizable | Bloqueo pendiente |
-|---|---|---|
-| Facebook | Sí | Revisión de la app en Meta (días) |
-| Instagram | Sí | Cuenta profesional + revisión de Meta + solo JPEG |
-| LinkedIn | Sí | Crear la página de empresa |
-| X | Sí | Revisión de la cuenta; 1 hashtag en self-serve |
-| YouTube | No | Decidir el mecanismo (sección 6) |
-| TikTok | No | Aprobación de scope + auditoría + dominio verificado |
-| Medium | No | API sin soporte oficial desde 2023 |
+Estado a **2026-09-28**. La columna "standby" significa que el contenido se
+escribe y se valida, pero Make no recibe la orden de publicar en esa red.
+
+| Red | Se publica | Standby | Motivo / qué falta |
+|---|---|---|---|
+| Facebook | Sí | No | Revisión de la app en Meta (tarda días) |
+| Instagram | Sí | No | Cuenta profesional + revisión de Meta + solo JPEG |
+| X | Sí | No | Revisión de la cuenta. **1 hashtag por post** en self-serve |
+| LinkedIn | No | **Sí** | Falta crear la página de empresa |
+| YouTube | No | **Sí** | No se hacen vídeos de momento |
+| TikTok | No | **Sí** | Aprobación de scope + auditoría + dominio verificado |
+| Medium | No | **Sí** | API sin soporte oficial desde 2023 |
+
+### Cómo funciona el standby
+
+Se declara en `rrss.config.yaml`, bajo la red, con el motivo escrito:
+
+```yaml
+linkedin:
+  activo: true
+  standby: "Decisión del 2026-09-28: no se crea página de empresa todavía."
+```
+
+Y tiene dos efectos:
+
+1. **Make no publica ahí.** Aparece en el resumen de la ejecución como
+   `standby`, con el motivo, para que quede constancia.
+2. **No te exige subir sus medios.** El validador avisa de los que faltan en
+   lugar de bloquear. Eso evita que "standby" te obligue a hacer el trabajo de
+   preparar imágenes de una red que no vas a usar.
+
+Lo que **sí** sigue haciendo standby: validar el contenido. El texto de
+LinkedIn se comprueba contra sus límites igual que el de Facebook, para que el
+día que la actives esté listo.
+
+Para publicar en una red en standby, quita su línea `standby` de
+`rrss.config.yaml`. No hay que tocar ningún manifiesto.
 
 ---
 
@@ -357,8 +372,9 @@ app, en lugar de crear vídeos vacíos en público.
 3. **Revisas** los textos.
 
 4. **Subes los medios** a `medios/2026-10-05-color-de-las-colonias/` con los
-   nombres de la tabla de `medios/README.md`, y los subes también al repo de
-   medios público.
+   nombres de la tabla de `medios/README.md`. Solo los de las redes que van a
+   publicarse: Facebook, Instagram y X. Los de las redes en standby no hacen
+   falta.
 
 5. **Validas**:
    ```bash

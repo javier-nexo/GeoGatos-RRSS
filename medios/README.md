@@ -65,11 +65,27 @@ El validador comprueba que cada fichero existe y que su formato vale para la
 red que lo va a usar. Si pasa, cambias `estado: listo` en el manifiesto,
 haz push y Make publica.
 
+## Solo subes los medios de las redes que se publican
+
+A 2026-09-28 se publica en **Facebook, Instagram y X**. Las otras cuatro
+redes están en standby: su contenido se escribe y se valida, pero no se
+publican.
+
+Consecuencia práctica: **no tienes que subir las imágenes de LinkedIn,
+YouTube, TikTok ni Medium**. El validador te avisa de las que faltan, pero no
+bloquea la publicación. En cuanto una red salga de standby, sus medios pasan a
+ser obligatorios.
+
 ## Por qué los medios necesitan un repositorio público
 
 Instagram y TikTok **descargan el fichero desde una URL pública**: no aceptan
-un binario que tengas en el disco duro. Por eso los medios se publican en un
-repo con GitHub Pages, y de ahí el `medios.base_url` de `rrss.config.yaml`.
+un binario que tengas en el disco duro. Por eso GitHub Pages sirve esta carpeta
+y el `medios.base_url` de `rrss.config.yaml` apunta aquí:
 
-Ese repositorio tiene que ser público. Ver la sección "Alojamiento de medios"
-de `docs/automacion-make.md` para las dos opciones.
+```
+https://javier-nexo.github.io/GeoGatos-RRSS/medios/<slug>/<fichero>
+```
+
+Configurado en *Settings → Pages → Source: Deploy from a branch*,
+`main` + `/medios`. Si cambias de alojamiento, solo hay que tocar
+`base_url`.

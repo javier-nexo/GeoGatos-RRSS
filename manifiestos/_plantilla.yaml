@@ -58,11 +58,23 @@ publicacion:
 #
 #   * El validador comprueba que cada fichero existe y que la extensión es
 #     válida PARA ESA RED. Instagram, por ejemplo, solo admite JPEG.
+#
+#   * Declara los medios de TODAS las redes, incluidas las que están en
+#     standby. Mientras una red esté en standby, el validador no te exige que
+#     subas sus ficheros (solo avisa); en cuanto sale de standby, los pasa a
+#     exigir. Así no te pilla desprevenido el día que la actives.
+#
+#   * No pongas `activo: false` para una red que simplemente no se publica
+#     todavía. Eso se gestiona con `standby` en rrss.config.yaml, que vale para
+#     todos los días y se cambia en un solo sitio. `activo: false` es para
+#     redes que quedan fuera del plan.
+#
+#   * X admite UN SOLO hashtag por post en cuentas self-serve. Con más, el
+#     validador lo rechaza.
 # -----------------------------------------------------------------------------
 plataformas:
 
   facebook:
-    activo: true
     texto: |-
       Primer párrafo del post.
 
@@ -73,7 +85,6 @@ plataformas:
     medios: ["facebook-01.jpg"]
 
   instagram:
-    activo: true
     tipo: "carrusel"                # imagen_unica | carrusel | reel
     texto: |-
       Un solo párrafo. Es el caption.
@@ -84,7 +95,6 @@ plataformas:
       - "instagram-02.jpg"
 
   linkedin:
-    activo: true
     texto: |-
       Dos o tres párrafos, tono institucional B2B.
 
@@ -93,33 +103,25 @@ plataformas:
     medios: ["linkedin-01.jpg"]
 
   x:
-    activo: true
     texto: |-
       Un párrafo breve. Máximo 280 caracteres contando hashtags.
     hashtags: ["GeoGatos"]           # OJO: self-serve permite SOLO 1
     medios: ["x-01.jpg"]
 
   youtube:
-    activo: true
     titulo: "Título de la descripción, máx. 100 caracteres"
     texto: |-
-      Un párrafo. Descripción o comentario_fixed.
+      Un párrafo. Descripción o comentario.
     hashtags: ["GeoGatos", "ColoniasFelinas"]
     medios: ["youtube-01.jpg"]
 
-  # ---------------------------------------------------------------------------
-  # Redes con bloqueos de plataforma. Se rellenan igual, pero su `activo` debe
-  # ser false mientras no exista el permiso. El validador avisa si no.
-  # ---------------------------------------------------------------------------
   tiktok:
-    activo: false
     texto: |-
       Una o dos frases para el texto en pantalla.
     hashtags: ["GeoGatos", "gatos", "ProteccionAnimal"]
     medios: ["tiktok-01.mp4"]
 
   medium:
-    activo: false
     titulo: "Título del artículo, máx. 100 caracteres"
     texto: |-
       Cuerpo del artículo en Markdown. OpenCode lo convierte a HTML.

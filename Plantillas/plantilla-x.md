@@ -36,10 +36,19 @@ Qué se quiere que haga la audiencia: seguir, citar, retuitear, comentar, abrir 
 
 - [ ] Imagen / vídeo (`../assets/...`)
 
-## Hashtags propuestos
+## Hashtags
 
-`#GeoGatos` `#ColoniasFelinas` `#CER` `#GatosCallejeros` `#ProteccionAnimal` `#LeyAnimal`
+`#GeoGatos`
+
+**Un solo hashtag.** X limita a 1 hashtag por post en los posts creados por API
+en cuentas self-serve. No es un stylistic choice: es un límite de la plataforma
+y el publicador lo rechazaría. Para usar más hay que contratar el plan
+Enterprise de X.
 
 ## Notas / contexto
 
 Contexto adicional, hechos verificados usados, menciones a otras cuentas si procede, etc.
+
+La longitud de X no es la del texto: una URL pesa siempre 23 caracteres y un
+emoji pesa como dos letras. Un texto de 250 caracteres puede no caber. Mídelo
+con `node scripts/validar-manifiesto.mjs`, que ya aplica esa regla.

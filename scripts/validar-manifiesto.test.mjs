@@ -27,10 +27,19 @@ const TMP = join(tmpdir(), 'geogatos-test-manifiestos');
 /** Bytes de relleno: al validador solo le interesa la extensión y que exista. */
 const CONTENIDO_FAKE = Buffer.from('contenido de prueba');
 
-let n = 0;
+/**
+ * Carpetas de medios creadas por los tests.
+ *
+ * El validador exige que los ficheros existan dentro de `medios/<slug>/`, así
+ * que los tests no pueden usar un directorio temporal: tienen que escribir ahí.
+ * Se apunta todo lo creado para borrarlo al terminar, porque `medios/` se
+ * sirve por GitHub Pages y unos ficheros de prueba ahí son basura publicada.
+ */
+const creados = new Set();
 
 function escribirMedios(slug, ficheros) {
   const dir = join(MEDIOS, slug);
+  creados.add(dir);
   mkdirSync(dir, { recursive: true });
   for (const f of ficheros) {
     mkdirSync(join(dir, ...f.split('/').slice(0, -1)), { recursive: true });
@@ -84,7 +93,16 @@ function validar(yaml, nombreFichero) {
 }
 
 before(() => mkdirSync(MEDIOS, { recursive: true }));
-after(() => rmSync(TMP, { recursive: true, force: true }));
+
+after(() => {
+  rmSync(TMP, { recursive: true, force: true });
+  for (const dir of creados) {
+    // rmSync recursivo: cada slug es una carpeta propia, no hay riesgo de
+    // borrar medios reales porque solo se borra lo que este fichero creó.
+    rmSync(dir, { recursive: true, force: true });
+  }
+  creados.clear();
+});
 
 // ---------------------------------------------------------------------------
 describe('casos que deben PASAR la validación', () => {
@@ -365,19 +383,22 @@ describe('coherencia del manifiesto', () => {
     assert.match(r.salida, /no es una fecha ISO/);
   });
 
-  test('rechaza marcar activo:true una red desactivada en la configuración', () => {
+  test('la configuración manda sobre el manifiesto: TikTok en standby no es un error', () => {
+    // Antes, `activo: true` en el manifiesto con la red apagada en la config
+    // era un error. Ahora la config manda y solo se avisa: el contenido se
+    // escribe igual y no se publica. Es la diferencia entre "inactiva" (error
+    // de coherencia) y "standby" (decisión operativa).
     const r = validar(base({
       slug: '2026-02-13-tiktok-activo',
       fecha: '2026-02-13',
       extra: { contenido: `  tiktok:
-    activo: true
     texto: |-
       Dos frases.
     hashtags: ["GeoGatos"]
     medios: []` },
     }));
-    assert.equal(r.codigo, 1);
-    assert.match(r.salida, /Pendiente de aprobación del scope/);
+    assert.equal(r.codigo, 0, r.salida);
+    assert.match(r.salida, /en standby/);
   });
 
   test('Medium se limita a 3 tags', () => {
@@ -394,5 +415,75 @@ describe('coherencia del manifiesto', () => {
     }));
     assert.equal(r.codigo, 1);
     assert.match(r.salida, /4 tags, pero medium solo usa los 3 primeros/);
+  });
+});
+
+// ---------------------------------------------------------------------------
+describe('standby: se valida el contenido pero no se exige medios', () => {
+  test('una red en standby no falla por falta de ficheros', () => {
+    // linkedin está en standby en rrss.config.yaml. El manifiesto declara sus
+    // medios, pero los ficheros no existen: no debe impedir publicar.
+    const r = validar(base({
+      slug: '2026-02-20-standby-sin-medios',
+      fecha: '2026-02-20',
+      extra: { contenido: `  facebook:
+    activo: true
+    texto: |-
+      Texto.
+    hashtags: ["GeoGatos"]
+    medios: []
+  linkedin:
+    texto: |-
+      Texto institucional.
+    hashtags: ["GeoGatos"]
+    medios: ["linkedin-01.jpg", "linkedin-02.png"]` },
+    }));
+    assert.equal(r.codigo, 0, r.salida);
+    assert.match(r.salida, /falta el fichero: linkedin-01\.jpg.*opcional mientras esté en standby/);
+  });
+
+  test('una red activa sí falla por falta de ficheros', () => {
+    const r = validar(base({
+      slug: '2026-02-21-activa-sin-medios',
+      fecha: '2026-02-21',
+      extra: { contenido: `  facebook:
+    texto: |-
+      Texto.
+    hashtags: ["GeoGatos"]
+    medios: ["facebook-01.jpg"]` },
+    }));
+    assert.equal(r.codigo, 1);
+    assert.match(r.salida, /falta el fichero: facebook-01\.jpg/);
+    assert.doesNotMatch(r.salida, /opcional mientras esté en standby/);
+  });
+
+  test('una red en standby sigue validando su contenido', () => {
+    // En standby no se publica, pero el texto tiene que estar bien escrito
+    // para el día que salga. Por eso los límites se comprueban igual.
+    const r = validar(base({
+      slug: '2026-02-22-standby-texto-malo',
+      fecha: '2026-02-22',
+      extra: { contenido: `  medium:
+    titulo: "Título"
+    texto: |-
+      Cuerpo.
+    hashtags: ["Uno", "Dos", "Tres", "Cuatro"]
+    medios: []` },
+    }));
+    assert.equal(r.codigo, 1);
+    assert.match(r.salida, /4 tags, pero medium solo usa los 3 primeros/);
+  });
+
+  test('resume qué redes están en standby', () => {
+    const r = validar(base({
+      slug: '2026-02-23-resumen-standby',
+      fecha: '2026-02-23',
+      extra: { contenido: `  linkedin:
+    texto: |-
+      Texto.
+    hashtags: ["GeoGatos"]
+    medios: []` },
+    }));
+    assert.match(r.salida, /no se publica en: linkedin/);
   });
 });

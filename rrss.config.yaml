@@ -1,7 +1,7 @@
 # Configuración del pipeline de publicación (OpenCode → Make)
 #
 # Este archivo es la ÚNICA fuente de verdad de los ajustes de infraestructura.
-# Si cambias de alojamiento de medios o de cuenta, edita solo aquí.
+# Si cambias de alojamiento de medios, de cuenta o de red, edita solo aquí.
 
 pipeline:
   # Versión del esquema de manifiestos. No la cambies sin migrar los manifiestos.
@@ -12,24 +12,21 @@ pipeline:
 # ---------------------------------------------------------------------------
 # Instagram hace `curl` al archivo y TikTok exige URLs de un dominio verificado.
 # Por eso los medios NO pueden quedarse en una carpeta local: necesitan HTTPS
-# público. Ver docs/automacion-make.md para las dos拓扑icas posibles.
+# público. Ver docs/automacion-make.md para las dos topologías posibles.
 medios:
-  # Carpeta local donde depositas las imágenes/vídeos antes de publicarlas.
+  # Carpeta local donde depositas las imágenes y vídeos antes de publicarlas.
   carpeta: "medios"
 
   # Dominio base que se antepone a las rutas de los ficheros.
   #
-  # Opciones reales:
-  #   - Repo de medios público, Pages desde la raíz:
-  #       https://<usuario>.github.io
-  #   - Repo de medios público, Pages desde /docs o /public:
-  #       https://<usuario>.github.io/<repo>
-  #   - Repo de contenido público, Pages desde /medios:
-  #       https://<usuario>.github.io/<repo>
+  # Este repo es público y sirve /medios con GitHub Pages. Para activarlo:
+  #   Settings → Pages → Source: Deploy from a branch
+  #              → Branch: main, Folder: /medios
   #
-  # CRÍTICO: este host es el que verificas en TikTok (URL prefix). Eliges uno
-  # del que seas propietario; raw.githubusercontent.com NO es verificable.
-  base_url: "https://javier-nexo.github.io/GeoGatos-Media"
+  # CRÍTICO: este host es el que se verifica en TikTok (URL prefix) cuando
+  # llegue el momento. raw.githubusercontent.com NO es verificable porque no es
+  # tuyo; el dominio javier-nexo.github.io sí.
+  base_url: "https://javier-nexo.github.io/GeoGatos-RRSS/medios"
 
   # Extensiones admitidas por tipo de medio.
   extensiones:
@@ -37,47 +34,64 @@ medios:
     video: [mp4, mov, webm]
 
 # ---------------------------------------------------------------------------
-# Redes activas
+# Redes
 # ---------------------------------------------------------------------------
-# Poner en false una red hace que el validador la marque como BLOQUEADA y que
-# Make la salte sin error. Las redes bloqueadas conservan su contenido para
-# poder activarlas más adelante sin regenerar la publicación.
+# Cada red tiene dos interruptores, y la diferencia importa:
+#
+#   activo: false      La red NO está en el plan. No se le pide contenido, no
+#                      se valida y no aparece en el manifiesto. Añadirla es un
+#                      cambio de proyecto, no de operación.
+#
+#   standby: <motivo>  La red SÍ está en el plan: se le escribe el contenido
+#                      completo y se valida igual que las demás, pero Make no
+#                      recibe la orden de publicar en ella. Es la palanca
+#                      operativa: se activa o se quita en un solo sitio, sin
+#                      tocar ningún manifiesto.
+#
+# La diferencia práctica está en los medios: una red en standby NO te exige
+# subir sus imágenes. En cuanto sale de standby, el validador pasa a exigirlas
+# y te avisa de lo que falte.
+#
+# Estado a 2026-09-28: solo se publica en Facebook, Instagram y X. Las otras
+# cuatro se preparan pero no se publican.
 redes:
   facebook:
     activo: true
+
   instagram:
     activo: true
-  linkedin:
-    activo: true
+
   x:
     activo: true
+
+  linkedin:
+    activo: true
+    standby: "Decisión del 2026-09-28: no se crea página de empresa todavía. El perfil personal no permite publicar por API."
+
   youtube:
     activo: true
+    standby: "Decisión del 2026-09-28: no se hacen vídeos de momento. Sin vídeo no hay descripción que publicar."
+
   tiktok:
-    activo: false
-    # TikTok exige dos aprobaciones que no están automatizables:
-    #  1. La app debe aprobar el scope `video.publish`.
-    #  2. Sin superar la auditoría, TODO lo publicado queda en modo privado.
-    motivo: "Pendiente de aprobación del scope video.publish + auditoría de la app"
+    activo: true
+    standby: "Bloqueo de plataforma: la app debe aprobar el scope video.publish y superar una auditoría; sin eso, todo se publica en modo privado."
+
   medium:
-    activo: false
-    # Medium cerró su API: el repositorio oficial de documentación está
-    # archivado desde marzo de 2023 y advierte que ya no se soporta.
-    # El único camino es un integration token autogenerado, sin garantía.
-    motivo: "API de Medium sin soporte oficial (archivada en 2023)"
+    activo: true
+    standby: "Bloqueo de plataforma: la API de Medium está sin soporte oficial desde 2023."
 
 # ---------------------------------------------------------------------------
 # Límites por plataforma
 # ---------------------------------------------------------------------------
 # Valores tomados de la documentación oficial de cada API.
-# `verificado: true` significa que el dato está confirmado en la doc.
+# `verificado: true` significa que el dato está confirmado en la documentación.
 # Si una red cambia sus límites, corrige aquí y no en el validador.
 limites:
   x:
     longitud_texto: 280
-    # URLs se contabilizan como 23 caracteres.
+    # Las URLs se contabilizan como 23 caracteres.
     longitud_url: 23
-    # REGLA CRÍTICA: en cuentas self-serve X limita a 1 cashtag por post.
+    # REGLA CRÍTICA: en cuentas self-serve, X limita a 1 hashtag por post.
     # Para permitir más hay que contratar el plan Enterprise.
     hashtags_max: 1
     medios_max: 4
@@ -89,8 +103,8 @@ limites:
     formatos_imagen: [jpg, jpeg]
     carrusel_max: 10
     hashtags_max: 30
-    # Límite de publicaciones por cuenta en 24 h. La doc cita 100 y 50 en
-    # secciones distintas; usamos el más restrictivo para ir sobre seguro.
+    # Límite de publicaciones por cuenta en 24 h. La documentación cita 100 y
+    # 50 en secciones distintas; usamos el más restrictivo para ir sobre seguro.
     publicaciones_24h: 50
     verificado: true
   facebook:
@@ -117,12 +131,13 @@ limites:
     longitud_texto: 2200
     hashtags_max: 10
     video_duracion_max_s: 300
-    # NO VERIFICADO contra la doc: la longitud exacta del caption depende del
-    # tipo de post. 2200 es un valor conservador heredado de la v1 de la API.
+    # NO VERIFICADO contra la documentación: la longitud exacta del caption
+    # depende del tipo de post. 2200 es un valor conservador heredado de la
+    # v1 de la API.
     longitud_texto_verificado: false
   medium:
     longitud_titulo: 100
-    # Solo se usan los 3 primeros tags y se ignoran los de más de 25 chars.
+    # Solo se usan los 3 primeros tags y se ignoran los de más de 25 caracteres.
     tags_max: 3
     longitud_tag: 25
     formatos_imagen: [jpg, jpeg, png, gif, tiff]
@@ -135,5 +150,5 @@ salida:
   # Dónde escribe Make el resultado de cada publicación.
   registro: "registro/publicaciones.jsonl"
   # Si es true, tras publicar Make actualiza `estado` en el manifiesto y
-  # confirma el cambio. Evita dependencias circulares de permisos.
+  # confirma el cambio. Es la única protección frente a publicar dos veces.
   escribir_estado_en_repo: true

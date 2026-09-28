@@ -55,10 +55,20 @@ Flujo de un día de publicación:
 
 1. Eliges un tema de `banco-de-temas.md`.
 2. Pides la publicación y OpenCode genera los `.md` y el manifiesto.
-3. Subes los medios a `medios/<slug>/` con la nomenclatura de `medios/README.md`.
+3. Subes los medios de las redes que se publican a `medios/<slug>/`, con la
+   nomenclatura de `medios/README.md`.
 4. `node scripts/validar-manifiesto.mjs --todos`
 5. Cambias `estado: borrador` por `estado: listo` y haces push.
 6. Make publica y deja constancia en `registro/publicaciones.jsonl`.
+
+### Dónde se publica y dónde no
+
+A 2026-09-28 se publica en **Facebook, Instagram y X**. Las otras cuatro
+redes —LinkedIn, YouTube, TikTok y Medium— están **en standby**: se les escribe
+el contenido y se valida igual, pero Make no publica ahí, y sus medios no son
+obligatorios. El estado y el motivo de cada red están en `rrss.config.yaml`;
+para activar una, se quita su línea `standby` y no hay que tocar ningún
+manifiesto.
 
 La guía completa, con el escenario de Make paso a paso, las credenciales que
 hay que pedir en cada plataforma y los bloqueos de cada red, está en

@@ -22,6 +22,32 @@ import { parse as parseYaml } from 'yaml';
 export const ESTADOS = ['borrador', 'esperando_medios', 'listo', 'publicado', 'error'];
 
 // ---------------------------------------------------------------------------
+// Estado de una red
+// ---------------------------------------------------------------------------
+/**
+ * Hay tres estados, no dos, y la diferencia entre `inactiva` y `standby` es la
+ * que evita trabajo inútil:
+ *
+ *   inactiva  La red no está en el plan. No se le pide contenido ni medios.
+ *   standby   La red está en el plan: se le escribe el contenido y se valida,
+ *             pero NO se publica y NO se exigen sus medios.
+ *   activa    Se publica de verdad, medios incluidos.
+ */
+export function estadoRed(nombre, cfg, plataforma) {
+  const cfgRed = cfg.redes?.[nombre] ?? {};
+  if (cfgRed.activo === false) {
+    return { estado: 'inactiva', motivo: cfgRed.motivo ?? 'desactivada en rrss.config.yaml' };
+  }
+  if (cfgRed.standby) {
+    return { estado: 'standby', motivo: cfgRed.standby };
+  }
+  if (plataforma && plataforma.activo === false) {
+    return { estado: 'inactiva', motivo: plataforma.motivo ?? 'desactivada en el manifiesto' };
+  }
+  return { estado: 'activa', motivo: null };
+}
+
+// ---------------------------------------------------------------------------
 // Carga
 // ---------------------------------------------------------------------------
 export function cargarConfig(raiz) {
@@ -184,6 +210,7 @@ export function validarManifiestoCompleto(manifiesto, rutaManifiesto, cfg, raiz)
   }
 
   const permitirSinMedios = manifiesto.opciones?.permitir_sin_medios !== false;
+  const enStandby = [];
 
   for (const [nombre, plataforma] of Object.entries(manifiesto.plataformas)) {
     const cfgRed = cfg.redes[nombre];
@@ -191,14 +218,29 @@ export function validarManifiestoCompleto(manifiesto, rutaManifiesto, cfg, raiz)
       warn(nombre, 'no figura en rrss.config.yaml; Make no la reconocerá');
       continue;
     }
-    validarPlataforma(nombre, plataforma, cfgRed, cfg, { medDir, permitirSinMedios, err, warn });
+    const { estado, motivo } = estadoRed(nombre, cfg, plataforma);
+    if (estado === 'inactiva') {
+      warn(nombre, `no se publica: ${motivo}`);
+    }
+    if (estado === 'standby') enStandby.push(nombre);
+
+    validarPlataforma(nombre, plataforma, cfgRed, cfg, {
+      medDir, permitirSinMedios, exigirMedios: estado === 'activa', err, warn,
+    });
+  }
+
+  if (enStandby.length) {
+    avisos.push({
+      donde: 'standby',
+      msg: `se prepara contenido pero no se publica en: ${enStandby.join(', ')}. Sus medios son opcionales mientras dure el standby.`,
+    });
   }
 
   return { errores, avisos };
 }
 
 function validarPlataforma(nombre, plataforma, cfgRed, cfg, ctx) {
-  const { medDir, permitirSinMedios, err, warn } = ctx;
+  const { medDir, permitirSinMedios, exigirMedios, err, warn } = ctx;
   const límites = cfg.limites[nombre] ?? {};
 
   if (!plataforma || typeof plataforma !== 'object') {
@@ -206,13 +248,12 @@ function validarPlataforma(nombre, plataforma, cfgRed, cfg, ctx) {
     return;
   }
 
-  const activo = plataforma.activo !== false;
-  const activaEnCfg = cfgRed.activo !== false;
+  const { estado } = estadoRed(nombre, cfg, plataforma);
+  const enStandby = estado === 'standby';
 
-  if (activo && !activaEnCfg) {
-    err(nombre, `está marcada activo: true en el manifiesto pero ${cfgRed.motivo ?? 'está desactivada en rrss.config.yaml'}`);
+  if (enStandby) {
+    warn(nombre, 'en standby: se valida el contenido pero no se publica, y sus medios son opcionales');
   }
-  if (!activo) warn(nombre, 'desactivada: se omitirá en la publicación');
 
   // --- Texto
   const texto = componerTextoConHashtags(plataforma);
@@ -236,7 +277,7 @@ function validarPlataforma(nombre, plataforma, cfgRed, cfg, ctx) {
   // --- Título
   if (límites.longitud_titulo) {
     if (plataforma.titulo === undefined) {
-      if (activo) warn(nombre, `necesita \`titulo\` (máximo ${límites.longitud_titulo} caracteres)`);
+      if (estado !== 'inactiva') warn(nombre, `necesita \`titulo\` (máximo ${límites.longitud_titulo} caracteres)`);
     } else if (typeof plataforma.titulo !== 'string' || !plataforma.titulo.trim()) {
       err(nombre, '`titulo` está presente pero vacío');
     } else if (plataforma.titulo.length > límites.longitud_titulo) {
@@ -265,15 +306,24 @@ function validarPlataforma(nombre, plataforma, cfgRed, cfg, ctx) {
   }
 
   // --- Medios
+  //
+  // En standby los medios son opcionales: exigir que subas las imágenes de una
+  // red que no se va a publicar sería trabajo inútil, que es justo lo que el
+  // standby evita. En cuanto la red sale de standby, los vuelve a exigir.
   const medios = Array.isArray(plataforma.medios) ? plataforma.medios : [];
   if (medios.length === 0) {
-    if (['carrusel', 'reel'].includes(plataforma.tipo)) {
+    if (['carrusel', 'reel'].includes(plataforma.tipo) && exigirMedios) {
       err(nombre, `tipo "${plataforma.tipo}" exige al menos un medio`);
     }
-    if (!permitirSinMedios) err(nombre, 'no tiene medios y opciones.permitir_sin_medios es false');
-    else warn(nombre, 'sin medios: se publicará solo texto');
+    if (!permitirSinMedios && exigirMedios) {
+      err(nombre, 'no tiene medios y opciones.permitir_sin_medios es false');
+    } else if (medios.length === 0 && enStandby) {
+      warn(nombre, 'sin medios (opcional mientras esté en standby)');
+    } else {
+      warn(nombre, 'sin medios: se publicará solo texto');
+    }
   } else {
-    validarMedios(nombre, plataforma, medDir, cfg, límites, err, warn);
+    validarMedios(nombre, plataforma, medDir, cfg, límites, exigirMedios, err, warn);
   }
 
   // --- Reglas específicas
@@ -289,7 +339,7 @@ function validarPlataforma(nombre, plataforma, cfgRed, cfg, ctx) {
   }
 }
 
-function validarMedios(nombre, plataforma, medDir, cfg, límites, err, warn) {
+function validarMedios(nombre, plataforma, medDir, cfg, límites, exigirMedios, err, warn) {
   const donde = `${nombre}.medios`;
   const medios = plataforma.medios ?? [];
 
@@ -329,7 +379,10 @@ function validarMedios(nombre, plataforma, medDir, cfg, límites, err, warn) {
     }
 
     if (!existsSync(absoluta)) {
-      err(donde, `falta el fichero: ${rel} (esperado en ${medDir})`);
+      const msg = `falta el fichero: ${rel} (esperado en ${medDir})`;
+      // Si la red no se va a publicar, que falte su imagen no impide nada.
+      if (exigirMedios) err(donde, msg);
+      else warn(donde, `${msg} — opcional mientras esté en standby`);
       continue;
     }
 

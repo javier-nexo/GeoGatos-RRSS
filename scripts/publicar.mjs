@@ -39,7 +39,7 @@ import { fileURLToPath } from 'node:url';
 
 import {
   cargarConfig, cargarManifiesto, validarManifiestoCompleto,
-  componerTextoConHashtags, normalizarHashtags, resolverUrlMedio,
+  componerTextoConHashtags, normalizarHashtags, resolverUrlMedio, estadoRed,
 } from './lib/nucleo.mjs';
 import { REDES, ORDEN_PUBLICACION } from './lib/redes.mjs';
 
@@ -200,16 +200,16 @@ for (const nombre of ORDEN_PUBLICACION) {
     continue;
   }
 
-  const cfgRed = cfg.redes[nombre];
-  const activa = plataforma.activo !== false;
-  const activaEnCfg = cfgRed?.activo !== false;
+  const { estado, motivo } = estadoRed(nombre, cfg, plataforma);
 
-  if (!activa) {
-    saltadas.push({ red: nombre, motivo: plataforma.motivo ?? 'desactivada en el manifiesto' });
+  if (estado === 'standby') {
+    // Se escribió el contenido y no se publica. No es un fallo: es la decisión
+    // registrada en rrss.config.yaml.
+    saltadas.push({ red: nombre, motivo: `standby — ${motivo}` });
     continue;
   }
-  if (!activaEnCfg) {
-    saltadas.push({ red: nombre, motivo: cfgRed?.motivo ?? 'desactivada en rrss.config.yaml' });
+  if (estado === 'inactiva') {
+    saltadas.push({ red: nombre, motivo });
     continue;
   }
 

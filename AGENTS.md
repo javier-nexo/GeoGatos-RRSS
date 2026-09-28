@@ -26,22 +26,37 @@ los `.md`, el día no se publica; si generas solo el `.yaml`, nadie lo revisa.
 - El texto del manifiesto va **sin hashtags**: van en el array `hashtags`. El
   publicador los concatena. Si los pones en `texto` y en el array, salen
   duplicados.
+- Escribe contenido de las **siete** redes, incluidas las que están en standby.
+- No pongas `activo: false` por una red que no se publica *todavía*: eso se
+  gestiona con `standby` en `rrss.config.yaml`, que es una palanca global.
+  `activo: false` es para redes que salen del plan.
 - `estado` empieza siempre en `borrador`. **Nunca lo pongas en `listo`**: eso
   dispara la publicación de verdad al hacer push. Lo cambia el usuario cuando
   ha revisado los textos y ha subido los medios.
-- Los medios van declarados aunque todavía no existan. El validador avisará de
-  los que falten, que es exactamente lo que el usuario necesita ver.
+- Declara los medios de todas las redes aunque hoy no se publiquen, pero no
+  insistas al usuario con que los suba: los de las redes en standby son
+  opcionales y el validador lo respeta.
+
+## Estado de las redes
+
+A 2026-09-28 se publica en **Facebook, Instagram y X**. **LinkedIn, YouTube,
+TikTok y Medium están en standby**: se les escribe el contenido y se valida
+igual, pero Make no publica ahí. Los motivos están en `rrss.config.yaml`.
+
+Para activar una red, quita su línea `standby`. No toques los manifiestos.
 
 ## Antes de dar cualquier cosa por terminada
 
 ```bash
 node scripts/validar-manifiesto.mjs --todos
 node --test scripts/validar-manifiesto.test.mjs
+node scripts/publicar.mjs --slug=<slug> --dry-run
 ```
 
-El validador es la barrera que evita que salga un post malo. Si un cambio en
-`scripts/lib/` altera lo que se publica, hay que actualizar también los tests:
-un validador que pasa de más es peor que no tener validador.
+El validador es la barrera que evita que salga un post malo. El `--dry-run` es
+la única forma de comprobar el pipeline sin gastar una publicación real. Si un
+cambio en `scripts/lib/` altera lo que se publica, hay que actualizar también
+los tests: un validador que pasa de más es peor que no tener validador.
 
 ## Datos y hechos
 
