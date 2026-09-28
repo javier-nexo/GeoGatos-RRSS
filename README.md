@@ -76,8 +76,8 @@ reintenta solo: el registro ya impide repetir lo que sí salió, y volver a
 
 ### Dónde se publica y dónde no
 
-A 2026-09-28 se publica en **Facebook, Instagram y X**. Las otras cuatro
-redes —LinkedIn, YouTube, TikTok y Medium— están **en standby**: se les escribe
+A 2026-09-28 se publica en **Facebook e Instagram**. Las otras cinco redes -X,
+LinkedIn, YouTube, TikTok y Medium- están **en standby**: se les escribe
 el contenido y se valida igual, pero el runner no publica ahí, y sus medios no
 son obligatorios. El estado y el motivo de cada red están en
 `rrss.config.yaml`; para activar una, se quita su línea `standby` y no hay que

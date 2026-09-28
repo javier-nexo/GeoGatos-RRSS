@@ -411,11 +411,27 @@ así que cualquier token que acabe en un fichero acaba en internet.
 
 ### Facebook — `FACEBOOK_PAGE_ID`, `FACEBOOK_PAGE_TOKEN`
 
-1. [developers.facebook.com](https://developers.facebook.com) → crear app tipo *Business*.
-2. Añadir el producto **Facebook Login for Business**.
-3. Permisos: `pages_show_list`, `pages_read_engagement`, `pages_manage_posts`.
-4. Revisión de la app: Meta la revisa en días. Sin ella, el token no sirve.
-5. Obtener el token de la **página** (no del usuario) y su ID numérico.
+1. [developers.facebook.com](https://developers.facebook.com) → crear app tipo
+   *Business*. No hace falta añadir ningún producto: la Pages API no lo pide.
+2. Permisos: `pages_show_list`, `pages_read_engagement`, `pages_manage_posts`,
+   `pages_manage_metadata`.
+3. **No hace falta App Review.** La documentación de Meta dice, para *"My app is
+   only for a business I own or manage"*, que basta **Standard Access** y la
+   revisión **no es necesaria**. Solo las apps que sirven a varias empresas
+   necesitan Advanced Access. Lo que sí hay que activar es el producto
+   **Facebook Login**, con *Client OAuth Login* y *Web OAuth Login* encendidos
+   y una *Valid OAuth Redirect URI* puesta (por ejemplo `https://localhost/`).
+   Sin esa línea, `me` no resuelve.
+4. Generar un token de **usuario** con *Get Access Token* marcando las cuatro
+   casillas `pages_*`.
+5. Consultar `me/accounts?fields=id,name,access_token` → `id` es
+   `FACEBOOK_PAGE_ID` y `access_token` es el token de página.
+6. **Alargar el token antes de usarlo.** El del Explorador caduca en ~1 h y el
+   runner se dispara con un push, a una hora que no controlas. Ver más abajo.
+
+> La respuesta debe traer `CREATE_CONTENT` en la lista `tasks`. Si no lo trae,
+> el usuario no tiene tarea de publicación sobre esa página y el paso 5 no
+> sirve. Un rol de *Creador de contenido* basta; *Moderador* no.
 
 ### Instagram — `INSTAGRAM_IG_ID`, `INSTAGRAM_PAGE_TOKEN`
 
@@ -425,13 +441,57 @@ así que cualquier token que acabe en un fichero acaba en internet.
 2. Conectar el Instagram a una **página de Facebook** en
    *Configuración de la cuenta profesional*.
 3. Permisos: `instagram_basic`, `instagram_content_publish`,
-   `pages_read_engagement`, `pages_manage_posts`.
-4. Nivel de acceso: **Standard o Advanced**, ambos requieren revisión de Meta.
+   `pages_read_engagement`, `pages_show_list`.
+4. **No hace falta App Review**, por el mismo motivo que Facebook: es la página
+   del propio negocio.
 5. `INSTAGRAM_IG_ID` es el ID numérico de la cuenta de Instagram, no el usuario.
+   Sale del campo `instagram_business_account` de la página.
+6. **`INSTAGRAM_PAGE_TOKEN` es el mismo token de página que Facebook.** No hay
+   dos credenciales que pedir: el código publica a
+   `graph.facebook.com/{ig-id}/media` con token de página, no a
+   `graph.instagram.com`. Son cuatro variables, tres valores.
 
-> Límites: 50-100 publicaciones por cuenta en 24 h. Solo JPEG. Las imágenes
+> Límites: **50 publicaciones por cuenta en 24 h**. Solo JPEG. Las imágenes
 > deben estar en URL pública. En carrusel, **todas se recortan al formato de la
 > primera**.
+
+#### Dos trampas que no dan error visible
+
+**Conectar Instagram hace que `/me/accounts` devuelva `data: []`.** Desde la
+Graph API v17, el endpoint no devuelve páginas enlazadas a una cuenta de
+negocio de Meta. El caso típico: la página aparecía, conectas Instagram, y
+desaparece de la lista. **No es un fallo de la configuración.** Si ya tienes
+el Page ID, sáltate el endpoint:
+
+```
+/{FACEBOOK_PAGE_ID}?fields=id,name,access_token,instagram_business_account
+```
+
+Ojo: `tasks` **no** es un campo válido del nodo de Página. Solo aparece en
+`/me/accounts`, porque lo añade ese endpoint. Pedirlo directamente da
+`(#100) Tried accessing nonexisting field (tasks)`.
+
+**PPA (Page Publishing Authorization).** Si la Página tiene activada la
+*Publicar desde apps*, la cuenta de Instagram queda bloqueada para publicar por
+API. El ajuste **no aparece en la interfaz** salvo cuando está bloqueando: no
+puedes revisarlo por adelantado. Se comprueba mirando si
+`instagram_business_account` viene con contenido; si viene vacío, el problema es
+la conexión, no PPA.
+
+#### El token de larga duración
+
+El token de Página que sale del Explorador hereda la caducidad del token de
+usuario: **una hora**. Para el runner eso no sirve.
+
+1. [Depurador de tokens](https://developers.facebook.com/tools/debug/accesstoken)
+2. Pegar el token de **usuario** (no el de página) → *Extend Access Token*
+3. Sale un token de usuario válido ~60 días
+4. En el Explorador, seleccionar ese token en el desplegable y repetir la
+   consulta de la página
+
+El `access_token` de página que sale de ahí **no caduca**. Es el único valor de
+todo el sistema que no va a fallar solo, y es el que va a los secrets. Si se
+comparte en un chat, un issue o una captura, hay que revocarlo.
 
 ### LinkedIn — `LINKEDIN_ORG_URN`, `LINKEDIN_ACCESS_TOKEN`
 
@@ -448,12 +508,46 @@ así que cualquier token que acabe en un fichero acaba en internet.
 
 ### X — `X_ACCESS_TOKEN`
 
+**X está en `standby` desde el 2026-09-28. Ver más abajo por qué.**
+
 1. Cuenta de desarrollador aprobada en [developer.x.com](https://developer.x.com).
 2. Crear un proyecto y una app con permiso **Read and write**.
-3. Token de **usuario** por OAuth 2.0 PKCE.
-4. **Límite importante:** en cuentas self-serve, los posts creados por API
+3. En *User authentication settings*: activar **OAuth 2.0**, registrar un callback
+   exacto y poner el tipo de app en **Web App**. Una app de tipo *Automated* es
+   app-only y no puede escribir.
+4. Scopes en la URL de authorize: `tweet.read`, `tweet.write`, `users.read`,
+   `media.write`, `offline.access`.
+   - `media.write` **no es opcional**: el publicador sube la imagen con
+     `media/upload/initialize → append → finalize`, y sin ese scope falla ahí.
+   - `offline.access` es lo único que hace que X devuelva un `refresh_token`.
+5. Flujo: generar `code_verifier` → `code_challenge = base64url(sha256(verifier))`
+   → abrir la URL de authorize → copiar el `code` de la redirección →
+   canjearlo en `POST https://api.x.com/2/oauth2/token`.
+6. **Límite importante:** en cuentas self-serve, los posts creados por API
    admiten **un solo hashtag**. El plan Enterprise permite más. Con self-serve,
    la plantilla de X debe llevar un único hashtag.
+
+#### Por qué está en standby
+
+El `access_token` de X dura **2 horas**, y `scripts/` no tiene ningún refresco:
+no hay `refresh_token`, ni `client_id`, ni llamada a `/2/oauth2/token`. El runner
+se dispara con un push, a una hora que no se controla, así que el primer manifiesto
+en `estado: listo` fallaría en X con un `401` que no explica nada.
+
+Peor: `publicar.mjs` **sigue adelante tras el fallo de una red**, así que
+Facebook e Instagram se publicarían, X no, y el manifiesto quedaría en
+`estado: error`. Un post en Facebook sin su contrapartida en X, y sin reintento
+automático.
+
+Para sacarla de standby hay dos cosas, en el mismo cambio:
+
+1. Añadir `X_CLIENT_ID`, `X_CLIENT_SECRET` y `X_REFRESH_TOKEN` a los secrets.
+2. Refrescar el token dentro del runner antes de publicar.
+
+**Alternativa mientras tanto:** compartir a mano. Lo que se publica por API en
+Instagram **no** se reenvía a X automáticamente, y la opción de compartir de la
+app tampoco existe para publicaciones hechas por API. Es copiar el texto a mano,
+y no complica nada.
 
 ### YouTube
 
@@ -507,9 +601,9 @@ escribe y se valida, pero el runner no recibe la orden de publicar en esa red.
 
 | Red | Se publica | Standby | Motivo / qué falta |
 |---|---|---|---|
-| Facebook | Sí | No | Revisión de la app en Meta (tarda días) |
-| Instagram | Sí | No | Cuenta profesional + revisión de Meta + solo JPEG |
-| X | Sí | No | Revisión de la cuenta. **1 hashtag por post** en self-serve |
+| Facebook | Sí | No | Listo. Standard Access, sin App Review. Solo el token de larga duración |
+| Instagram | Sí | No | Listo. Cuenta profesional conectada a la página. Solo JPEG |
+| X | No | **Sí** | El token caduca a 2 h y no hay refresco implementado. **1 hashtag por post** en self-serve |
 | LinkedIn | No | **Sí** | Falta crear la página de empresa |
 | YouTube | No | **Sí** | No se hacen vídeos de momento |
 | TikTok | No | **Sí** | Aprobación de scope + auditoría + dominio verificado |

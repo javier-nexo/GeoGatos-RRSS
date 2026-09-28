@@ -72,8 +72,9 @@ Las redes en standby no se preparan salvo que se pase `--incluir-standby`.
 
 ## Estado de las redes
 
-A 2026-09-28 se publica en **Facebook, Instagram y X**. **LinkedIn, YouTube,
-TikTok y Medium están en standby**: se les escribe el contenido y se valida
+A 2026-09-28 se publica en **Facebook e Instagram**. Las otras cinco -X,
+LinkedIn, YouTube, TikTok y Medium- están **en standby**: se les escribe el
+contenido y se valida
 igual, pero el runner no publica ahí. Los motivos están en `rrss.config.yaml`.
 
 Para activar una red, quita su línea `standby`. No toques los manifiestos.

@@ -64,8 +64,8 @@ medios:
 # subir sus imágenes. En cuanto sale de standby, el validador pasa a exigirlas
 # y te avisa de lo que falte.
 #
-# Estado a 2026-09-28: solo se publica en Facebook, Instagram y X. Las otras
-# cuatro se preparan pero no se publican.
+# Estado a 2026-09-28: solo se publica en Facebook e Instagram. Las otras
+# cinco se preparan pero no se publican.
 redes:
   facebook:
     activo: true
@@ -75,6 +75,7 @@ redes:
 
   x:
     activo: true
+    standby: "Decisión del 2026-09-28: el access_token de X caduca a las 2 horas y el runner no refresca nada. El primer push con estado listo fallaría en X con un 401, dejando Facebook e Instagram publicados y el manifiesto en error. Se comparte a mano mientras tanto. Para sacarla: añadir X_CLIENT_ID, X_CLIENT_SECRET y X_REFRESH_TOKEN a los secrets e implementar el refresco antes de publicar."
 
   linkedin:
     activo: true
@@ -115,8 +116,9 @@ limites:
     formatos_imagen: [jpg, jpeg]
     carrusel_max: 10
     hashtags_max: 30
-    # Límite de publicaciones por cuenta en 24 h. La documentación cita 100 y
-    # 50 en secciones distintas; usamos el más restrictivo para ir sobre seguro.
+    # Límite de publicaciones por cuenta en 24 h. La documentación cita 100 en
+    # algunos sitios y 50 en otros; usamos el más restrictivo para ir sobre
+    # seguro. Confirmado en la página de límites de Content Publishing.
     publicaciones_24h: 50
     verificado: true
   facebook:
