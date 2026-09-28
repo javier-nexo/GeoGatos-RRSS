@@ -14,9 +14,10 @@ publicacion:
   tema: "2.2 Por qué esterilizar"
   subtema: "Una sola gata y sus descendientes + beneficios de salud"
   autor: "GeoGatos"
-  estado: "listo"
+  estado: "error"
   hora: "10:00"
   desfase_minutos: 5
+  publicado_en: 2026-09-28T19:54:27.485Z
 
 plataformas:
 
@@ -36,7 +37,15 @@ plataformas:
     tipo: "carrusel"
     texto: |-
       Una sola gata sin esterilizar puede dejar más de 100 descendientes a lo largo de su vida. 💔 Esterilizar a los gatos de una colonia es el acto más grande de prevención que existe: evita camadas nacidas para sufrir en la calle, protege la salud de cada gato (menos tumores, menos infecciones, menos enfermedades de transmisión sexual) y tranquiliza la convivencia en el barrio al reducir peleas, marcaje y maullidos de celo. Con el método CER la colonia se estabiliza y sus gatos viven más y mejor. 🐈‍⬛
-    hashtags: ["GeoGatos", "ColoniasFelinas", "CER", "GatosCallejeros", "ProteccionAnimal", "Esterilizacion"]
+    hashtags:
+      [
+        "GeoGatos",
+        "ColoniasFelinas",
+        "CER",
+        "GatosCallejeros",
+        "ProteccionAnimal",
+        "Esterilizacion"
+      ]
     medios:
       - "instagram-01.jpg"
       - "instagram-02.jpg"
