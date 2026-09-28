@@ -10,25 +10,34 @@ Cómo se encadena OpenCode → medios → Make para publicar en todas las redes.
 ## 1. El flujo
 
 ```
-  1. TÚ pides la publicación        "prepara la del 2026-10-05, tema 2.8"
+  1. TÚ sueltas tus .jpg en entrada/   sin renombrar, en el orden que quieras
               │
-  2. OPENCODE genera               7 ficheros .md legibles
-              │                    + 1 manifiesto .yaml (el contrato)
+  2. TÚ pides la publicación           "prepara la del 2026-10-05, tema 2.8"
+              │
+  3. OPENCODE genera                   7 ficheros .md legibles
+              │                        + 1 manifiesto .yaml (el contrato)
               ▼
-  3. TÜ validas y subes medios     npm run validar
-              │                    + drop de imágenes/vídeos en medios/<slug>/
+  4. OPENCODE prepara los medios       node scripts/preparar-medios.mjs
+              │                        copia entrada/ -> medios/<slug>/ con
+              │                        el nombre que pide cada red, y te
+              │                        enseña el reparto
               ▼
-  4. TÚ cambias a `listo` y haces push
+  5. TÜ validas                        npm run validar
               │
-  5. MAKE lee el manifiesto y publica en cada red activa
+  6. TÚ cambias a `listo` y haces push
               │
-  6. MAKE deja constancia           registro/publicaciones.jsonl
+  7. MAKE lee el manifiesto y publica en cada red activa
+              │
+  8. MAKE deja constancia           registro/publicaciones.jsonl
                                    + estado → `publicado`
 ```
 
 El punto clave: **el manifiesto es el contrato**. OpenCode no publica, Make no
 interpreta. El manifiesto dice qué texto va en cada red y qué fichero va con
 él, y ambos programas leen exactamente el mismo fichero.
+
+OpenCode **nunca** pone `estado: listo` ni hace commit. Ese paso es del
+usuario, y es la única barrera real contra una publicación sin revisar.
 
 ### Por qué un manifiesto y no los .md directamente
 
@@ -83,8 +92,25 @@ El mapping resultante, verificado:
 |---|---|
 | `medios/<slug>/instagram-01.jpg` | `https://javier-nexo.github.io/GeoGatos-RRSS/medios/<slug>/instagram-01.jpg` |
 
-Que es exactamente lo que compone `base_url`. Puedes comprobarlo en cualquier
-momento:
+**Ojo con una cosa que ya falló una vez.** `base_url` es solo el prefijo; el
+slug se añade después, al componer la URL de cada medio. Si se usara
+`base_url` tal cual, Instagram recibiría
+`.../medios/instagram-01.jpg` en vez de `.../medios/<slug>/instagram-01.jpg`,
+se descargaría un 404 y el error que devolvería Meta no mencionaría rutas.
+
+Por eso la composición vive en una función, `urlBasePublicacion()` en
+`scripts/lib/nucleo.mjs`, con tests que fijan el contrato:
+
+```js
+resolverUrlMedio('instagram-01.jpg', urlBasePublicacion(cfg.medios.base_url, slug))
+// -> https://javier-nexo.github.io/GeoGatos-RRSS/medios/<slug>/instagram-01.jpg
+```
+
+Esa función también rechaza un `base_url` con espacios o sin `https://`, que
+darían el mismo 404. Un espacio pegado al copiar la config es un error
+fácil de cometer y muy difícil de ver.
+
+Para comprobar que todo esto responde:
 
 ```bash
 curl -I https://javier-nexo.github.io/GeoGatos-RRSS/medios/<slug>/<fichero>
@@ -139,31 +165,158 @@ pipeline no se entera.
 
 ## 3. El escenario de Make
 
-El escenario tiene **6 módulos, no 40**. Toda la lógica está en
-`scripts/publicar.mjs`, que se puede probar en local sin tocar ninguna cuenta.
+> **Lee antes el apartado 3.1.** Hay una advertencia real sobre el plan
+> gratuito que puede hacer que este diseño no te sirva, y una alternativa que
+> probablemente encaje mejor.
 
-Esto es deliberado. El plan gratuito da 1.000 operaciones al mes. Un escenario
-con un módulo por red y uno por cada paso de subida de medios se gasta el
-presupuesto en unas pocas publicaciones; este consume unas 8 por publicación.
+Toda la lógica de publicación está en `scripts/publicar.mjs`, que se puede
+probar en local sin tocar ninguna cuenta ni gastar un solo post. Make solo se
+limita a dispararlo y a leer el resultado.
 
-### Módulo 1 — GitHub: Watch files
+Esto es deliberado. Un escenario con un módulo por red y uno por cada paso de
+subida de medios se gasta el presupuesto de créditos en unas pocas
+publicaciones; este consume unos pocos por publicación.
+
+### 3.1 Antes de construirlo: comprueba tu plan
+
+Datos verificados en la página oficial de planes de Make:
+
+| Límite | Free | Core (9 $/mes) |
+|---|---|---|
+| Créditos al mes | 1.000 | 10.000 |
+| Escenarios activos | **2** | ilimitados |
+| Duración máxima de una ejecución | **5 min** | 40 min |
+| Intervalo mínimo entre ejecuciones | 15 min | 1 min |
+| Tamaño máximo de fichero | 5 MB | 100 MB |
+| Registro de ejecuciones | 7 días | 30 días |
+| Make Code App (ejecutar código) | **no** | sí |
+
+Dos filas de esa tabla importan de verdad para este diseño:
+
+1. **No se ha podido confirmar que el módulo `Run a script` exista en el plan
+   gratuito.** No aparece en la lista de características de ningún nivel. Es
+   el módulo que ejecuta `node scripts/publicar.mjs`, así que sin él el
+   escenario no tiene sentido. Compruébalo tú: si al buscarlo te pide subir de
+   plan, párate y usa la [alternativa de la sección 3.2](#32-alternativa-github-actions).
+
+2. **5 minutos de ejecución es un margen estrecho.** El runner es efímero, así
+   que cada ejecución clona el repo y ejecuta `npm ci` antes de publicar. El
+   clonado más la instalación de dependencias ya se come buena parte de esos
+   5 minutos, y después quedan las llamadas a las tres redes. Si Make corta la
+   ejecución a mitad, te queda un post publicado en una red y no en otra, sin
+   estado actualizado: el peor resultado posible.
+
+### 3.2 Alternativa: GitHub Actions
+
+Si el punto 1 o el 2 te impiden usar Make, esta alternativa gana en todo salvo
+en una cosa: pierdes el panel visual de ejecuciones de Make y ganas un
+historial por commit en la pestaña *Actions* del repo.
+
+Ventajas frente a Make:
+
+- **Gratis e ilimitado** en repositorios públicos. Nada de créditos.
+- Node.js nativo: no hay que clonar ni instalar nada, el runner ya trae Node.
+- Los secretos viven en *Settings → Secrets* del repo. Ni una variable que
+  inyectar a mano.
+- El disparador es el mismo `push`, con el mismo filtro de `estado: "listo"`.
+- `scripts/publicar.mjs` **no cambia ni una línea**. Solo cambia quién lo llama.
+
+Si eliges esta vía, el workflow es este (`.github/workflows/publicar.yml`):
+
+```yaml
+name: Publicar
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'manifiestos/*.yaml'
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    # Publicar es irreversible: nunca reintentes solo, o duplicas el post.
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - run: npm ci --omit=dev
+
+      # El mismo filtro que el módulo 5 de Make: solo `listo` publica.
+      - name: Publicar los manifiestos en listo
+        env:
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          FACEBOOK_PAGE_TOKEN: ${{ secrets.FACEBOOK_PAGE_TOKEN }}
+          INSTAGRAM_IG_ID: ${{ secrets.INSTAGRAM_IG_ID }}
+          INSTAGRAM_PAGE_TOKEN: ${{ secrets.INSTAGRAM_PAGE_TOKEN }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+        run: |
+          set -euo pipefail
+          for f in manifiestos/*.yaml; do
+            [ -e "$f" ] || continue
+            slug="$(basename "$f" .yaml)"
+            case "$slug" in _*) continue ;; esac
+            if grep -q 'estado: *"listo"' "$f"; then
+              echo "::group::Publicando $slug"
+              node scripts/publicar.mjs --slug="$slug" --json
+              echo "::endgroup::"
+            else
+              echo "$slug: no esta en listo, se salta"
+            fi
+          done
+```
+
+Los secretos se añaden en *Settings → Secrets and variables → Actions →
+New repository secret*, uno por variable. En el log saldrán trocitos de
+token, nunca el token completo.
+
+### 3.3 El escenario de Make, módulo a módulo
+
+Solo si confirmas que tienes acceso a `Run a script`.
+
+#### Módulo 1 — Webhooks → Custom webhook
+
+Recomendado frente a instalar la app de Make en GitHub: no pide permisos
+amplios, se configura en un minuto y no consume créditos en reposo.
 
 | Campo | Valor |
 |---|---|
-| Connection | tu cuenta de GitHub (token con `repo`) |
-| Repository | `javier-nexo/GeoGatos-RRSS` |
-| Watch files | `manifiestos` |
-| Trigger on | *Create* y *Update* |
-| Entry | `manifiestos/` |
+| Connection | ninguna |
+| Webhook | el que genera Make, ej. `https://hook.make.com/XXXX/YYYY` |
 
-> Alternativa si prefieres no instalar la app de Make en GitHub: usa
-> **Webhooks → Custom webhook** y configúralo en
-> *Settings → Webhooks* del repo con event type *Just the push event*.
-> La URL la genera Make.
+Cópialo en *Settings → Webhooks* del repo, *Add webhook*:
 
-### Módulo 2 — GitHub: Make a request
+| Campo | Valor |
+|---|---|
+| Payload URL | la URL de Make |
+| Content type | `application/json` |
+| Secret | uno largo que tú elijas |
+| Events | *Just the push event* |
 
-Pide el listado de la carpeta de manifiestos.
+> El *secret* sirve para que GitHub firme las peticiones. Si lo pones,
+> actívalo en Make con el mismo valor; si no, déjalo vacío en los dos lados.
+> Nunca lo guardes en el repositorio.
+
+#### Módulo 2 — Tools → Run a script
+
+Se ejecuta **una vez, antes del bucle**:
+
+```bash
+cd /tmp && rm -rf GeoGatos-RRSS
+git clone --depth 1 https://x-access-token:$GITHUB_TOKEN@github.com/javier-nexo/GeoGatos-RRSS.git
+cd GeoGatos-RRSS && npm ci --omit=dev
+```
+
+El runner de Make es efímero. Clonar aquí y no en el módulo 6 evita clonar
+una vez por cada manifiesto de la iteración.
+
+#### Módulo 3 — GitHub → Make a request
 
 ```
 GET  https://api.github.com/repos/javier-nexo/GeoGatos-RRSS/contents/manifiestos
@@ -173,54 +326,45 @@ Headers: Authorization: Bearer <GITHUB_TOKEN>
 
 Mapea `message` en el campo **Name**.
 
-### Módulo 3 — Iterator
+#### Módulo 4 — Iterator
 
-Un icono por cada fichero cuyo nombre acabe en `.yaml` o `.yml`.
-Descarta los que empiezan por `_` (la plantilla).
+Un icono por fichero cuyo nombre acabe en `.yaml`. Descarta los que empiezan
+por `_` (la plantilla).
 
-### Módulo 4 — GitHub: Make a request
-
-Descarga el manifiesto.
+#### Módulo 5 — GitHub → Make a request
 
 ```
-GET  https://api.github.com/repos/javier-nexo/GeoGatos-RRSS/contents/manifiestos/<name>
+GET  https://api.github.com/repos/javier-nexo/GeoGatos-RRSS/contents/manifiestos/{{Name}}
 Headers: Authorization: Bearer <GITHUB_TOKEN>
 ```
 
-El contenido viene en Base64: hay que decodificarlo. Usa el módulo
-**Tools → Transform → Base64 decode**.
+El `content` viene en Base64. Añade **Tools → Transform → Base64 decode**.
 
-Después, un **Filter** para dejar pasar solo los que contengan
-`estado: "listo"`. Este filtro es el que evita que un push cualquiera dispare
-publicaciones.
+Luego un **Filter** que deje pasar solo lo que contenga `estado: "listo"`.
+**Este filtro es el que evita que un push cualquiera dispare publicaciones.**
 
-### Módulo 5 — Tools: Run a script
+#### Módulo 6 — Tools → Run a script
 
-```
-cd /home/runner/GeoGatos-RRSS
-git pull --ff-only origin main
-npm ci --omit=dev
-node scripts/publicar.mjs --slug=<slug> --json
+```bash
+node scripts/publicar.mjs --slug={{slug}} --json
 ```
 
-- **Command**: el comando o script a ejecutar.
-- **Working directory**: la ruta del repo.
-- **Captura de salida**: activa *stdout* para leer el JSON.
+- **Command**: lo de arriba.
+- **Working directory**: `/tmp/GeoGatos-RRSS`.
+- Activa la captura de **stdout** para leer el JSON.
 
-Extrae `slug` del nombre del fichero en el módulo 4.
+El `slug` se extrae del nombre del fichero en el módulo 5, sin la extensión
+`.yaml`.
 
-Si el runner de Make no tiene el repo clonado, en el módulo 1 añade antes un
-**GitHub → Clone repository**, o deja el clonado en el paso anterior.
+> ¿Por qué `--json`? Make necesita saber si salió bien. Sin él, el código de
+> salida ya sirve, pero no hay detalle por red.
 
-> ¿Por qué `--json`? Make necesita saber si salió bien. Sin `--json` el
-> código de salida ya sirve, pero el detalle por red no.
-
-### Módulo 6 — GitHub: Update a file
+#### Módulo 7 — GitHub → Update a file
 
 Escribe el resultado de vuelta, para que nadie vuelva a publicar lo mismo.
 
 ```
-PUT  https://api.github.com/repos/javier-nexo/GeoGatos-RRSS/contents/manifiestos/<slug>.yaml
+PUT  https://api.github.com/repos/javier-nexo/GeoGatos-RRSS/contents/manifiestos/{{slug}}.yaml
 ```
 
 Cambia `estado: "listo"` por `estado: "publicado"` y añade la fecha.
@@ -235,47 +379,52 @@ reintentará la publicación.
 - **Ejecución secuencial**, no en paralelo. Dos pushes seguidos no deben
   publicar dos veces el mismo manifiesto.
 - **Programación**: desactivada. Publicar se dispara con el push, no a una hora.
-- **Reintentos**: 1, con espera de 5 minutos. Publicar es irreversible: un
-  reintento automático puede duplicar un post que sí llegó a publicarse y cuya
-  respuesta se perdió.
+  El intervalo mínimo de 15 minutos del plan gratuito no aplica a webhooks.
+- **Reintentos**: desactivados, o 1 con espera de 5 minutos. Publicar es
+  irreversible: un reintento automático puede duplicar un post que sí llegó a
+  publicarse y cuya respuesta se perdió.
 
 ### Consumo estimado
 
-| Módulo | Operaciones |
+| Módulo | Créditos |
 |---|---|
-| Watch files + listado + descarga + decode | 4 |
-| Filter | 0 |
-| Run a script | 1 (o 2 si falla y reintenta) |
-| Update a file | 2 |
+| Webhook + clonado | 2 |
+| Listado + iteración + descarga + decode | 4 |
+| Filter | 0 (no consume) |
+| Run a script | 1 |
+| Update a file | 1 |
 | **Total por publicación** | **≈ 8** |
 
-Con 1.000 operaciones al mes tienes margen para más de cien publicaciones.
+Con 1.000 créditos al mes hay margen para más de cien publicaciones. El plan
+gratuito aguanta de sobra en créditos; lo que no aguanta es la duración de la
+ejecución, como se explica en el 3.1.
 
 ---
 
-## 4. Preparar el repositorio en el runner de Make
+## 4. El runner de Make
 
-Una sola vez, antes de la primera ejecución:
+No hay nada que preparar: el runner de Make es efímero, se tira después de
+cada ejecución. El clonado y `npm ci` van dentro del propio escenario, en el
+[módulo 2](#33-el-escenario-de-make-módulo-a-módulo), antes del bucle.
 
-```bash
-git clone https://github.com/javier-nexo/GeoGatos-RRSS.git
-cd GeoGatos-RRSS
-npm ci
-```
-
-El runner de Make es efímero en algunos planes. Si el repo no está ahí, el
-módulo 5 falla. En ese caso, clona dentro del propio comando:
-
-```
-bash -lc "cd /tmp && rm -rf GeoGatos-RRSS && git clone --depth 1 https://x-access-token:$GITHUB_TOKEN@github.com/javier-nexo/GeoGatos-RRSS.git && cd GeoGatos-RRSS && npm ci --omit=dev && node scripts/publicar.mjs --slug=$SLUG --json"
-```
+Lo único que hay que comprobar una vez es que `npm ci` funciona sin
+dependencias nativas. Este repo no tiene ninguna: `package.json` no declara
+dependencias de producción, solo scripts. Si algún día se añade una, con
+`--omit=dev` no se instala y el script fallará al importar.
 
 ---
 
 ## 5. Credenciales: qué pedir en cada red
 
-Se inyectan como variables de entorno en Make (**Connections** o el propio
-módulo). **Nunca en el repositorio.**
+Se inyectan como variables de entorno. **Nunca en el repositorio.**
+
+- Con Make: en el propio módulo, o en la conexión si es la misma para todas
+  las ejecuciones.
+- Con GitHub Actions: *Settings → Secrets and variables → Actions*. Son las
+  mismas variables; `publicar.mjs` no distingue entre un runner y otro.
+
+El repositorio es público y GitHub Pages sirve **todo** lo que hay en la raíz,
+así que cualquier token que acabe en un fichero acaba en internet.
 
 ### Facebook — `FACEBOOK_PAGE_ID`, `FACEBOOK_PAGE_TOKEN`
 
@@ -412,27 +561,43 @@ Para publicar en una red en standby, quita su línea `standby` de
 
 ## 8. Qué haces tú en cada ciclo
 
-1. **Pides la publicación.**
+1. **Sueltas tus imágenes en `entrada/`**, sin renombrar, en el orden que
+   quieras. No hace falta que se llamen como las espera el pipeline.
+
+2. **Pides la publicación.**
    > "Prepara la del 2026-10-05, tema 2.8, subtema semáforo del mapa."
 
-2. **OpenCode** deja los 7 `.md` y `manifiestos/2026-10-05-...yaml` con
-   `estado: borrador`.
+3. **OpenCode** deja los 7 `.md` y `manifiestos/2026-10-05-...yaml` con
+   `estado: borrador`, y copia tus imágenes a `medios/<slug>/` con el nombre
+   que pide cada red. Te enseña el reparto y te avisa de lo que detecte.
 
-3. **Revisas** los textos.
-
-4. **Subes los medios** a `medios/2026-10-05-color-de-las-colonias/` con los
-   nombres de la tabla de `medios/README.md`. Solo los de las redes que van a
-   publicarse: Facebook, Instagram y X. Los de las redes en standby no hacen
-   falta.
+4. **Revisas** los textos y la tabla de reparto.
 
 5. **Validas**:
    ```bash
-   node scripts/validar-manifiesto.mjs --todos
+   npm run validar
    ```
 
 6. **Marcas `estado: listo`** y haces push.
 
-7. **Make publica.** No tienes que hacer nada más.
+7. **El runner publica.** No tienes que hacer nada más.
+
+### El reparto de imágenes, en una tabla
+
+La imagen *n* que subiste va al hueco *n* de la lista `medios` de cada red:
+
+| Imagen subida | Ficheros donde acaba |
+|---|---|
+| 1ª | `facebook-01.jpg` e `instagram-01.jpg` |
+| 2ª | `instagram-02.jpg` |
+| 3ª | `instagram-03.jpg` |
+
+Que la misma foto sirva para varias redes es **lo que se quiere**, no un fallo.
+No tienes que subir una imagen distinta por red. Si subes más de 3, las
+sobrantes quedan en `entrada/` para la siguiente publicación.
+
+`entrada/` está en `.gitignore`: es un borrador local. Lo que se versiona es la
+copia de `medios/<slug>/`, que es la que GitHub Pages sirve.
 
 ---
 
@@ -441,10 +606,10 @@ Para publicar en una red en standby, quita su línea `standby` de
 ```bash
 # 1. Probar el validador
 npm install
-node scripts/validar-manifiesto.mjs --todos
+npm run validar
 
-# 2. Probar los tests del validador
-node --test scripts/validar-manifiesto.test.mjs
+# 2. Probar los tests
+npm test
 
 # 3. Simular una publicación SIN credenciales y SIN riesgo
 node scripts/publicar.mjs --slug=<slug> --dry-run
@@ -453,9 +618,27 @@ node scripts/publicar.mjs --slug=<slug> --dry-run
 El paso 3 imprime exactamente qué se publicaría en cada red, con qué URL de
 medio y qué endpoint. Revísalo antes de gastar una publicación real.
 
+Y una comprobación que no se puede hacer en local: que la URL del medio
+responde de verdad.
+
+```bash
+curl -I https://javier-nexo.github.io/GeoGatos-RRSS/medios/<slug>/<fichero>
+```
+
+Tiene que dar `200` **y** `content-type: image/jpeg`. Un 200 con otro tipo
+significa que Jekyll está procesando el fichero: revisa que exista
+`.nojekyll`. Instagram rechaza la imagen y el error de Meta no menciona el
+content-type, así que el diagnóstico desde el panel es imposible.
+
 Primera publicación real: usa una red de pago bajo (Facebook) con un post de
-prueba, y **no** las cinco a la vez. Verifica que el texto sale bien y que la
-imagen es la correcta. Publicar es irreversible.
+prueba, y **no** las tres a la vez:
+
+```bash
+node scripts/publicar.mjs --slug=<slug> --redes=facebook
+```
+
+Verifica que el texto sale bien y que la imagen es la correcta. Publicar es
+irreversible.
 
 ---
 
@@ -464,9 +647,12 @@ imagen es la correcta. Publicar es irreversible.
 | Síntoma | Causa habitual |
 |---|---|
 | Instagram falla al publicar pero el contenedor se creó bien | El fichero era PNG. Meta solo admite JPEG. |
+| Meta devuelve 404 al descargar la imagen | La URL no lleva el slug: `.../medios/instagram-01.jpg` en vez de `.../medios/<slug>/...`. Comprueba con `urlBasePublicacion()`. |
+| Meta dice que no puede leer el fichero, y el 200 es correcto | El `content-type` no es `image/jpeg`. Suele ser Jekyll: comprueba que exista `.nojekyll`. |
 | TikTok no aparece en el perfil | La app no ha pasado la auditoría: se publica en modo privado. |
 | X rechaza el post con error de longitud | Estabas contando con `.length`. X cuenta URLs como 23 y emojis como 2. Usa el validador. |
 | LinkedIn devuelve 403 | Token de perfil personal. Hace falta página de empresa y `w_organization_social`. |
 | Se publica dos veces | Falló el módulo 6. Make usa `estado: publicado` como única memoria. |
 | `Faltan credenciales: ...` | La variable no está en el entorno del runner de Make, no en tu máquina. |
 | Nada se publica y no hay errores | El filtro del módulo 4 no encontró `estado: "listo"`. |
+| El runner dice que no encuentra el repo | El runner de Make es efímero. Clona dentro del propio comando, ver sección 4. |

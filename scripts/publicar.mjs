@@ -4,16 +4,20 @@
  * =====================
  *
  * Lee un manifiesto, lo valida, y publica en cada red activa. Make lo invoca
- * desde un webhook de GitHub cuando detecta `estado: listo`.
+ * desde un webhook de GitHub cuando detecta `estado: listo`. También se puede
+ * invocar desde GitHub Actions; el script no sabe quién lo llamó.
  *
  * Por qué toda la lógica vive aquí y no en 40 módulos de Make:
  *   - Se puede probar en local antes de tocar ninguna cuenta real.
- *   - El plan gratuito de Make da 1.000 operaciones al mes. Un escenario con
- *     un módulo por red y uno por subsistema se gasta ese presupuesto en
- *     unas pocas publicaciones; este script consume 4-5 operaciones por
- *     publicación porque Make solo lo invoca una vez.
+ *   - El plan gratuito de Make da 1.000 créditos al mes. Un escenario con un
+ *     módulo por red y uno por subsistema se gasta ese presupuesto en unas
+ *     pocas publicaciones; este script consume unos 8 créditos por publicación
+ *     porque Make solo lo invoca una vez.
  *   - La lógica queda versionada y revisable en el repositorio, no repartida
  *     por un canvas que nadie puede diffear.
+ *
+ * En `docs/automacion-make.md` está el montaje paso a paso, los límites reales
+ * del plan gratuito y la alternativa con GitHub Actions.
  *
  * Uso:
  *   node scripts/publicar.mjs --manifiesto=manifiestos/2026-10-05-tema.yaml
