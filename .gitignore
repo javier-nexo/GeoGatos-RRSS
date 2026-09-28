@@ -1,0 +1,16 @@
+# Dependencias
+node_modules/
+
+# Registro de ejecuciones: se regenera en cada publicación.
+# El historial que importa vive en los manifiestos (estado: publicado + URL),
+# porque el runner de Make es efímero y este log no sobrevive a una ejecución.
+registro/
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Editores
+.vscode/
+.idea/
+*.swp

@@ -1,0 +1,141 @@
+# =============================================================================
+# PLANTILLA DE MANIFIESTO DE PUBLICACIÓN
+# =============================================================================
+# Este archivo es la ÚNICA fuente de verdad que lee Make. Los .md de cada red
+# son la versión legible por humanos; este .yaml es el que se publica.
+#
+# OpenCode rellena todo lo que depende del tema (textos, hashtags, assets
+# declarados). Tú solo tienes que:
+#   1. poner los ficheros de medios en  medios/<slug>/
+#   2. cambiar  estado:  a "listo"
+#
+# En cuanto estado = "listo" y Make recibe el push, publica.
+# =============================================================================
+
+# Identificador de la publicación. Debe coincidir con el nombre de la carpeta
+# de medios y con el nombre del fichero del manifiesto, sin la extensión.
+slug: "AAAA-MM-DD-slug-del-tema"
+
+publicacion:
+  fecha: "AAAA-MM-DD"              # día de publicación, formato ISO
+  tema: "2.8 El color de las colonias"
+  subtema: "Qué significa verde, amarillo y rojo en el mapa"
+  autor: "GeoGatos"
+
+  # Máquina de estados. Make solo publica cuando estado = "listo".
+  #
+  #   borrador         OpenCode ha generado el contenido, no lo has revisado.
+  #   esperando_medios El contenido está aprobado; faltan los ficheros.
+  #   listo            Todo validado. Dispara la publicación al hacer push.
+  #   publicado        Make terminó. Lo escribe Make, no tú.
+  #   error            Algo falló. Revisa registro/publicaciones.jsonl.
+  estado: "borrador"
+
+  # Franja horaria de publicación en formato 24h. Offset de Madrid.
+  # Stagger entre redes para que no publiquen en el mismo segundo.
+  hora: "10:00"
+
+  # Desfase en minutos respecto a `hora`. Evita ráfagas simultáneas y da margen
+  # para que el rate limit de Instagram no acumule peticiones.
+  desfase_minutos: 5
+
+# -----------------------------------------------------------------------------
+# Contenido por red
+# -----------------------------------------------------------------------------
+# Reglas de medios, que es donde suele haber ambigüedad:
+#
+#   * La lista `medios` es ORDENADA. El orden ES el orden de publicación.
+#     En un carrusel, la primera imagen es la portada y además TODAS las
+#     demás se recortan al aspect ratio de la primera (comportamiento de
+#     Instagram). Pon la mejor imagen primero.
+#
+#   * `medios: []` significa publicación solo de texto. Es legítimo.
+#
+#   * Un medio puede declararse en varias redes. Escribe la ruta relativa a
+#     medios/<slug>/ tal cual, sin prefijo de carpeta:
+#         "comun/logo-naranja.png"
+#         "instagram-01.jpg"
+#
+#   * El validador comprueba que cada fichero existe y que la extensión es
+#     válida PARA ESA RED. Instagram, por ejemplo, solo admite JPEG.
+# -----------------------------------------------------------------------------
+plataformas:
+
+  facebook:
+    activo: true
+    texto: |-
+      Primer párrafo del post.
+
+      Segundo párrafo con el mensaje clave.
+
+      Tercer párrafo con el cierre.
+    hashtags: ["GeoGatos", "ColoniasFelinas", "ProteccionAnimal"]
+    medios: ["facebook-01.jpg"]
+
+  instagram:
+    activo: true
+    tipo: "carrusel"                # imagen_unica | carrusel | reel
+    texto: |-
+      Un solo párrafo. Es el caption.
+    hashtags: ["GeoGatos", "ColoniasFelinas", "CER"]
+    # Máximo 10. La primera es la portada y fija el recorte de todas.
+    medios:
+      - "instagram-01.jpg"
+      - "instagram-02.jpg"
+
+  linkedin:
+    activo: true
+    texto: |-
+      Dos o tres párrafos, tono institucional B2B.
+
+      Enmarca con la Ley 7/2023 si el tema lo permite.
+    hashtags: ["GeoGatos", "ColoniasFelinas"]
+    medios: ["linkedin-01.jpg"]
+
+  x:
+    activo: true
+    texto: |-
+      Un párrafo breve. Máximo 280 caracteres contando hashtags.
+    hashtags: ["GeoGatos"]           # OJO: self-serve permite SOLO 1
+    medios: ["x-01.jpg"]
+
+  youtube:
+    activo: true
+    titulo: "Título de la descripción, máx. 100 caracteres"
+    texto: |-
+      Un párrafo. Descripción o comentario_fixed.
+    hashtags: ["GeoGatos", "ColoniasFelinas"]
+    medios: ["youtube-01.jpg"]
+
+  # ---------------------------------------------------------------------------
+  # Redes con bloqueos de plataforma. Se rellenan igual, pero su `activo` debe
+  # ser false mientras no exista el permiso. El validador avisa si no.
+  # ---------------------------------------------------------------------------
+  tiktok:
+    activo: false
+    texto: |-
+      Una o dos frases para el texto en pantalla.
+    hashtags: ["GeoGatos", "gatos", "ProteccionAnimal"]
+    medios: ["tiktok-01.mp4"]
+
+  medium:
+    activo: false
+    titulo: "Título del artículo, máx. 100 caracteres"
+    texto: |-
+      Cuerpo del artículo en Markdown. OpenCode lo convierte a HTML.
+    hashtags: ["GeoGatos", "ColoniasFelinas", "CER"]   # solo se usan 3
+    medios: ["medium-01.jpg"]
+
+# -----------------------------------------------------------------------------
+# Criterios de publicación
+# -----------------------------------------------------------------------------
+# Declarados para que Make no tenga que interpretar el contenido.
+opciones:
+  # Qué hacer si la validación falla en pleno vuelo (una red cae, el resto no).
+  #   continuar_publicar : publica el resto y registra el fallo (recomendado)
+  #   detener_todo       : aborta en el primer error
+  ante_error: "continuar_publicar"
+
+  # Si es false y no hay medios, se salta la red sin considerarlo error.
+  # Útil para X cuando solo se publica texto.
+  permitir_sin_medios: true

@@ -10,7 +10,16 @@ Este repositorio centraliza todo el material de comunicación de GeoGatos: la ap
 GeoGatos-RRSS/
 ├── README.md                    <- Este archivo
 ├── AGENTS.md                    <- Instrucciones para agentes
+├── rrss.config.yaml             <- Configuración del pipeline (redes, límites, medios)
 ├── banco-de-temas.md            <- Catálogo de temas por categorías, con subtemas
+├── manifiestos/                 <- Contrato de publicación: un .yaml por día, es lo que lee Make
+│   ├── _plantilla.yaml          <- Plantilla de manifiesto con las 7 redes comentadas
+│   └── AAAA-MM-DD-tema.yaml
+├── medios/                      <- Dónde subes tú las imágenes y vídeos (ver medios/README.md)
+├── scripts/                     <- Validador y publicador
+│   ├── validar-manifiesto.mjs   <- Comprueba límites por red antes de publicar
+│   ├── publicar.mjs             <- Publica en todas las redes; Make lo invoca
+│   └── lib/                     <- Núcleo compartido y adaptadores por red
 ├── Plantillas/                  <- Plantilla específica para cada red social
 │   ├── plantilla-facebook.md
 │   ├── plantilla-instagram.md
@@ -20,7 +29,9 @@ GeoGatos-RRSS/
 │   ├── plantilla-x.md
 │   └── plantilla-youtube.md
 ├── docs/
-│   └── sobre-geogatos.md        <- Documento maestro: qué es la app, público, mensajes clave
+│   ├── sobre-geogatos.md        <- Documento maestro: qué es la app, público, mensajes clave
+│   └── automatizacion-make.md   <- Guía del pipeline OpenCode → Make
+├── registro/                    <- Resultado de cada publicación (JSONL, lo escribe el publicador)
 ├── assets/                      <- Imágenes, logos, videos y otros recursos
 ├── facebook/                    <- Posts de Facebook (2-3 párrafos) + acceso a su plantilla
 ├── instagram/                   <- Posts de Instagram (1 párrafo) + acceso a su plantilla
@@ -29,6 +40,35 @@ GeoGatos-RRSS/
 ├── tiktok/                      <- Posts de TikTok (1-2 frases) + acceso a su plantilla
 ├── x/                           <- Posts de X / Twitter (1 párrafo) + acceso a su plantilla
 └── youtube/                     <- Contenido de YouTube (1 párrafo) + acceso a su plantilla
+```
+
+## Publicación automatizada
+
+Hay dos formatos en el repo para cada publicación, y conviene no confundirlos:
+
+- Los **`.md` de cada red** son para leerlos y editarlos: traen notas, ideas de
+  assets y contexto.
+- El **`.yaml` de `manifiestos/`** es el contrato que consume Make: texto final
+  por red, hashtags y lista ordenada de medios.
+
+Flujo de un día de publicación:
+
+1. Eliges un tema de `banco-de-temas.md`.
+2. Pides la publicación y OpenCode genera los `.md` y el manifiesto.
+3. Subes los medios a `medios/<slug>/` con la nomenclatura de `medios/README.md`.
+4. `node scripts/validar-manifiesto.mjs --todos`
+5. Cambias `estado: borrador` por `estado: listo` y haces push.
+6. Make publica y deja constancia en `registro/publicaciones.jsonl`.
+
+La guía completa, con el escenario de Make paso a paso, las credenciales que
+hay que pedir en cada plataforma y los bloqueos de cada red, está en
+[`docs/automacion-make.md`](docs/automacion-make.md).
+
+```bash
+npm install
+node scripts/validar-manifiesto.mjs --todos        # valida
+node scripts/publicar.mjs --slug=<slug> --dry-run   # simula, sin publicar
+node --test scripts/validar-manifiesto.test.mjs     # tests del validador
 ```
 
 ## Cómo funciona el banco de publicaciones

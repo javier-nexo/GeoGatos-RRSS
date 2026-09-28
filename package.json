@@ -1,0 +1,17 @@
+{
+  "name": "geogatos-rrss",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Banco de publicaciones y pipeline de publicación automatizada (OpenCode + Make) para GeoGatos",
+  "scripts": {
+    "validar": "node scripts/validar-manifiesto.mjs",
+    "validar:todo": "node scripts/validar-manifiesto.mjs --todos"
+  },
+  "dependencies": {
+    "yaml": "^2.6.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,99 @@
+# Manifiesto de publicación — 2026-09-16 "Por qué esterilizar"
+#
+# Ejemplo de trabajo construido a partir de la publicación ya escrita en
+# /facebook, /instagram, /linkedin, /medium, /tiktok, /x y /youtube con la
+# misma fecha. Sirve como referencia de cómo se traduce el contenido humano
+# al formato que consume Make.
+#
+# ESTADO REAL: faltan los ficheros de medios. El validador lo detecta.
+
+slug: "2026-09-16-por-que-esterilizar"
+
+publicacion:
+  fecha: "2026-09-16"
+  tema: "2.2 Por qué esterilizar"
+  subtema: "Una sola gata y sus descendientes + beneficios de salud"
+  autor: "GeoGatos"
+  estado: "esperando_medios"
+  hora: "10:00"
+  desfase_minutos: 5
+
+plataformas:
+
+  # --- Facebook: 2-3 párrafos, tono cercano ---------------------------
+  facebook:
+    activo: true
+    texto: |-
+      Una sola gata sin esterilizar puede dejar más de 100 descendientes a lo largo de su vida fértil. Cada camada que nace en la calle se enfrenta a frío, hambre, enfermedades y atropellos, y casi ninguno tendrá una vida fácil.
+
+      Esterilizar no es un trámite ni un castigo: es medicina preventiva. En las hembras elimina el riesgo de piometra y reduce drásticamente los tumores mamarios; en los machos, los tumores testiculares. Además desaparecen la mayor parte de las peleas, el marcaje y los maullidos de celo, así que la convivencia en el barrio mejora de forma medible.
+
+      Cuando una colonia alcanza un porcentaje alto de esterilización, la población deja de crecer y se estabiliza sola, sin medidas traumáticas. Por eso la Ley 7/2023 obliga a los municipios a gestionar las colonias mediante el método CER, y por eso hace falta un registro serio de lo que se hace en cada operación.
+    hashtags: ["GeoGatos", "ColoniasFelinas", "ProteccionAnimal"]
+    medios: ["facebook-01.jpg"]
+
+  # --- Instagram: 1 párrafo, carrusel ----------------------------------
+  instagram:
+    activo: true
+    tipo: "carrusel"
+    texto: |-
+      Una sola gata sin esterilizar puede dejar más de 100 descendientes a lo largo de su vida. 💔 Esterilizar a los gatos de una colonia es el acto más grande de prevención que existe: evita camadas nacidas para sufrir en la calle, protege la salud de cada gato (menos tumores, menos infecciones, menos enfermedades de transmisión sexual) y tranquiliza la convivencia en el barrio al reducir peleas, marcaje y maullidos de celo. Con el método CER la colonia se estabiliza y sus gatos viven más y mejor. 🐈‍⬛
+    hashtags: ["GeoGatos", "ColoniasFelinas", "CER", "GatosCallejeros", "ProteccionAnimal", "Esterilizacion"]
+    medios:
+      - "instagram-01.jpg"
+      - "instagram-02.jpg"
+      - "instagram-03.jpg"
+
+  # --- LinkedIn: 2-3 párrafos, tono institucional ----------------------
+  linkedin:
+    activo: true
+    texto: |-
+      La Ley 7/2023 obliga a los municipios españoles a gestionar las colonias felinas mediante protocolos CER. En la práctica, eso significa que miles de localidades necesitan una herramienta para documentar cada operación con rigor: quién la hizo, cuándo, con qué resultado.
+
+      La esterilización es el único método que estabiliza una población felina de forma ética y sostenida. Una gata sin esterilizar puede llegar a más de cien descendientes en su vida fértil, y cada capa que nace sin control se convierte en sobrepoblación, enfermedad y conflicto vecinal.
+
+      GeoGatos cubre esa necesidad con trazabilidad completa: censo de gatos con estado de esterilización y microchip, registro de visitas, validación por GPS y un módulo CER con checklist legal de liberación. Para un ayuntamiento, eso no es una app de gatos: es un sistema de información para justificar su gestión. Descarga la app y registra la colonia de tu barrio.
+    hashtags: ["GeoGatos", "ColoniasFelinas", "CER", "ProteccionAnimal", "LeyAnimal"]
+    medios: ["linkedin-01.jpg"]
+
+  # --- X: 1 párrafo, máximo 280 caracteres -----------------------------
+  # OJO: `hashtags_max` de X es 1 en self-serve. El texto incluye el CTA.
+  x:
+    activo: true
+    texto: |-
+      Una gata sin esterilizar puede dejar +100 descendientes en la calle. 💔 Esterilizar salva vidas: menos camadas abandonadas, menos tumores y peleas, y una colonia que se estabiliza sola. Lee el artículo completo en Medium: [enlace]
+    hashtags: ["GeoGatos"]
+    medios: ["x-01.jpg"]
+
+  # --- YouTube: 1 párrafo, título + descripción -----------------------
+  youtube:
+    activo: true
+    titulo: "Por qué esterilizar a los gatos de la calle — GeoGatos"
+    texto: |-
+      Una sola gata sin esterilizar puede dejar más de 100 descendientes a lo largo de su vida fértil, y casi ninguno tendrá una vida fácil en la calle. En este vídeo explicamos por qué el método CER es la herramienta ética y eficaz para estabilizar una colonia, qué beneficios tiene para la salud de los propios gatos y cómo registra GeoGatos cada operación con trazabilidad. Descarga la app en geogatos.com.
+    hashtags: ["GeoGatos", "ColoniasFelinas", "ProteccionAnimal"]
+    medios: ["youtube-01.jpg"]
+
+  # --- TikTok: 1-2 frases, BLOQUEADO ----------------------------------
+  tiktok:
+    activo: false
+    texto: |-
+      Una sola gata sin esterilizar puede dejar más de 100 gatitos en la calle. Esterilizar no es cruel: es su manera de salvar vidas. 🐈‍⬛
+    hashtags: ["GeoGatos", "gatos", "ProteccionAnimal"]
+    medios: ["tiktok-01.mp4"]
+
+  # --- Medium: artículo, BLOQUEADO ------------------------------------
+  medium:
+    activo: false
+    titulo: "Por qué esterilizar a los gatos de la calle: la decisión que salva vidas"
+    texto: |-
+      El artículo completo está en /medium/2026-09-16-por-que-esterilizar.md.
+
+      OpenCode lo convierte de Markdown a HTML y lo publica vía `contentFormat: html`.
+      Solo se usan los 3 primeros tags y se ignoran los de más de 25 caracteres.
+    hashtags: ["GeoGatos", "ColoniasFelinas", "CER"]
+    medios: ["medium-01.jpg"]
+
+opciones:
+  ante_error: "continuar_publicar"
+  permitir_sin_medios: true
