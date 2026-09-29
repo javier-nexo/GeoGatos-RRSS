@@ -1,0 +1,172 @@
+========================================================================
+COPIAR Y PEGAR EN MEDIUM — 2026-09-16 — "Por qué esterilizar"
+========================================================================
+
+Este .txt es la versión en texto plano del artículo, para pegar en Medium
+sin que salgan asteriscos ni almohadillas. El original editable y la
+referencia de formato son:
+
+    2026-09-16-por-que-esterilizar.md   (en esta misma carpeta)
+
+Si cambias el texto, cámbialo en el .md y vuelve a generar este archivo.
+Este .txt no se edita a mano.
+
+
+--- CAMPOS DE MEDIUM (NO son parte del cuerpo) ------------------------
+
+Título -> campo "Title"
+
+  Por qué esterilizar a los gatos de la calle: la decisión que salva vidas
+
+  El .md propone este título con el final "(para ellos y para la colonia)":
+  103 caracteres, y Medium admite 100. Aquí va el corto, el del manifiesto,
+  de 72. Si prefieres el largo, quita el paréntesis por el medio.
+
+
+Subtítulo -> campo "Subtitle" (opcional, se puede dejar vacío)
+
+  Una gata sin esterilizar puede dejar más de 100 descendientes. Y eso
+  casi siempre termina mal
+
+
+Tags -> campo "Topics" de Medium, uno por línea, SIN la almohadilla
+
+  GeoGatos
+  ColoniasFelinas
+  CER
+
+  Solo se usan 3 tags, que es el límite de la configuración y el que ya
+  lleva el manifiesto. Los otros cuatro del .md (GatosCallejeros,
+  ProteccionAnimal, LeyAnimal, Esterilizacion) se dejan fuera: Medium
+  admite cinco, pero si algún día se automatiza la copia el texto tiene
+  que coincidir con lo que publique el manifiesto.
+
+
+--- NEGRITAS QUE HAY QUE REPONER A MANO -------------------------------
+
+Medium no tiene markdown: si se pegara un asterisco saldría literal. En
+este .txt el texto va en normal, y abajo está la lista de lo que en el
+.md va en negrita. Son 22 sitios, y hay que volver a marcarlos a mano en
+el editor de Medium. No hace falta pegar el artículo entero de golpe: se
+puede ir sección a sección.
+
+   1. esa gata no está esterilizada
+   2. dos y tres camadas al año
+   3. cuatro y seis gatitos
+   4. más de cien descendientes
+   5. poliéstricas estacionales
+   6. entre 63 y 65 días
+   7. 12 a 20 camadas
+   8. un acto de prevención
+   9. medicina preventiva
+  10. En las hembras:
+  11. piometra
+  12. En los machos:
+  13. En ambos:
+  14. Desaparecen la mayor parte de las peleas
+  15. Se reduce el marcaje
+  16. Bajan los maullidos
+  17. Menos vecinos quejándose
+  18. porcentaje alto de esterilización
+  19. se reducen de forma progresiva y natural
+  20. Ley 7/2023
+  21. el gesto más grande de responsabilidad
+  22. descarga la app, censa a los gatos de tu barrio y convierte una
+      acción individual en un impacto de comunidad.
+
+
+--- AVISO ANTES DE PEGAR ----------------------------------------------
+
+En la sección "La bomba demográfica" hay una lista de dos viñetas
+sueltas, sin frase que las presente. Así está en el .md, y aquí se ha
+mantenido tal cual. Revísalo antes de publicar: si sobran, bórralas en
+el editor de Medium; no hace falta tocar el .md si al final no se
+publican.
+
+
+========================================================================
+CUERPO DEL ARTÍCULO — COPIAR DE AQUÍ AL FINAL DEL ARCHIVO
+========================================================================
+
+
+INTRODUCCIÓN
+
+Imagina una gata tranquila en una colonia de tu barrio. Parece otra más entre las muchas que duermen al sol en los bancos de un parque. Pero hay un detalle que lo cambia todo: esa gata no está esterilizada.
+
+Una sola hembra fértil puede encadenar celos cada dos o tres semanas si no se queda embarazada, tener entre dos y tres camadas al año y parir entre cuatro y seis gatitos en cada una. Si ponemos los números en la mesa, el resultado es demoledor: a lo largo de su vida fértil, una única gata sin esterilizar puede llegar a más de cien descendientes. Y casi ninguno tendrá una vida fácil.
+
+Esterilizar no es un trámite. Es la herramienta más eficaz, ética y humana que existe para proteger a los gatos que viven en la calle. Te explicamos por qué.
+
+
+LA BOMBA DEMOGRÁFICA: LOS NÚMEROS QUE NO MIENTEN
+
+Las gatas son poliéstricas estacionales: entran en celo repetidamente durante los meses cálidos y de más horas de luz. Si no se produce gestación, pueden volver a entrar en celo cada pocas semanas. Y su embarazo es cortísimo: entre 63 y 65 días.
+
+Con ese ritmo biológico, una gata sana que empiece a reproducirse sobre los seis meses puede encadenar 12 a 20 camadas a lo largo de su vida reproductiva. Con una media de 4 a 6 gatitos por parto, la cuenta supera rápidamente el centenar de crías. Y cada una de esas crías, a su vez, está lista para reproducirse cuando apenas tiene unos meses.
+
+En colonias felinas sin control esto genera un ciclo casi continuo de reproducción: no hay sitio, comida ni cuidados que den abasto.
+
+- Prevención de infectaciones: menos camadas, menos gatos vulnerables en la calle.
+- Estabilización de la colonia: con el método CER, la población deja de crecer de forma descontrolada.
+
+
+LA ESTERILIZACIÓN ES UNA VACUNA CONTRA EL SUFRIMIENTO
+
+Cada camada no deseada que nace en la calle se enfrenta a frío, hambre, enfermedades, atropellos y peleas. La realidad es dura: un gato callejero sin cuidados apenas suele vivir pocos años, mientras que un gato cuidado y esterilizado en una colonia atendida tiene una esperanza de vida mucho mayor.
+
+Esterilizar evita que esos gatitos nazcan para sufrir. Es, en el sentido más real de la palabra, un acto de prevención: menos animales enfermos, heridos o muertos prematuramente.
+
+
+BENEFICIOS DIRECTOS PARA LA SALUD DE LOS PROPIOS GATOS
+
+La esterilización quirúrgica no es solo control de población: es medicina preventiva de primera línea.
+
+- En las hembras: reduce drásticamente el riesgo de tumores mamarios (el 85 % de estos tumores en gatas son malignos) y elimina el riesgo de piometra, una infección uterina grave y a menudo mortal.
+- En los machos: elimina el riesgo de tumores testiculares y reduce los problemas prostáticos.
+- En ambos: evita la transmisión de enfermedades de transmisión sexual como el virus de la inmunodeficiencia felina (VIF) y la leucemia felina (VLFe), que se contagian sobre todo a través de mordiscos en peleas y del apareamiento.
+
+
+MENOS PELEAS, MENOS RUIDO, MEJOR CONVIVENCIA
+
+Los gatos no esterilizados viven en tensión constante: marcan territorio, se pelean por las hembras y maúllan sin descanso durante el celo. Eso genera heridas, infecciones y, de paso, quejas vecinales.
+
+Al esterilizar los gatos de una colonia:
+
+- Desaparecen la mayor parte de las peleas y las lesiones asociadas.
+- Se reduce el marcaje con orina y el olor territorial.
+- Bajan los maullidos nocturnos de celo.
+- Menos vecinos quejándose y una convivencia más pacífica. Según los programas de gestión de colonias que ya aplican el método CER, la reducción de ruidos y olores es uno de los primeros beneficios visibles para el barrio.
+
+
+LA COLONIA SE ESTABILIZA: MENOS GATOS, MÁS SANOS
+
+Contrario a lo que se cree, esterilizar no "condena" a los gatos que viven en el barrio. Todo lo contrario.
+
+Cuando una colonia llega a un porcentaje alto de esterilización (los programas municipales lo consideran controlado a partir de aproximadamente el 80 %), la población deja de crecer de forma sexualmente activa y empieza a estabilizarse. Los gatos que ya viven allí disfrutan de más comida, más espacio y menos competencia, y viven vidas más largas y sanas.
+
+Estudios y décadas de programas de captura-esterilización-retorno (CER) en ciudades de todo el mundo demuestran que las colonias gestionadas se reducen de forma progresiva y natural gracias al envejecimiento de sus miembros, sin necesidad de medidas traumáticas ni sacrificios.
+
+
+LA LEY LO RESPALDA
+
+En España, la Ley 7/2023 de protección de los derechos y el bienestar de los animales obliga a los municipios a gestionar las colonias felinas mediante protocolos CER (capturar, esterilizar y retornar). No es una opción: es un deber legal, porque es la única vía ética y científicamente sólida para controlar estas poblaciones.
+
+Y aquí es donde entra la parte práctica: para que este trabajo de miles de voluntarios y ayuntamientos funcione, hace falta un registro serio de qué se ha hecho, con quién y cuándo. Para eso sirve GeoGatos: una app en la que voluntarios, protectoras y ayuntamientos censan a cada gato, registran su estado de esterilización y dan trazabilidad completa a cada operación CER.
+
+
+CONCLUSIÓN
+
+Esterilizar no es un castigo ni una decisión fría. Es, probablemente, el gesto más grande de responsabilidad que podemos tener con los gatos que viven sin hogar.
+
+- Evita que nazcan camadas condenadas al sufrimiento.
+- Protege la salud de cada gato de la colonia.
+- Reduce peleas, ruidos y conflictos con los vecinos.
+- Estabiliza la colonia a largo plazo.
+- Y cumple con la ley.
+
+Cada gato esterilizado es una cadena de sufrimiento rota. Y cada cadena rota empieza con una sola decisión.
+
+
+CALL TO ACTION (CTA)
+
+Si cuidas una colonia, habla con tu ayuntamiento o con una protectora y pon en marcha el protocolo CER. Y registra cada paso en GeoGatos para que nada se pierda: descarga la app, censa a los gatos de tu barrio y convierte una acción individual en un impacto de comunidad.

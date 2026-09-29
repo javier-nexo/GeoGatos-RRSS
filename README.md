@@ -40,7 +40,8 @@ GeoGatos-RRSS/
 ├── facebook/                    <- Posts de Facebook (2-3 párrafos) + acceso a su plantilla
 ├── instagram/                   <- Posts de Instagram (1 párrafo) + acceso a su plantilla
 ├── linkedin/                    <- Posts de LinkedIn (2-3 párrafos) + acceso a su plantilla
-├── medium/                      <- Artículos de Medium (formato artículo) + acceso a su plantilla
+├── medium/                      <- Artículos de Medium, uno por carpeta + acceso a su plantilla
+│   └── AAAA-MM-DD-tema/         <- Cada artículo con su .md (original) y su .txt (para pegar a mano)
 ├── tiktok/                      <- Posts de TikTok (1-2 frases) + acceso a su plantilla
 ├── x/                           <- Posts de X / Twitter (1 párrafo) + acceso a su plantilla
 └── youtube/                     <- Contenido de YouTube (1 párrafo) + acceso a su plantilla
@@ -108,11 +109,11 @@ Flujo de trabajo:
 1. Elige un tema de `banco-de-temas.md` para la fecha (todas las redes del mismo tema y subtema).
 2. Consulta `docs/sobre-geogatos.md` para verificar hechos y datos.
 3. Abre la plantilla de cada red (en `Plantillas/` o el acceso directo de su carpeta): `plantilla-facebook.md`, `plantilla-instagram.md`, `plantilla-linkedin.md`, `plantilla-medium.md`, `plantilla-tiktok.md`, `plantilla-x.md`, `plantilla-youtube.md`.
-4. Crea una publicación por red en la carpeta correspondiente respetando la longitud de cada plataforma (tabla de abajo).
+4. Crea una publicación por red en la carpeta correspondiente respetando la longitud de cada plataforma (tabla de abajo). **Medium es la excepción:** cada artículo va en su propia carpeta `medium/AAAA-MM-DD-tema/` con el `.md` y su `.txt` de texto plano, que es el que se pega en medium.com.
 5. Publica el mismo día en todas las plataformas adaptando la longitud.
 6. Marca la fecha en el tema usado para no repetir ángulos similares muy seguidos.
 
-**Nombre de archivo sugerido:** `AAAA-MM-DD-tema.md`
+**Nombre de archivo sugerido:** `AAAA-MM-DD-tema.md` (en Medium, `AAAA-MM-DD-tema/AAAA-MM-DD-tema.md` y `.txt`)
 
 ## Longitud por plataforma
 

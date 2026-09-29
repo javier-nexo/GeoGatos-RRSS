@@ -97,13 +97,19 @@ plataformas:
     medios: ["tiktok-01.mp4"]
 
   # --- Medium: artículo (en standby) ---------------------------------
+  # Medium no lo publica el runner: su API está sin soporte. El artículo se
+  # pega a mano en medium.com desde el .txt de la carpeta del artículo.
   medium:
     titulo: "Por qué esterilizar a los gatos de la calle: la decisión que salva vidas"
     texto: |-
-      El artículo completo está en /medium/2026-09-16-por-que-esterilizar.md.
+      El artículo completo está en medium/2026-09-16-por-que-esterilizar/.
 
-      OpenCode lo convierte de Markdown a HTML y lo publica vía `contentFormat: html`.
-      Solo se usan los 3 primeros tags y se ignoran los de más de 25 caracteres.
+      Para publicarlo a mano: se pega el cuerpo desde el .txt y el título en
+      su campo, no este texto. El .md de la misma carpeta es la referencia
+      de formato y el original editable.
+
+      Si algún día se automatiza, el runner manda el campo `texto` de este
+      bloque como `contentFormat: markdown` y usa solo los 3 primeros tags.
     hashtags: ["GeoGatos", "ColoniasFelinas", "CER"]
     medios: ["medium-01.jpg"]
 

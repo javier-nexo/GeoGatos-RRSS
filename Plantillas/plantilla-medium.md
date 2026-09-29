@@ -4,6 +4,12 @@ Publicaciones de **Medium** → formato **artículo extenso**.
 
 > El artículo de Medium del tema del día es la versión profunda; las demás redes publican resúmenes del mismo tema.
 
+> **Dónde va este archivo.** Cada artículo vive en su propia carpeta dentro de
+> `../medium/`, con el `.md` y un `.txt` de texto plano para pegar en Medium,
+> que es la única forma de publicar allí: la API está en standby. El nombre de
+> la carpeta es el `slug`, `AAAA-MM-DD-tema`. Mueve este `.md` allí y genera el
+> `.txt` a partir de él. Ver `../medium/plantilla.md`.
+
 ## Publicación
 
 - **Fecha:** YYYY-MM-DD
