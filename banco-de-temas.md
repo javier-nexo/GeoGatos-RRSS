@@ -171,7 +171,7 @@ Temas sobre el marco legal que impulsa el cuidado de colonias felinas en España
 
 Temas prácticos de salud y bienestar felino.
 
-- **4.1 Alimentación correcta** — Qué dar y qué evitar a un gato de colonia.
+- **4.1 Alimentación correcta** — Qué dar y qué evitar a un gato de colonia. *(usado el 2026-09-30)*
   - Pienso seco: la opción práctica para colonias.
   - Qué alimentos humanos evitar (chocolate, lácteos, etc.).
   - Comedero fijo: hábitos y lugar limpio.

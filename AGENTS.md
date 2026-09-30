@@ -127,10 +127,31 @@ Lo que el agente tiene que saber:
 ## Antes de dar cualquier cosa por terminada
 
 ```bash
+node scripts/verificar-prosa.mjs
 node scripts/validar-manifiesto.mjs --todos
-node --test scripts/validar-manifiesto.test.mjs scripts/preparar-medios.test.mjs
+node --test scripts/validar-manifiesto.test.mjs scripts/preparar-medios.test.mjs scripts/verificar-prosa.test.mjs
 node scripts/publicar.mjs --slug=<slug> --dry-run
 ```
+
+### `verificar-prosa.mjs`: pásalo antes de escribir el manifiesto
+
+Redactar castellano largo mete cosas raras dentro sin que se note. Lo que más
+ha pasado en este repo: una palabra con el alfabeto cirílico en mitad de una
+palanca castellana (`es` + cirílico + `anta`, en medio de una frase), y
+caracteres CJK como si fueran letras. Pasa desapercibido al releer en un visor
+UTF-8 y sale publicado.
+
+```bash
+node scripts/verificar-prosa.mjs                    # todo el contenido
+node scripts/verificar-prosa.mjs --archivo=<ruta>   # un fichero
+node scripts/verificar-prosa.mjs --todo             # más README y AGENTS.md
+```
+
+No es un corrector: marca lo sospechoso y devuelve 1. Deja pasar los hashtags,
+las siglas, las URLs, los identificadores de fichero y los bloques de código, a
+propósito, porque si no saltaría con todo y nadie lo miraría. **No barra
+`scripts/`**: ahí el inglés es el idioma del código, y hay que mirar los
+comentarios a mano.
 
 El validador es la barrera que evita que salga un post malo. El `--dry-run` es
 la única forma de comprobar el pipeline sin gastar una publicación real. Si un

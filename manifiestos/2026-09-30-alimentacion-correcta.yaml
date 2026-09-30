@@ -1,0 +1,121 @@
+# Manifiesto de publicación — 2026-09-30 "Alimentación correcta"
+#
+# Tema 4.1 del banco. Los .md legibles están en facebook/, instagram/,
+# linkedin/, x/, youtube/, tiktok/ y medium/ con la misma fecha.
+#
+# ESTADO REAL: faltan los ficheros de medios en medios/<slug>/.
+# El validador lo detecta. El estado lo pone el usuario, nunca el agente.
+
+slug: "2026-09-30-alimentacion-correcta"
+
+publicacion:
+  fecha: "2026-09-30"
+  tema: "4.1 Alimentación correcta"
+  subtema: "El caldo y la leche, la lista de prohibidos y el precio oculto del pienso seco"
+  autor: "GeoGatos"
+  estado: "borrador"
+  hora: "10:00"
+  desfase_minutos: 5
+
+plataformas:
+
+  # --- Facebook: 3 párrafos + cierre, tono cercano ----------------------
+  facebook:
+    texto: |-
+      Un plato de caldo casero y un cuenco de leche. Los dos buenos gestos más habituales de una casa con gatos, y los dos fallan. El caldo lleva cebolla casi siempre, y la cebolla —en trocitos, en polvo, en el fondo del bonito— destruye los glóbulos rojos del gato. Los gatos son mucho más sensibles a eso que los perros: basta una cantidad pequeña para hacer daño, y cocinar no lo evita. La leche no es tóxica, pero la mayoría de los gatos adultos han perdido la lactasa, la enzima que digiere el azúcar de la leche. No es que les haga daño: es que la digieren mal, y la siguiente es una diarrea.
+
+      Para una colonia, la opción práctica es el pienso seco completo. No se estropea en el comedero, se guarda meses en un bote, se raciona bien y no atrae insectos ni roedores. Pero tiene un precio que hay que decir en voz alta: el gato que come seco bebe más del bebedero y, a la vez, ingiere menos agua en total. Por eso el bebedero limpio deja de ser un detalle y pasa a ser parte de la alimentación. En la práctica, una dieta solo de pienso seco se ha asociado en estudios con más problemas urinarios que una dieta mixta.
+
+      Y luego está la lista de lo que no se da nunca: chocolate, café, alcohol, xilitol, uvas y pasas. Y lo que no es tóxico pero tampoco entra: el hueso cocido, que se astilla y puede perforar el intestino, el hígado en exceso, que envenena con vitamina A, y el pescado crudo, que destruye la tiamina, la vitamina B1 que el gato no puede fabricar. Todo eso se deja fuera, ni por cariño ni por costumbre.
+
+      Si cuidas una colonia, registra en cada visita qué has dejado y cuánto. La comida también es un dato de campo, y en GeoGatos cabe en la misma visita que los gatos que viste. Un plato de más y uno de menos también se notan.
+    hashtags: ["GeoGatos", "ColoniasFelinas", "GatosCallejeros", "AlimentacionFelina", "ProteccionAnimal"]
+    medios: ["facebook-01.jpg"]
+
+  # --- Instagram: 1 párrafo, carrusel de 3 ------------------------------
+  # La primera imagen fija el recorte de las otras dos. Las tres son
+  # apaisadas, así que el recorte al centro no elimina nada importante.
+  instagram:
+    tipo: "carrusel"
+    texto: |-
+      Un plato de caldo casero y un cuenco de leche son los dos buenos gestos más habituales de una casa con gatos, y los dos fallan. El caldo lleva cebolla casi siempre, y la cebolla destruye los glóbulos rojos del gato: son mucho más sensibles que los perros a eso, y cocinar no lo evita, así que el polvo de cebolla de un puré o de un fondo de bonito sigue contando. La leche no es tóxica, pero casi todos los gatos adultos han perdido la lactasa, la enzima que la digiere, así que viene diarrea. Para una colonia la opción práctica es el pienso seco completo: no se estropea en el comedero, se raciona bien y no atrae insectos. Pero el gato que come seco bebe más del bebedero y a la vez ingiere menos agua en total, así que el bebedero limpio es parte de la comida, no un extra. Y la lista de lo que no se da nunca: chocolate, café, alcohol, xilitol, uvas y pasas; y lo que sin ser tóxico tampoco entra, como el hueso cocido, el hígado en exceso o el pescado crudo. Todo eso fuera, ni por cariño ni por costumbre. Registra en cada visita qué has dejado y cuánto. 🐈‍⬛
+    hashtags:
+      [
+        "GeoGatos",
+        "ColoniasFelinas",
+        "GatosCallejeros",
+        "AlimentacionFelina",
+        "BienestarAnimal",
+        "SaludFelina",
+        "ProteccionAnimal"
+      ]
+    medios:
+      - "instagram-01.jpg"
+      - "instagram-02.jpg"
+      - "instagram-03.jpg"
+
+  # --- LinkedIn: 3 párrafos, tono institucional (en standby) -------------
+  linkedin:
+    texto: |-
+      La alimentación de una colonia no es un detalle de la gestión: es la variable que más se improvisa y menos se documenta.
+
+      El error más habitual no es dar el pienso equivocado, es dar lo que sobra en casa. Un caldo casero lleva cebolla con frecuencia, y el polvo de cebolla que se usa en purés y sopas es tan peligroso como la cebolla entera: los gatos son mucho más sensibles a la familia de la cebolla que los perros, y cocinar o secar no elimina el efecto. En sentido contrario, la leche no es tóxica pero casi todos los gatos adultos han perdido la enzima que la digiere. Son gestos de buena intención que producen intoxicaciones y diarreas todos los días.
+
+      La otra mitad del problema es menos visible. El pienso seco completo es, para una colonia, la opción técnicamente correcta: no se estropea en el comedero, se raciona, se almacena y no atrae vectores. Pero la humedad del alimento es una variable clínica, no un detalle de formato: un gato con dieta seca bebe más del bebedero y, aun así, ingiere menos agua en total, y las dietas solo secas se han asociado en estudios con un riesgo sensiblemente mayor de enfermedad del tracto urinario inferior. Un comedero y un bebedero mal gestionados son, en la práctica, un problema de salud.
+
+      Para un ayuntamiento o una protectora, esto significa que la calidad de la gestión depende de un dato que casi nunca se registra: qué se ha dejado en cada visita y en qué cantidad. GeoGatos recoge ese dato en la misma visita que el censo de gatos y la validación por GPS, de modo que la alimentación de una colonia deja de ser una anécdota informal y pasa a ser un registro con fecha y responsable. La Ley 7/2023 obliga a gestionar las colonias mediante el método CER; el registro de la alimentación es lo que convierte esa obligación en algo verificable.
+
+      Descarga la app, registra la colonia de tu municipio y empieza a documentar lo que se alimenta, no solo lo que se cuenta. Más en geogatos.com.
+    hashtags: ["GeoGatos", "ColoniasFelinas", "GestionDeColonias", "SaludAnimal", "AlimentacionFelina", "LeyAnimal"]
+    medios: ["linkedin-01.jpg"]
+
+  # --- X: 1 párrafo, máximo 280 caracteres contando el hashtag -----------
+  # OJO: en self-serve X admite UN SOLO hashtag. El validador lo rechaza.
+  # Sin URL en el texto: los enlaces de X cuentan como 23 caracteres fijos
+  # y no hay a dónde apuntar, porque Medium y el resto están en standby.
+  x:
+    texto: |-
+      El caldo lleva cebolla casi siempre: destruye los glóbulos rojos del gato y cocinar no lo evita. La leche no es tóxica, pero casi todos los adultos ya no la digieren. Para colonias, pienso seco completo y bebedero limpio al lado. 🐈‍⬛
+    hashtags: ["GeoGatos"]
+    medios: ["x-01.jpg"]
+
+  # --- YouTube: título + descripción (en standby) ------------------------
+  youtube:
+    titulo: "Alimentar bien a una colonia felina: lo que sí y lo que nunca — GeoGatos"
+    texto: |-
+      Qué darle de comer a los gatos de una colonia y, sobre todo, qué no darles nunca. Repasamos por qué un plato de caldo casero puede ser peligroso por el polvo de cebolla, por qué la leche les causa diarrea a casi todos los gatos adultos, y por qué el pienso seco completo es la opción práctica para una colonia, con el precio que hay que pagar: el gato que come seco bebe más del bebedero pero ingiere menos agua en total, así que el bebedero limpio deja de ser un extra. Cerramos con la lista de alimentos que no deben aparecer en el comedero: chocolate, café, alcohol, xilitol, uvas y pasas, y también hueso cocido, hígado en exceso y pescado crudo. GeoGatos registra todo esto en la visita, para que la comida de una colonia también quede documentada. Más en geogatos.com.
+    hashtags: ["GeoGatos", "ColoniasFelinas", "GatosCallejeros", "AlimentacionFelina", "SaludFelina"]
+    medios: ["youtube-01.jpg"]
+
+  # --- TikTok: 1-2 frases para el texto en pantalla (en standby) --------
+  tiktok:
+    texto: |-
+      El caldo tiene cebolla. La cebolla mata los glóbulos rojos del gato.
+    hashtags: ["GeoGatos", "gatos", "AlimentacionFelina", "ProteccionAnimal"]
+    medios: ["tiktok-01.mp4"]
+
+  # --- Medium: artículo (en standby) -------------------------------------
+  # Medium no lo publica el runner: su API está sin soporte oficial. El
+  # artículo se pega a mano en medium.com desde el .txt de su carpeta, no
+  # desde este bloque.
+  medium:
+    titulo: "Alimentar bien a una colonia felina: lo que sí y lo que nunca"
+    texto: |-
+      El artículo completo está en medium/2026-09-30-alimentacion-correcta/.
+
+      Para publicarlo a mano: el título va en su campo, y el cuerpo se pega
+      desde el .txt, que ya viene sin marcas de markdown. El .md de la misma
+      carpeta es el original editable y la referencia de formato.
+
+      El .txt incluye arriba el subtítulo, los tres tags y la lista de los
+      35 tramos que en el .md iban en negrita, porque Medium no tiene
+      markdown y hay que repasarlos a mano en su editor.
+
+      Si algún día se automatiza, el runner manda el campo `texto` de este
+      bloque como `contentFormat: markdown` y usa solo los 3 primeros tags.
+    hashtags: ["GeoGatos", "ColoniasFelinas", "GatosCallejeros"]
+    medios: ["medium-01.jpg"]
+
+opciones:
+  ante_error: "continuar_publicar"
+  permitir_sin_medios: true
