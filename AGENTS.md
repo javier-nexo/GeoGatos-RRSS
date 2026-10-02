@@ -104,9 +104,16 @@ node scripts/importar-articulo.mjs --slug=<slug>
 - Llama a `POST /api/v1/article` con un token JWT de Admin
 - Actualiza el manifiesto con el `articulo_id` creado
 
-**Requisitos (local):**
-- Variable de entorno `GEOGATOS_ADMIN_TOKEN` con un token JWT de Admin
-- Variable de entorno `GEOGATOS_API_URL` (opcional, default: `https://geogatos.onrender.com/api/v1`)
+**Obtención automática del token:**
+
+El script obtiene el token automáticamente de (en orden):
+1. Variable de entorno `GEOGATOS_ADMIN_TOKEN`
+2. Archivo `.env` en el directorio raíz
+3. GitHub Secrets (vía GitHub CLI: `gh secret get GEOGATOS_ADMIN_TOKEN`)
+
+No necesitas definir ninguna variable de entorno local. Si tienes GitHub CLI
+instalado y autenticado, el script obtiene el token de GitHub Secrets
+directamente.
 
 **Automatización con GitHub Actions:**
 

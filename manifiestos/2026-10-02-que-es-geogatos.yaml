@@ -1,0 +1,109 @@
+# =============================================================================
+# MANIFIESTO DE PUBLICACIÓN — 2026-10-02-que-es-geogatos
+# =============================================================================
+# Este archivo es el ÚNICO que lee el runner. Los .md de cada red son la
+# versión legible por humanos; este .yaml es el que se publica.
+#
+# Para publicar: poner los medios en medios/2026-10-02-que-es-geogatos/
+# y cambiar  estado:  a "listo". El push dispara la publicación.
+# =============================================================================
+
+slug: "2026-10-02-que-es-geogatos"
+
+publicacion:
+  fecha: "2026-10-02"
+  tema: "1.1 Qué es GeoGatos en 10 segundos"
+  subtema: "La app que cuida a los gatos de tu calle (mensaje principal)"
+  autor: "GeoGatos"
+
+  # Máquina de estados. Solo se publica cuando estado = "listo".
+  #   borrador → esperando_medios → listo → publicado / error
+  estado: "borrador"
+
+  hora: "10:00"
+  desfase_minutos: 5
+
+plataformas:
+
+  facebook:
+    texto: |-
+      Hay una colonia de gatos en tu barrio, y alguien lleva el registro en un cuaderno que se puede perder. 🐈‍⬛
+
+      La mayoría de las colonias urbanas se gestionan con herramientas prestadas: un grupo de WhatsApp que se satura, una nota en el móvil, una hoja de cálculo que solo una persona sabe usar. Cuando alguien pregunta cómo está la colonia de la calle X, la respuesta suele ser "no lo sé, lleva años sin ir". No es un fallo de las personas que cuidan: es un fallo de las herramientas.
+
+      GeoGatos es una aplicación para gestionar colonias de gatos urbanos. Permite registrar colonias con GPS, censar gatos individualmente (color, salud, esterilización, microchip), documentar visitas con validación de ubicación, reportar incidencias y coordinar equipos de voluntarios. Todo funciona con o sin conexión. Está construido alrededor del método CER (Capturar-Esterilizar-Retornar), el protocolo que la Ley 7/2023 exige para la gestión de colonias.
+
+      Cada visita, cada gato y cada incidencia quedan registrados con fecha, responsable y ubicación. Los datos se pueden usar para justificar una subvención, coordinar una protectora o saber si una colonia está mejorando.
+
+      Descarga GeoGatos, registra la colonia de tu barrio y empieza a cuidar con datos, no con memoria. Disponible en Google Play y en geogatos.com.
+    hashtags: ["GeoGatos", "ColoniasFelinas", "ProteccionAnimal"]
+    medios: ["facebook-01.jpg"]
+
+  instagram:
+    tipo: "carrusel"
+    texto: |-
+      Tu colonia de gatos se registra en un cuaderno que se puede perder. GeoGatos la registra para siempre.
+
+      GeoGatos es la app que cuida a los gatos de tu calle. Registra cada colonia con GPS, censa a cada gato —color, salud, esterilización, microchip—, documenta cada visita con la ubicación verificada y coordina a los voluntarios para que nada se pierda. Funciona con o sin conexión, y está construido alrededor del método CER, el protocolo que la Ley 7/2023 exige para gestionar colonias felinas. De WhatsApp y papel a una herramienta real: geogatos.com. 🐈‍⬛
+
+      Síguenos y descarga GeoGatos. Registra la colonia de tu barrio.
+    hashtags: ["GeoGatos", "ColoniasFelinas", "GatosCallejeros"]
+    medios:
+      - "instagram-01.jpg"
+      - "instagram-02.jpg"
+      - "instagram-03.jpg"
+
+  linkedin:
+    texto: |-
+      La Ley 7/2023 de protección de los derechos y el bienestar de los animales establece que las administraciones locales deben gestionar las colonias de gatos mediante el método CER (Capturar-Esterilizar-Retornar). Pero gestionar una colonia sin herramientas de registro es inviable: no hay forma de demostrar qué se ha hecho, cuántos gatos hay, cuáles están esterilizados ni qué incidencias se han resuelto.
+
+      GeoGatos es una plataforma de gestión de colonias felinas urbanas construida para ese marco legal. Permite censar gatos individualmente, documentar visitas con validación GPS, gestionar el flujo completo de operaciones CER con trazabilidad, y generar los datos que un ayuntamiento necesita para justificar su programa ante una subvención o una inspección. Funciona con o sin conexión, y su modelo anti-duplicados por scoring evita que el censo se contamine con fichas repetidas.
+
+      Está disponible para Android, iOS y Windows, con versión web en geogatos.com. Pensado para ayuntamientos, protectoras, veterinarios y voluntarios que necesitan pasar de la buena intención al registro verificable.
+
+      Si trabajas con colonias felinas y necesitas datos trazables, escríbenos a info@geogatos.com o visita geogatos.com.
+    hashtags: ["GeoGatos", "ColoniasFelinas", "Ley7_2023"]
+    medios: ["linkedin-01.jpg"]
+
+  x:
+    texto: |-
+      De WhatsApp y papel a una herramienta real para gatos.
+
+      GeoGatos registra colonias con GPS, censa a cada gato y documenta visitas, incidencias y operaciones CER. Funciona con o sin conexión, y todo queda con fecha, responsable y ubicación. geogatos.com 🐈‍⬛
+    hashtags: ["GeoGatos"]
+    medios: ["x-01.jpg"]
+
+  youtube:
+    titulo: "GeoGatos: la app que cuida a los gatos de tu calle"
+    texto: |-
+      GeoGatos es una aplicación para gestionar colonias de gatos urbanos. Registra colonias con GPS, censa a cada gato con sus datos de salud y esterilización, documenta visitas con ubicación verificada y coordina a los voluntarios en un solo lugar. Funciona con o sin conexión y está construido alrededor del método CER, el protocolo que la Ley 7/2023 exige para gestionar colonias felinas. Disponible para Android, iOS y Windows, con versión web en geogatos.com.
+    hashtags: ["GeoGatos", "ColoniasFelinas", "CER"]
+    medios: ["youtube-01.jpg"]
+
+  tiktok:
+    texto: |-
+      De cuaderno a app: GeoGatos registra colonias, gatos y visitas con GPS.
+    hashtags: ["GeoGatos", "gatos", "ProteccionAnimal"]
+    medios: ["tiktok-01.mp4"]
+
+  medium:
+    titulo: "GeoGatos: la app que cuida a los gatos de tu calle"
+    texto: |-
+      El artículo completo está en medium/2026-10-02-que-es-geogatos/.
+
+      Para publicarlo a mano: el título va en su campo, y el cuerpo se pega
+      desde el -limpio.md, que ya viene sin notas ni metadatos. El .md de la
+      misma carpeta es el original editable y la referencia de formato.
+
+      El -limpio.md incluye solo el título, el subtítulo y el contenido en
+      markdown limpio, listo para copiar y pegar en Supabase (módulo de
+      Educación de la app).
+
+      Si algún día se automatiza, el runner manda el campo `texto` de este
+      bloque como `contentFormat: markdown` y usa solo los 3 primeros tags.
+    hashtags: ["GeoGatos", "ColoniasFelinas", "CER"]
+    medios: ["medium-01.jpg"]
+
+opciones:
+  ante_error: "continuar_publicar"
+  permitir_sin_medios: true

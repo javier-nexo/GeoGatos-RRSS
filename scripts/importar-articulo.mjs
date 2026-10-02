@@ -9,22 +9,63 @@
  * Uso:
  *   node scripts/importar-articulo.mjs --slug=<slug>
  *
- * Variables de entorno requeridas:
- *   GEOGATOS_API_URL  — URL base de la API (default: https://geogatos.onrender.com/api/v1)
- *   GEOGATOS_ADMIN_TOKEN — Token JWT de Admin para autenticación
+ * El token se obtiene automáticamente de (en orden):
+ *   1. Variable de entorno GEOGATOS_ADMIN_TOKEN
+ *   2. Archivo .env en el directorio raíz
+ *   3. GitHub Secrets (vía GitHub CLI: gh secret get GEOGATOS_ADMIN_TOKEN)
  *
- * Opcional:
- *   GEOGATOS_API_KEY  — API Key alternativa (si la API la soporta)
+ * Variables de entorno opcionales:
+ *   GEOGATOS_API_URL  — URL base de la API (default: https://geogatos.onrender.com/api/v1)
  */
 
 import { readFileSync, existsSync } from 'node:fs';
 import { join, basename } from 'node:path';
 import { parse } from 'yaml';
+import { execSync } from 'node:child_process';
+
+// ─── Obtener token de Admin ─────────────────────────────────────────────────
+
+function obtenerToken() {
+  // 1. Variable de entorno
+  if (process.env.GEOGATOS_ADMIN_TOKEN) {
+    return process.env.GEOGATOS_ADMIN_TOKEN;
+  }
+
+  // 2. Archivo .env
+  const envPath = join(process.cwd(), '.env');
+  if (existsSync(envPath)) {
+    const envContent = readFileSync(envPath, 'utf-8');
+    for (const line of envContent.split('\n')) {
+      const match = line.match(/^\s*([^#][^=]+)\s*=\s*(.*)\s*$/);
+      if (match) {
+        const [, key, value] = match;
+        if (key.trim() === 'GEOGATOS_ADMIN_TOKEN' && value.trim()) {
+          return value.trim();
+        }
+      }
+    }
+  }
+
+  // 3. GitHub Secrets (vía GitHub CLI)
+  try {
+    const result = execSync('gh secret get GEOGATOS_ADMIN_TOKEN --repo javier-nexo/GeoGatos-RRSS', {
+      encoding: 'utf-8',
+      stdio: ['pipe', 'pipe', 'pipe'],
+    }).trim();
+    if (result) {
+      return result;
+    }
+  } catch {
+    // GitHub CLI no disponible o no autenticado
+  }
+
+  return null;
+}
 
 // ─── Configuración ──────────────────────────────────────────────────────────
 
 const API_URL = process.env.GEOGATOS_API_URL || 'https://geogatos.onrender.com/api/v1';
-const ADMIN_TOKEN = process.env.GEOGATOS_ADMIN_TOKEN;
+const ADMIN_TOKEN = obtenerToken();
 
 // ─── Argumentos ──────────────────────────────────────────────────────────────
 
