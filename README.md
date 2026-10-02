@@ -34,7 +34,7 @@ GeoGatos-RRSS/
 │   └── plantilla-youtube.md
 ├── docs/
 │   ├── sobre-geogatos.md        <- Documento maestro: qué es la app, público, mensajes clave
-│   └── automatizacion-make.md   <- Guía del pipeline de publicación: workflow, credenciales y bloqueos
+│   └── publicacion-automatica.md <- Guía del pipeline de publicación: workflow, credenciales y bloqueos
 ├── registro/                    <- Resultado de cada publicación (JSONL, versionado: evita duplicados)
 ├── assets/                      <- Imágenes, logos, videos y otros recursos
 ├── facebook/                    <- Posts de Facebook (2-3 párrafos) + acceso a su plantilla
@@ -89,7 +89,7 @@ tocar ningún manifiesto.
 
 La guía completa, con el workflow de publicación, las credenciales que hay que
 pedir en cada plataforma y los bloqueos de cada red, está en
-[`docs/automacion-make.md`](docs/automacion-make.md).
+[`docs/publicacion-automatica.md`](docs/publicacion-automatica.md).
 
 ```bash
 npm install

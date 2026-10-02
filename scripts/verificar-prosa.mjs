@@ -28,10 +28,6 @@ import { pathToFileURL } from 'node:url';
 // Palabras inglesas que aparecen por descuido al redactar en castellano.
 // Se listan a mano porque una lista automática mete demasiados falsos
 // positivos con nombres propios, siglas y tecnicismos.
-//
-// "make" está en la lista a propósito: en este repo ya no hay Make (la
-// publicación la hace GitHub Actions), así que su presencia es un resto de
-// textos viejos. "and" sale por las citas de papers, que se dejan.
 const INGLES = [
   'the', 'with', 'left', 'would', 'this', 'which', 'from', 'that',
   'have', 'were', 'been', 'they', 'them', 'then', 'than', 'there', 'their',
@@ -52,19 +48,15 @@ const SOSPECHOSAS_FIJAS = [
 
 // Palabras que en castellano son legítimas pero en inglés son la palabra
 // entera. Se listan para que la revisión las salte sin tener que pensar:
-// "and" sale en citas de papers, "make" en los restos de la era Make.
-const EN_PALABRA = new Set(['and', 'make']);
+// "and" sale en las citas de papers, que se citan literales.
+const EN_PALABRA = new Set(['and']);
 
 // Rótulos de interfaz que se citan literalmente y que son correctos en inglés.
-// Sin esta lista, --todo marca seis cosas en docs/automacion-make.md y en
+// Sin esta lista, --todo marca cosas en docs/publicacion-automatica.md y en
 // rrss.config.yaml y siempre sale con código 1, que es lo mismo que no tener
 // barrera ninguna. Se comparan en minúsculas y admiten espacios flexibles.
 export const ROTULOS_UI = [
   'deploy from a branch',
-  'custom webhook',
-  'just the push event',
-  'working directory',
-  'run a script',
 ];
 
 const CODIGO = [

@@ -3,21 +3,20 @@
  * Publicador — GeoGatos
  * =====================
  *
- * Lee un manifiesto, lo valida, y publica en cada red activa. Make lo invoca
- * desde un webhook de GitHub cuando detecta `estado: listo`. También se puede
- * invocar desde GitHub Actions; el script no sabe quién lo llamó.
+ * Lee un manifiesto, lo valida, y publica en cada red activa. Lo dispara el
+ * workflow de `.github/workflows/publicar.yml` cuando un manifiesto llega a
+ * `estado: listo`, y se puede invocar a mano desde local; el script no sabe
+ * quién lo llamó.
  *
- * Por qué toda la lógica vive aquí y no en 40 módulos de Make:
+ * Por qué toda la lógica vive aquí y no repartida por pasos en el workflow:
  *   - Se puede probar en local antes de tocar ninguna cuenta real.
- *   - El plan gratuito de Make da 1.000 créditos al mes. Un escenario con un
- *     módulo por red y uno por subsistema se gasta ese presupuesto en unas
- *     pocas publicaciones; este script consume unos 8 créditos por publicación
- *     porque Make solo lo invoca una vez.
- *   - La lógica queda versionada y revisable en el repositorio, no repartida
- *     por un canvas que nadie puede diffear.
+ *   - La lógica queda versionada y revisable en el repositorio, con sus
+ *     tests, en vez de viva en el log de una ejecución que ya no existe.
+ *   - El workflow solo tiene que saber cuándo disparar y cómo leer el
+ *     resultado. Cambiar la lógica de una red no obliga a tocar el workflow.
  *
- * En `docs/automacion-make.md` está el montaje paso a paso, los límites reales
- * del plan gratuito y la alternativa con GitHub Actions.
+ * En `docs/publicacion-automatica.md` está el montaje paso a paso, los límites
+ * reales de cada API y los bloqueos de cada red.
  *
  * Uso:
  *   node scripts/publicar.mjs --manifiesto=manifiestos/2026-10-05-tema.yaml
@@ -83,8 +82,8 @@ function die(mensaje, codigo = 2) {
 // Registro de ejecuciones
 // ---------------------------------------------------------------------------
 /**
- * Un JSONL: una línea por publicación/red. Make lo lee para saber qué pasó y
- * para no volver a publicar lo ya publicado.
+ * Un JSONL: una línea por publicación/red. El runner lo lee para saber qué
+ * pasó y para no volver a publicar lo ya publicado.
  */
 function registrar(cfg, entrada) {
   const rel = cfg.salida?.registro ?? 'registro/publicaciones.jsonl';
@@ -176,8 +175,8 @@ if (pub.estado !== 'listo' && !args.forzar && !args.dryRun) {
 // Credenciales
 // ---------------------------------------------------------------------------
 /**
- * Se leen del entorno. Make las inyecta; en local, exporta las variables o usa
- * --dry-run. Nunca se guardan en el repo.
+ * Se leen del entorno. En el runner llegan como secrets; en local, exporta las
+ * variables o usa --dry-run. Nunca se guardan en el repo.
  */
 const CREDENCIALES = Object.fromEntries(
   Object.entries(process.env).filter(([k]) => /^(FACEBOOK|INSTAGRAM|LINKEDIN|X_|YOUTUBE|TIKTOK|MEDIUM)_/.test(k)),

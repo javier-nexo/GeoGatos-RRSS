@@ -32,5 +32,5 @@ Qué darle de comer a los gatos de una colonia y, sobre todo, qué no darles nun
 ## Notas / contexto
 
 - **Límites** (`rrss.config.yaml`, `youtube`): título 100 caracteres, descripción 5.000, un medio como máximo. El título lleva 62, con margen.
-- **YouTube está en standby**: no hay publicador automático (ver `docs/automacion-make.md`), y el usuario no hace vídeos de momento. Sin vídeo no hay nada que publicar; el texto queda escrito para el día que lo haya.
+- **YouTube está en standby**: no hay publicador automático (ver `docs/publicacion-automatica.md`), y el usuario no hace vídeos de momento. Sin vídeo no hay nada que publicar; el texto queda escrito para el día que lo haya.
 - `geogatos.com` es un hecho verificado (`docs/sobre-geogatos.md`, sección 7).

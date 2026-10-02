@@ -424,7 +424,7 @@ const linkedin = {
  * finalize. X no acepta el fichero entero en una llamada.
  *
  * Restricción importante: en cuentas self-serve solo se admite 1 hashtag por
- * post. La valida el script de validación, no Make.
+ * post. La valida el script de validación, no el runner.
  */
 const x = {
   requiere: ['X_ACCESS_TOKEN'],
@@ -519,14 +519,14 @@ const youtube = {
   activoPorDefecto: false,
   async publicar({ texto, dryRun, log }) {
     if (dryRun) {
-      log('borrador', 'YouTube: sin publicador automático configurado (ver docs/automacion-make.md).');
+      log('borrador', 'YouTube: sin publicador automático configurado (ver docs/publicacion-automatica.md).');
       log('borrador', `Se publicaría como comentario fijo o descripción en el vídeo del tema, ${texto.length} caracteres.`);
       return { ok: true, url: 'https://youtube.com/(dry-run)' };
     }
     throw new Error(
       'YouTube no tiene publicador configurado. Publicar la descripción de un vídeo ' +
       'exige primero que exista el vídeo, y crear un vídeo vacío en el canal es peor que no publicar. ' +
-      'Ver la sección "YouTube" de docs/automacion-make.md.',
+      'Ver la sección "YouTube" de docs/publicacion-automatica.md.',
     );
   },
 };

@@ -10,7 +10,7 @@ se llamen `facebook-01.jpg` ni nada parecido: eso lo pone el script.
    creo el manifiesto.
 3. **Yo** corro el script, que copia tus imágenes a `medios/<slug>/` con el
    nombre que cada red necesita, y te enseño el reparto en una tabla.
-4. **Tú** revisas, pones `estado: listo` y haces push. Make publica.
+4. **Tú** revisas, pones `estado: listo` y haces push. El workflow publica.
 
 ## El reparto es por posición
 

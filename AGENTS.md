@@ -108,9 +108,8 @@ Para activar una red, quita su línea `standby`. No toques los manifiestos.
 ## Publicación automática
 
 Quien publica es un workflow de GitHub Actions
-(`.github/workflows/publicar.yml`), no Make: el módulo de Make que ejecuta
-scripts no está disponible en su plan gratuito. Los detalles están en
-`docs/automacion-make.md`.
+(`.github/workflows/publicar.yml`). Los detalles están en
+`docs/publicacion-automatica.md`.
 
 Lo que el agente tiene que saber:
 
@@ -180,6 +179,6 @@ No prometas publicación automática en estas sin comprobar el estado actual:
 - **TikTok**: requiere aprobación del scope `video.publish` y auditoría de la
   app; sin eso, todo se publica en modo privado.
 - **Medium**: su API está sin soporte oficial desde 2023.
-- **YouTube**: no hay publicador automático; ver `docs/automacion-make.md`.
+- **YouTube**: no hay publicador automático; ver `docs/publicacion-automatica.md`.
 - **Instagram**: exige cuenta profesional y solo acepta JPEG.
 - **X**: en cuentas self-serve, un solo hashtag por post vía API.

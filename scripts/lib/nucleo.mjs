@@ -129,9 +129,9 @@ export function longitudPonderadaX(texto, longitudUrl = 23) {
  * TikTok. Estas redes hacen `curl` al fichero: si la URL no responde, la
  * publicación falla sin explicación útil.
  *
- * Se validan las rutas porque acaban interpoladas en URLs que Make entrega a
- * las APIs con un token de acceso a las cuentas. Un `../` permitiría leer
- * ficheros de fuera de la publicación.
+ * Se validan las rutas porque acaban interpoladas en URLs que el runner
+ * entrega a las APIs con un token de acceso a las cuentas. Un `../`
+ * permitiría leer ficheros de fuera de la publicación.
  */
 export function resolverUrlMedio(rutaRelativa, baseUrl) {
   const rel = String(rutaRelativa ?? '').trim().replace(/\\/g, '/');
@@ -283,7 +283,7 @@ export function validarManifiestoCompleto(manifiesto, rutaManifiesto, cfg, raiz)
     err('publicacion.estado', `"${pub.estado}" no es un estado válido (${ESTADOS.join(', ')})`);
   }
   if (pub.estado === 'listo') {
-    warn('publicacion.estado', 'estado "listo": al hacer push, Make publicará de verdad');
+    warn('publicacion.estado', 'estado "listo": al hacer push, el runner publicará de verdad');
   }
   if (pub.hora && !/^([01]\d|2[0-3]):[0-5]\d$/.test(pub.hora)) {
     err('publicacion.hora', `"${pub.hora}" no es una hora HH:MM válida`);
@@ -305,7 +305,7 @@ export function validarManifiestoCompleto(manifiesto, rutaManifiesto, cfg, raiz)
   for (const [nombre, plataforma] of Object.entries(manifiesto.plataformas)) {
     const cfgRed = cfg.redes[nombre];
     if (!cfgRed) {
-      warn(nombre, 'no figura en rrss.config.yaml; Make no la reconocerá');
+      warn(nombre, 'no figura en rrss.config.yaml; el runner no la reconocerá');
       continue;
     }
     const { estado, motivo } = estadoRed(nombre, cfg, plataforma);

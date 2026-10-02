@@ -1,7 +1,7 @@
 # Publica los manifiestos que el usuario ha puesto en `listo`.
 #
-# El disparador es el mismo `push` que usaría Make, y el filtro es el mismo
-# `estado: "listo"`. Lo único que cambia es quién ejecuta `publicar.mjs`.
+# El disparador es un `push` a `main` que toca `manifiestos/*.yaml`, y el
+# filtro es `estado: "listo"`.
 #
 # Tres detalles de este fichero no son obvios y por eso están comentados:
 #

@@ -1,4 +1,4 @@
-# Configuración del pipeline de publicación (OpenCode → Make)
+# Configuración del pipeline de publicación (OpenCode → runner)
 #
 # Este archivo es la ÚNICA fuente de verdad de los ajustes de infraestructura.
 # Si cambias de alojamiento de medios, de cuenta o de red, edita solo aquí.
@@ -12,7 +12,7 @@ pipeline:
 # ---------------------------------------------------------------------------
 # Instagram hace `curl` al archivo y TikTok exige URLs de un dominio verificado.
 # Por eso los medios NO pueden quedarse en una carpeta local: necesitan HTTPS
-# público. Ver docs/automacion-make.md para las dos topologías posibles.
+# público. Ver docs/publicacion-automatica.md para las dos topologías posibles.
 medios:
   # Carpeta local donde depositas las imágenes y vídeos antes de publicarlas.
   carpeta: "medios"
@@ -55,7 +55,7 @@ medios:
 #                      cambio de proyecto, no de operación.
 #
 #   standby: <motivo>  La red SÍ está en el plan: se le escribe el contenido
-#                      completo y se valida igual que las demás, pero Make no
+#                      completo y se valida igual que las demás, pero el runner no
 #                      recibe la orden de publicar en ella. Es la palanca
 #                      operativa: se activa o se quita en un solo sitio, sin
 #                      tocar ningún manifiesto.
@@ -158,11 +158,11 @@ limites:
     verificado: true
 
 # ---------------------------------------------------------------------------
-# Formato de salida de Make
+# Formato de salida de la publicación
 # ---------------------------------------------------------------------------
 salida:
-  # Dónde escribe Make el resultado de cada publicación.
+  # Dónde escribe el runner el resultado de cada publicación.
   registro: "registro/publicaciones.jsonl"
-  # Si es true, tras publicar Make actualiza `estado` en el manifiesto y
+  # Si es true, tras publicar el workflow actualiza `estado` en el manifiesto y
   # confirma el cambio. Es la única protección frente a publicar dos veces.
   escribir_estado_en_repo: true

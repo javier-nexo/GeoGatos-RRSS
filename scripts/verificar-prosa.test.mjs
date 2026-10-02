@@ -78,7 +78,8 @@ test('ignora los hashtags', () => {
 });
 
 test('ignora las siglas en mayúsculas', () => {
-  // "make" esta en la lista de inglés, pero en mayúsculas es una sigla.
+  // Una palabra de la lista de inglés, en mayúsculas, es una sigla: la revisión
+  // compara en minúsculas, pero el filtro de siglas se la come antes.
   assert.deepEqual(revisarTexto('El API, la RSS y el GPS del CER', 'x.md'), []);
 });
 
@@ -94,20 +95,26 @@ test('ignora los bloques de código', () => {
   assert.deepEqual(revisarTexto(texto, 'x.md'), []);
 });
 
-test('ignora "and" y "make", que salen legitimamente', () => {
-  // "and" en citas de papers; "make" es un resto de la era Make de este repo.
+test('ignora "and", que sale legitimamente', () => {
+  // "and" en citas de papers, que se citan literales.
   assert.deepEqual(revisarTexto('Piyarungsri et al. (2020) and Kennedy and White', 'x.md'), []);
-  assert.deepEqual(revisarTexto('El manifiesto lo lee Make, no el agente.', 'x.md'), []);
+});
+
+test('marca "make", que en castellano no significa nada', () => {
+  // "make" es una palabra inglesa corriente, así que la lista la marca. En este
+  // repo no queda ninguna herramienta de publicación con ese nombre, así que si
+  // aparece es texto viejo o una palabra inglesa colada.
+  const h = revisarTexto('El manifiesto lo lee make, no el agente.', 'x.md');
+  assert.equal(h.length, 1);
+  assert.match(h[0].que, /palabra inglesa: "make"/);
 });
 
 test('ignora los rótulos de interfaz citados en inglés', () => {
-  // Vienen literales de las pantallas de GitHub y de Make. Si se marcaran,
-  // --todo no podría usarse como barrera: siempre saldria con código 1.
+  // Vienen literales de las pantallas de GitHub. Si se marcaran, --todo no
+  // podría usarse como barrera: siempre saldria con código 1.
   const casos = [
     'GitHub Pages con "Deploy from a branch" SOLO admite dos carpetas',
-    '#### Modulo 1 - Webhooks - Custom webhook',
-    '| Events | *Just the push event* |',
-    '- **Working directory**: `/tmp/GeoGatos-RRSS`.',
+    '| Source | Deploy from a branch |',
   ];
   for (const texto of casos) {
     assert.deepEqual(revisarTexto(texto, 'x.md'), [], `marca: ${texto}`);

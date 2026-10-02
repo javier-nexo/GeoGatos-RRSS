@@ -67,7 +67,7 @@ node scripts/validar-manifiesto.mjs --todos
 
 El validador comprueba que cada fichero existe y que su formato vale para la
 red que lo va a usar. Si pasa, cambias `estado: listo` en el manifiesto,
-haz push y Make publica.
+haz push y el workflow publica.
 
 ## Cómo se rellena esto en la práctica
 
@@ -157,6 +157,6 @@ visible en github.com. Pero hay una regla que conviene tener presente:
 
 > **Nunca escribas una credencial en un fichero del repositorio.** Cualquier
 > cosa committeada acaba servida por `github.io`. Las credenciales van siempre
-> por variable de entorno en Make.
+> por variable de entorno: en el runner, en los secrets del repo.
 
 `node_modules/` y `registro/` están en `.gitignore`, así que no se sirven.

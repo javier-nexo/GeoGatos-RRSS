@@ -3,7 +3,7 @@
 # Ejemplo de trabajo construido a partir de la publicación ya escrita en
 # /facebook, /instagram, /linkedin, /medium, /tiktok, /x y /youtube con la
 # misma fecha. Sirve como referencia de cómo se traduce el contenido humano
-# al formato que consume Make.
+# al formato que consume el runner.
 #
 # ESTADO REAL: faltan los ficheros de medios. El validador lo detecta.
 

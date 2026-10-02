@@ -3,11 +3,11 @@
  * Validador de manifiestos de publicación — GeoGatos
  * =================================================
  *
- * Puerta de calidad entre "OpenCode genera el contenido" y "Make lo publica".
- * Se ejecuta en local ANTES de hacer push, y Make vuelve a invocarlo en el
- * webhook como segunda barrera.
+ * Puerta de calidad entre "OpenCode genera el contenido" y "el runner lo
+ * publica". Se ejecuta en local ANTES de hacer push, y el workflow lo vuelve a
+ * invocar como segunda barrera.
  *
- * Por qué un validador si Make ya podría fallar solo:
+ * Por qué un validador si publicar.mjs ya podría fallar solo:
  *   - Publicar es irreversible. Si Instagram rechaza a las 10:00, el tweet ya
  *     salió y el post de LinkedIn se queda sin publicar. El validador comprueba
  *     los límites ANTES de que nada salga.

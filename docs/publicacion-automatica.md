@@ -1,8 +1,9 @@
-# Automatización de publicaciones con Make
+# Publicación automática
 
-Cómo se encadena OpenCode → medios → Make para publicar en todas las redes.
+Cómo se encadena OpenCode → medios → GitHub Actions para publicar en todas las
+redes.
 
-> Última revisión: septiembre de 2026. Los límites de cada API cambian sin
+> Última revisión: octubre de 2026. Los límites de cada API cambian sin
 > previo aviso; si algo falla de golpe, empieza por la tabla de la sección 7.
 
 ---
@@ -43,7 +44,7 @@ usuario, y es la única barrera real contra una publicación sin revisar.
 
 Los `.md` de cada carpeta están escritos para leerlos: tienen secciones de
 "Assets pendientes", "Notas / contexto" y "Hashtags propuestos" que son
-información para humanos, no texto publicable. Pedirle a Make que los
+información para humanos, no texto publicable. Pedirle al runner que los
 interprete sería frágil: en cuanto cambiara el formato de una plantilla, el
 pipeline publicaría notas internas o perdería hashtags.
 
@@ -151,7 +152,8 @@ visible en github.com. Pero hay una regla que conviene tener presente:
 
 > Nunca escribas una credencial en un fichero del repositorio. Cualquier cosa
 > committeada acaba servido por `github.io`. Las credenciales van siempre por
-> variable de entorno en Make.
+> variable de entorno: en el runner, en *Settings → Secrets and variables →
+> Actions*.
 
 `node_modules/` y `registro/` están en `.gitignore`, así que no se sirven.
 
@@ -165,63 +167,25 @@ pipeline no se entera.
 
 ## 3. El runner de publicación
 
-> **Decisión tomada: se usa GitHub Actions, no Make.** La 3.1 explica por qué;
-> la 3.2 es la vía montada. La 3.3 queda como referencia por si algún día se
-> decide pagar el plan Core.
+> Quien publica es un workflow de GitHub Actions
+> (`.github/workflows/publicar.yml`). Es la única vía montada.
 
 Toda la lógica de publicación está en `scripts/publicar.mjs`, que se puede
 probar en local sin tocar ninguna cuenta ni gastar un solo post. El runner solo
 se limita a dispararlo y a leer el resultado.
 
-Esto es deliberado. Un escenario con un módulo por red y uno por cada paso de
-subida de medios se gasta el presupuesto de créditos en unas pocas
-publicaciones; este consume unos pocos por publicación.
+Esto es deliberado, por tres motivos:
 
-### 3.1 Por qué se descartó Make
+- Se puede probar en local antes de tocar ninguna cuenta real.
+- La lógica queda versionada y revisable en el repositorio, no repartida por
+  una herramienta externa que nadie puede diffear.
+- Publicar en tres redes es un trabajo de pocos segundos; el presupuesto de
+  cómputo no es la restricción, y así no lo es nunca.
 
-Datos verificados en la página oficial de planes de Make:
+### 3.1 GitHub Actions
 
-| Límite | Free | Core (9 $/mes) |
-|---|---|---|
-| Créditos al mes | 1.000 | 10.000 |
-| Escenarios activos | **2** | ilimitados |
-| Duración máxima de una ejecución | **5 min** | 40 min |
-| Intervalo mínimo entre ejecuciones | 15 min | 1 min |
-| Tamaño máximo de fichero | 5 MB | 100 MB |
-| Registro de ejecuciones | 7 días | 30 días |
-| Make Code App (ejecutar código) | **no** | sí |
-
-Dos filas de esa tabla importan de verdad:
-
-1. **El módulo `Run a script` no aparece en la lista de características de
-   ningún nivel.** Es el módulo que ejecuta `node scripts/publicar.mjs`, así
-   que sin él el escenario no tiene sentido. La otra vía de Make para ejecutar
-   código, *Make Code App*, está marcada como Core+. Sin poder confirmarlo en
-   una cuenta real, un diseño que depende de ese módulo es una apuesta.
-
-2. **5 minutos de ejecución es un margen estrecho.** El runner es efímero, así
-   que cada ejecución clona el repo y ejecuta `npm ci` antes de publicar. El
-   clonado más la instalación de dependencias ya se come buena parte de esos
-   5 minutos, y después quedan las llamadas a las tres redes. Si Make corta la
-   ejecución a mitad, te queda un post publicado en una red y no en otra, sin
-   estado actualizado: el peor resultado posible.
-
-Ninguno de los dos problemas es de configuración: son del plan. Se pueden
-resolver pagando Core, y por eso la 3.3 sigue aquí.
-
-### 3.2 La vía elegida: GitHub Actions
-
-Se descartó Make por dos motivos verificados:
-
-- El módulo `Run a script`, que es el único capaz de ejecutar
-  `node scripts/publicar.mjs`, no aparece en la lista de características de
-  ningún nivel de la página oficial de planes. La otra opción, Make Code App,
-  está marcada como Core+ de pago.
-- Los 5 minutos de ejecución del plan gratuito son un margen estrecho para
-  clonar, instalar y publicar en tres redes, con el runner siendo efímero.
-
-GitHub Actions es gratis e ilimitado en repositorios públicos, el runner ya
-trae Node, y los secretos viven en los settings del repo.
+Gratis e ilimitado en repositorios públicos, el runner ya trae Node, y los
+secretos viven en los settings del repo.
 `scripts/publicar.mjs` no cambia ni una línea: solo cambia quién lo llama.
 
 El workflow está en `.github/workflows/publicar.yml`. Los secretos se añaden en
@@ -259,152 +223,32 @@ Tres detalles del workflow que no son evidentes:
 | `git add -A` y no un pathspec | Si no se publicó nada, `registro/` no existe y `git add registro` aborta el paso con `set -e`, dejando el manifiesto sin marcar. |
 | El commit del bot no se re-dispara | GitHub no lanza ejecuciones para pushes hechos con su propio `GITHUB_TOKEN`. |
 
-### 3.3 El escenario de Make, módulo a módulo
+### 3.2 Ajustes del runner
 
-Solo si confirmas que tienes acceso a `Run a script`.
-
-#### Módulo 1 — Webhooks → Custom webhook
-
-Recomendado frente a instalar la app de Make en GitHub: no pide permisos
-amplios, se configura en un minuto y no consume créditos en reposo.
-
-| Campo | Valor |
-|---|---|
-| Connection | ninguna |
-| Webhook | el que genera Make, ej. `https://hook.make.com/XXXX/YYYY` |
-
-Cópialo en *Settings → Webhooks* del repo, *Add webhook*:
-
-| Campo | Valor |
-|---|---|
-| Payload URL | la URL de Make |
-| Content type | `application/json` |
-| Secret | uno largo que tú elijas |
-| Events | *Just the push event* |
-
-> El *secret* sirve para que GitHub firme las peticiones. Si lo pones,
-> actívalo en Make con el mismo valor; si no, déjalo vacío en los dos lados.
-> Nunca lo guardes en el repositorio.
-
-#### Módulo 2 — Tools → Run a script
-
-Se ejecuta **una vez, antes del bucle**:
-
-```bash
-cd /tmp && rm -rf GeoGatos-RRSS
-git clone --depth 1 https://x-access-token:$GITHUB_TOKEN@github.com/javier-nexo/GeoGatos-RRSS.git
-cd GeoGatos-RRSS && npm ci --omit=dev
-```
-
-El runner de Make es efímero. Clonar aquí y no en el módulo 6 evita clonar
-una vez por cada manifiesto de la iteración.
-
-#### Módulo 3 — GitHub → Make a request
-
-```
-GET  https://api.github.com/repos/javier-nexo/GeoGatos-RRSS/contents/manifiestos
-Headers: Authorization: Bearer <GITHUB_TOKEN>
-         Accept: application/vnd.github+json
-```
-
-Mapea `message` en el campo **Name**.
-
-#### Módulo 4 — Iterator
-
-Un icono por fichero cuyo nombre acabe en `.yaml`. Descarta los que empiezan
-por `_` (la plantilla).
-
-#### Módulo 5 — GitHub → Make a request
-
-```
-GET  https://api.github.com/repos/javier-nexo/GeoGatos-RRSS/contents/manifiestos/{{Name}}
-Headers: Authorization: Bearer <GITHUB_TOKEN>
-```
-
-El `content` viene en Base64. Añade **Tools → Transform → Base64 decode**.
-
-Luego un **Filter** que deje pasar solo lo que contenga `estado: "listo"`.
-**Este filtro es el que evita que un push cualquiera dispare publicaciones.**
-
-#### Módulo 6 — Tools → Run a script
-
-```bash
-node scripts/publicar.mjs --slug={{slug}} --json
-```
-
-- **Command**: lo de arriba.
-- **Working directory**: `/tmp/GeoGatos-RRSS`.
-- Activa la captura de **stdout** para leer el JSON.
-
-El `slug` se extrae del nombre del fichero en el módulo 5, sin la extensión
-`.yaml`.
-
-> ¿Por qué `--json`? Make necesita saber si salió bien. Sin él, el código de
-> salida ya sirve, pero no hay detalle por red.
-
-#### Módulo 7 — GitHub → Update a file
-
-Escribe el resultado de vuelta, para que nadie vuelva a publicar lo mismo.
-
-```
-PUT  https://api.github.com/repos/javier-nexo/GeoGatos-RRSS/contents/manifiestos/{{slug}}.yaml
-```
-
-Cambia `estado: "listo"` por `estado: "publicado"` y añade la fecha.
-
-Está condicionado por `salida.escribir_estado_en_repo` de `rrss.config.yaml`.
-**Es la única protección frente a publicar dos veces**: Make se apoya en el
-estado, no en su propia memoria. Si este módulo falla, la siguiente ejecución
-reintentará la publicación.
-
-### Ajustes de la escenario
-
-- **Ejecución secuencial**, no en paralelo. Dos pushes seguidos no deben
-  publicar dos veces el mismo manifiesto.
-- **Programación**: desactivada. Publicar se dispara con el push, no a una hora.
-  El intervalo mínimo de 15 minutos del plan gratuito no aplica a webhooks.
-- **Reintentos**: desactivados, o 1 con espera de 5 minutos. Publicar es
-  irreversible: un reintento automático puede duplicar un post que sí llegó a
-  publicarse y cuya respuesta se perdió.
-
-### Consumo estimado
-
-| Módulo | Créditos |
-|---|---|
-| Webhook + clonado | 2 |
-| Listado + iteración + descarga + decode | 4 |
-| Filter | 0 (no consume) |
-| Run a script | 1 |
-| Update a file | 1 |
-| **Total por publicación** | **≈ 8** |
-
-Con 1.000 créditos al mes hay margen para más de cien publicaciones. El plan
-gratuito aguanta de sobra en créditos; lo que no aguanta es la duración de la
-ejecución, como se explica en el 3.1.
+- **Sin programación**: publicar se dispara con el push, no a una hora.
+- **Sin reintentos**: ver la tabla de arriba.
 
 ---
 
-## 4. El runner de Make
+## 4. El runner
 
-No hay nada que preparar: el runner de Make es efímero, se tira después de
-cada ejecución. El clonado y `npm ci` van dentro del propio escenario, en el
-[módulo 2](#33-el-escenario-de-make-módulo-a-módulo), antes del bucle.
+No hay nada que preparar: el runner de GitHub Actions es efímero, se tira
+después de cada ejecución. El `checkout` y el `npm ci` van dentro del propio
+workflow, antes del bucle de publicación, y el job lleva `timeout-minutes: 15`.
 
 Lo único que hay que comprobar una vez es que `npm ci` funciona sin
 dependencias nativas. Este repo no tiene ninguna: `package.json` no declara
-dependencias de producción, solo scripts. Si algún día se añade una, con
-`--omit=dev` no se instala y el script fallará al importar.
+dependencias de producción, solo scripts. Si algún día se añade una, hay que
+comprobar que instala en el runner antes de fiarse de que funciona en local.
 
 ---
 
 ## 5. Credenciales: qué pedir en cada red
 
-Se inyectan como variables de entorno. **Nunca en el repositorio.**
-
-- Con GitHub Actions: *Settings → Secrets and variables → Actions*. Son las
-  mismas variables; `publicar.mjs` no distingue entre un runner y otro.
-- Con Make: en el propio módulo, o en la conexión si es la misma para todas
-  las ejecuciones.
+Se inyectan como variables de entorno. **Nunca en el repositorio.** En el
+runner van en *Settings → Secrets and variables → Actions*; en local se
+exportan antes de invocar el script, o se usa `--dry-run`. `publicar.mjs` no
+distingue entre un sitio y otro.
 
 El repositorio es público y GitHub Pages sirve **todo** lo que hay en la raíz,
 así que cualquier token que acabe en un fichero acaba en internet.
@@ -776,7 +620,5 @@ irreversible.
 | TikTok no aparece en el perfil | La app no ha pasado la auditoría: se publica en modo privado. |
 | X rechaza el post con error de longitud | Estabas contando con `.length`. X cuenta URLs como 23 y emojis como 2. Usa el validador. |
 | LinkedIn devuelve 403 | Token de perfil personal. Hace falta página de empresa y `w_organization_social`. |
-| Se publica dos veces | Falló el módulo 6. Make usa `estado: publicado` como única memoria. |
-| `Faltan credenciales: ...` | La variable no está en el entorno del runner de Make, no en tu máquina. |
-| Nada se publica y no hay errores | El filtro del módulo 4 no encontró `estado: "listo"`. |
-| El runner dice que no encuentra el repo | El runner de Make es efímero. Clona dentro del propio comando, ver sección 4. |
+| `Faltan credenciales: ...` | La variable no está entre los secrets del repo, no en tu máquina. |
+| El job termina sin publicar nada | Ningún manifiesto estaba en `estado: "listo"`, o los ficheros de `manifiestos/` no cambiaron en ese push y el workflow ni siquiera se lanzó. |
