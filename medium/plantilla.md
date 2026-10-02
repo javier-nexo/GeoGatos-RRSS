@@ -14,21 +14,21 @@ carpeta**, con dos archivos:
 ```
 medium/
 └── 2026-09-16-por-que-esterilizar/
-    ├── 2026-09-16-por-que-esterilizar.md    <- original, con notas y contexto
-    └── 2026-09-16-por-que-esterilizar.txt   <- texto plano, para pegar
+    ├── 2026-09-16-por-que-esterilizar.md        <- original, con notas y contexto
+    └── 2026-09-16-por-que-esterilizar-limpio.md  <- limpio, para Supabase
 ```
 
 La carpeta se llama como el `slug` del artículo, igual que en `medios/`.
 
 - El **`.md`** es el original. Es lo único que se edita: aquí van las notas, las
   ideas de assets, las fuentes y las negritas.
-- El **`.txt`** es el que se pega en Medium. Va sin markdown, cada párrafo en
-  una sola línea, con los encabezados en mayúsculas. Arriba lleva el título, el
-  subtítulo, los tags y la lista de negritas que hay que reponer a mano, porque
-  Medium no tiene markdown y un asterisco pegado sale literal.
+- El **`-limpio.md`** es el que se pega en Supabase (módulo de Educación de la
+  app). Va sin notas, sin metadatos, sin secciones de Assets/Tags/Notas. Solo
+  lleva el título, el subtítulo y el contenido en markdown limpio, listo para
+  copiar y pegar en la base de datos.
 
-El `.txt` se genera a partir del `.md`, no se edita a mano: si cambias el
-artículo, rehaces el `.txt`.
+El `-limpio.md` se genera a partir del `.md`, no se edita a mano: si cambias el
+artículo, rehaces el `-limpio.md`.
 
 El bloque `texto` del manifiesto de Medium no lleva el artículo, solo un aviso
 de dónde está. Es lo que consume el runner si algún día se automatiza.

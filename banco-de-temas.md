@@ -471,7 +471,7 @@ Temas para derribar falsas creencias sobre gatos y el trabajo de calle.
 1. **Elige un tema** de la lista para una fecha concreta (idea: un "tema del día" por semana).
 2. **Dentro del tema, elige un subtema** como ángulo principal del día.
 3. **Consulta `docs/sobre-geogatos.md`** para verificar hechos y datos del tema elegido.
-4. **Abre la plantilla de cada red** (en `Plantillas/` o el acceso directo de su carpeta) y crea un archivo por publicación en la carpeta de cada red: `facebook/`, `instagram/`, `linkedin/`, `tiktok/`, `x/`, `youtube/`. En Medium cada artículo va en su propia carpeta `medium/AAAA-MM-DD-tema/`, con el `.md` y un `.txt` de texto plano para pegarlo en medium.com a mano.
+4. **Abre la plantilla de cada red** (en `Plantillas/` o el acceso directo de su carpeta) y crea un archivo por publicación en la carpeta de cada red: `facebook/`, `instagram/`, `linkedin/`, `tiktok/`, `x/`, `youtube/`. En Medium cada artículo va en su propia carpeta `medium/AAAA-MM-DD-tema/`, con el `.md` y un `-limpio.md` para el módulo de Educación de la app (Supabase).
 5. Respeta las longitudes por plataforma indicadas en el `README.md`.
 6. Marca el tema (y subtema) como usado con fecha para mantener distancia entre ángulos similares.
 7. Usa los subtemas restantes del mismo tema en días posteriores, espaciando los 🔁 hasta semanas diferentes.

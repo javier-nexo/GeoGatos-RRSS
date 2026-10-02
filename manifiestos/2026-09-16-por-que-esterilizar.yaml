@@ -98,13 +98,13 @@ plataformas:
 
   # --- Medium: artículo (en standby) ---------------------------------
   # Medium no lo publica el runner: su API está sin soporte. El artículo se
-  # pega a mano en medium.com desde el .txt de la carpeta del artículo.
+  # pega a mano en medium.com desde el -limpio.md de la carpeta del artículo.
   medium:
     titulo: "Por qué esterilizar a los gatos de la calle: la decisión que salva vidas"
     texto: |-
       El artículo completo está en medium/2026-09-16-por-que-esterilizar/.
 
-      Para publicarlo a mano: se pega el cuerpo desde el .txt y el título en
+      Para publicarlo a mano: se pega el cuerpo desde el -limpio.md y el título en
       su campo, no este texto. El .md de la misma carpeta es la referencia
       de formato y el original editable.
 

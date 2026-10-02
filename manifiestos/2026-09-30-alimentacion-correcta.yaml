@@ -129,20 +129,20 @@ plataformas:
 
   # --- Medium: artículo (en standby) -------------------------------------
   # Medium no lo publica el runner: su API está sin soporte oficial. El
-  # artículo se pega a mano en medium.com desde el .txt de su carpeta, no
-  # desde este bloque.
+  # artículo se pega a mano en medium.com desde el -limpio.md de su carpeta,
+  # no desde este bloque.
   medium:
     titulo: "Alimentar bien a una colonia felina: lo que sí y lo que nunca"
     texto: |-
       El artículo completo está en medium/2026-09-30-alimentacion-correcta/.
 
       Para publicarlo a mano: el título va en su campo, y el cuerpo se pega
-      desde el .txt, que ya viene sin marcas de markdown. El .md de la misma
-      carpeta es el original editable y la referencia de formato.
+      desde el -limpio.md, que ya viene sin notas ni metadatos. El .md de la
+      misma carpeta es el original editable y la referencia de formato.
 
-      El .txt incluye arriba el subtítulo, los tres tags y la lista de los
-      35 tramos que en el .md iban en negrita, porque Medium no tiene
-      markdown y hay que repasarlos a mano en su editor.
+      El -limpio.md incluye solo el título, el subtítulo y el contenido en
+      markdown limpio, listo para copiar y pegar en Supabase (módulo de
+      Educación de la app).
 
       Si algún día se automatiza, el runner manda el campo `texto` de este
       bloque como `contentFormat: markdown` y usa solo los 3 primeros tags.

@@ -17,7 +17,7 @@ Cada publicación existe en dos formatos, y no son intercambiables:
 Al generar una publicación hay que escribir **las dos cosas**. Si generas solo
 los `.md`, el día no se publica; si generas solo el `.yaml`, nadie lo revisa.
 
-### Medium es la excepción: cada artículo lleva su `.txt`
+### Medium es la excepción: cada artículo lleva su `-limpio.md`
 
 Medium está en `standby` porque su API está sin soporte, así que **el runner
 nunca lo publica**: el usuario copia el artículo a mano en medium.com. Por eso
@@ -25,16 +25,15 @@ en `medium/` cada artículo vive en su **propia carpeta**, con dos archivos:
 
 ```
 medium/AAAA-MM-DD-tema/
-├── AAAA-MM-DD-tema.md    <- original editable: notas, assets, fuentes, negritas
-└── AAAA-MM-DD-tema.txt   <- texto plano para pegar en Medium
+├── AAAA-MM-DD-tema.md        <- original editable: notas, assets, fuentes, negritas
+└── AAAA-MM-DD-tema-limpio.md <- limpio, para Supabase (módulo de Educación)
 ```
 
 Si creas un artículo de Medium, escribe **los dos**, no solo el `.md`. El
-`.txt` se deriva del `.md`: sin `**`, sin `#`, cada párrafo en una sola línea y
-los encabezados en mayúsculas. Arriba lleva título, subtítulo, tags y la lista
-de negritas que hay que reponer a mano (Medium no tiene markdown, un asterisco
-pegado sale literal). El `.txt` no se edita a mano: si cambia el `.md`, se
-regenera.
+`-limpio.md` se deriva del `.md`: sin notas, sin metadatos, sin secciones de
+Assets/Tags/Notas. Solo lleva el título, el subtítulo y el contenido en
+markdown limpio, listo para copiar y pegar en la base de datos de Supabase.
+El `-limpio.md` no se edita a mano: si cambia el `.md`, se regenera.
 
 ## Manifiestos
 
