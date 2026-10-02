@@ -80,6 +80,49 @@ El usuario no prepara los ficheros de medios a mano. El flujo es:
 3. **El agente le enseña la tabla de reparto** y avisa de lo que detecte.
 4. **El usuario** revisa, pone `estado: listo` y hace push. El runner publica.
 
+### Generar -limpio.md e importar a la app (módulo de Educación)
+
+Para que un artículo de Medium aparezca en el módulo de Educación de la app,
+primero genera el `-limpio.md` y luego impórtalo:
+
+```bash
+# 1. Generar el -limpio.md a partir del .md original
+node scripts/generar-limpio.mjs --slug=<slug>
+
+# 2. Importar a la app (local)
+node scripts/importar-articulo.mjs --slug=<slug>
+```
+
+**`generar-limpio.mjs`:**
+- Lee el `.md` original de la carpeta del artículo
+- Extrae título, subtítulo y contenido
+- Genera el `-limpio.md` sin notas, metadatos, assets ni tags
+
+**`importar-articulo.mjs`:**
+- Lee el `-limpio.md` de la carpeta del artículo
+- Extrae título, subtítulo y contenido
+- Llama a `POST /api/v1/article` con un token JWT de Admin
+- Actualiza el manifiesto con el `articulo_id` creado
+
+**Requisitos (local):**
+- Variable de entorno `GEOGATOS_ADMIN_TOKEN` con un token JWT de Admin
+- Variable de entorno `GEOGATOS_API_URL` (opcional, default: `https://geogatos.onrender.com/api/v1`)
+
+**Automatización con GitHub Actions:**
+
+El repo incluye un workflow (`.github/workflows/importar-articulos.yml`) que
+importa automáticamente el artículo cuando se hace push de un `-limpio.md`.
+Para usarlo:
+
+1. Ve a **Settings → Secrets and variables → Actions** en GitHub
+2. Crea los secrets:
+   - `GEOGATOS_ADMIN_TOKEN` — tu token JWT de Admin
+   - `GEOGATOS_API_URL` — `https://geogatos.onrender.com/api/v1`
+3. Al hacer push de un `-limpio.md`, el workflow lo importa automáticamente
+
+También puedes importar manualmente desde la pestaña **Actions** →
+**Importar artículos a la app** → **Run workflow** (introduciendo el slug).
+
 ### El reparto de imágenes es posicional, y lo decidió el usuario
 
 La imagen *n* de la bandeja va al hueco *n* de la lista `medios` de cada red:

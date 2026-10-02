@@ -21,8 +21,13 @@ GeoGatos-RRSS/
 │   ├── validar-manifiesto.mjs   <- Comprueba límites por red antes de publicar
 │   ├── preparar-medios.mjs      <- Copia tus imágenes de entrada/ a medios/<slug>/ con el nombre de cada red
 │   ├── publicar.mjs             <- Publica en todas las redes; el runner lo invoca
+│   ├── generar-limpio.mjs       <- Genera el -limpio.md a partir del .md original
+│   ├── importar-articulo.mjs    <- Importa el -limpio.md a la app (módulo de Educación)
 │   ├── actualizar-estado.mjs    <- Devuelve el resultado al manifiesto, conservando sus comentarios
 │   └── lib/                     <- Núcleo compartido, lectura de imágenes y adaptadores por red
+├── .github/workflows/
+│   ├── publicar.yml             <- Publica los manifiestos en `listo` al hacer push
+│   └── importar-articulos.yml  <- Importa artículos a la app al hacer push de -limpio.md
 ├── .github/workflows/publicar.yml  <- Publica los manifiestos en `listo` al hacer push
 ├── Plantillas/                  <- Plantilla específica para cada red social
 │   ├── plantilla-facebook.md

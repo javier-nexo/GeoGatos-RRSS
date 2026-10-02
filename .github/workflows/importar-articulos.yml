@@ -1,0 +1,51 @@
+name: Importar artículos a la app
+
+on:
+  push:
+    paths:
+      - 'medium/**/*-limpio.md'
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: 'Slug del artículo a importar'
+        required: true
+        type: string
+
+jobs:
+  importar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Importar artículo (automático)
+        if: github.event_name == 'push'
+        run: |
+          # Detectar qué -limpio.md se añadió o modificó
+          ARCHIVO=$(git diff --name-only HEAD~1 HEAD | grep '\-limpio\.md$' | head -1)
+          if [ -z "$ARCHIVO" ]; then
+            echo "No se detectó ningún -limpio.md nuevo."
+            exit 0
+          fi
+          SLUG=$(basename "$ARCHIVO" -limpio.md)
+          echo "Importando artículo: $SLUG"
+          node scripts/importar-articulo.mjs --slug="$SLUG"
+        env:
+          GEOGATOS_ADMIN_TOKEN: ${{ secrets.GEOGATOS_ADMIN_TOKEN }}
+          GEOGATOS_API_URL: ${{ secrets.GEOGATOS_API_URL }}
+
+      - name: Importar artículo (manual)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          node scripts/importar-articulo.mjs --slug="${{ github.event.inputs.slug }}"
+        env:
+          GEOGATOS_ADMIN_TOKEN: ${{ secrets.GEOGATOS_ADMIN_TOKEN }}
+          GEOGATOS_API_URL: ${{ secrets.GEOGATOS_API_URL }}
