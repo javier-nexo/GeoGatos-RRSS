@@ -21,17 +21,16 @@
 
 La mayoría de las colonias urbanas se gestionan con herramientas prestadas: un grupo de WhatsApp que se satura, una nota en el móvil, una hoja de cálculo que solo una persona sabe usar. Cuando alguien pregunta cómo está la colonia de la calle X, la respuesta suele ser "no lo sé, lleva años sin ir". No es un fallo de las personas que cuidan: es un fallo de las herramientas.
 
-GeoGatos es una aplicación para gestionar colonias de gatos urbanos. Permite registrar colonias con GPS, censar gatos individualmente (color, salud, esterilización, microchip), documentar visitas con validación de ubicación, reportar incidencias y coordinar equipos de voluntarios. Todo funciona con o sin conexión. Está construido alrededor del método CER (Capturar-Esterilizar-Retornar), el protocolo que la Ley 7/2023 exige para la gestión de colonias.
+GeoGatos es una aplicación para gestionar colonias de gatos urbanos. Permite registrar colonias con GPS, censar gatos individualmente (color, salud, esterilización, microchip), documentar visitas con validación de ubicación, reportar incidencias y coordinar equipos de voluntarios. Está construida alrededor del método CER (Capturar-Esterilizar-Retornar), el protocolo que la Ley 7/2023 exige para la gestión de colonias.
 
 Cada visita, cada gato y cada incidencia quedan registrados con fecha, responsable y ubicación. Los datos se pueden usar para justificar una subvención, coordinar una protectora o saber si una colonia está mejorando.
 
 ### Call to action (CTA)
 
-Descarga GeoGatos, registra la colonia de tu barrio y empieza a cuidar con datos, no con memoria. Disponible en Google Play y en geogatos.com.
+Descarga GeoGatos, registra la colonia de tu barrio y empieza a cuidar con datos, no con memoria. Disponible en Google Play, en App Store y en geogatos.com.
 
 ## Assets
 
-- [ ] Portada: persona con móvil mostrando el mapa de colonias
 - [ ] Enlace a la web de GeoGatos (geogatos.com)
 
 ## Hashtags propuestos
@@ -42,11 +41,10 @@ Descarga GeoGatos, registra la colonia de tu barrio y empieza a cuidar con datos
 
 **Hechos verificados usados** (`docs/sobre-geogatos.md`, sección 7):
 
-- GeoGatos es multiplataforma: Android (Play Store), iOS y Windows.
-- Web: geogatos.com. Play Store: https://play.google.com/store/apps/details?id=org.geogatos.app
+- GeoGatos es multiplataforma: Android, iOS y web.
+- Web: geogatos.com.
 - Ley 7/2023 (protección de los derechos y el bienestar de los animales, España).
 - Método CER (Capturar-Esterilizar-Retornar).
-- Anti-duplicados por scoring: color (2 pts) + oreja (2 pts) + género (1 pt).
 
 **Lo que NO se dice, a propósito:**
 

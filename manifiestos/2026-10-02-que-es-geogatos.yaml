@@ -18,7 +18,7 @@ publicacion:
 
   # Máquina de estados. Solo se publica cuando estado = "listo".
   #   borrador → esperando_medios → listo → publicado / error
-  estado: "borrador"
+  estado: "listo"
 
   hora: "10:00"
   desfase_minutos: 5

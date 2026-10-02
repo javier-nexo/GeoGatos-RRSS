@@ -20,7 +20,7 @@
 
 ### Cuerpo
 
-GeoGatos es la app que cuida a los gatos de tu calle. Registra cada colonia con GPS, censa a cada gato —color, salud, esterilización, microchip—, documenta cada visita con la ubicación verificada y coordina a los voluntarios para que nada se pierda. Funciona con o sin conexión, y está construido alrededor del método CER, el protocolo que la Ley 7/2023 exige para gestionar colonias felinas. De WhatsApp y papel a una herramienta real: geogatos.com. 🐈‍⬛
+GeoGatos es la app que cuida a los gatos de tu calle. Registra cada colonia, censa a cada gato —color, salud, esterilización, microchip—, documenta cada visita con la ubicación verificada y coordina a los voluntarios para que nada se pierda. GeoGatos está construida alrededor del método CER, el protocolo que la Ley 7/2023 exige para gestionar colonias felinas. De WhatsApp y papel a una herramienta real: GeoGatos 🐈‍⬛
 
 ### Call to action (CTA)
 
