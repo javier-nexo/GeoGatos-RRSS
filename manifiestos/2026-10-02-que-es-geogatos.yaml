@@ -18,10 +18,20 @@ publicacion:
 
   # Máquina de estados. Solo se publica cuando estado = "listo".
   #   borrador → esperando_medios → listo → publicado / error
-  estado: "listo"
+  estado: "publicado"
 
   hora: "10:00"
   desfase_minutos: 5
+  publicado_en: 2026-10-02T16:17:45.095Z
+  resultados:
+    - red: facebook
+      ok: true
+      url: null
+      id: null
+    - red: instagram
+      ok: true
+      url: null
+      id: null
 
 plataformas:
 
