@@ -312,11 +312,11 @@ Temas sobre cómo se construye GeoGatos.
   - Autenticación segura: email, Google y Apple.
   - Política de privacidad y contacto.
 
-- **6.5 Diseño y marca** — El naranja caliente, el gato negro y el tono de la marca.
+- **6.5 Diseño y marca** — El naranja albaricoque, el gato calico y el tono de la marca.
   - El color naranja #F0641E.
   - La paleta cálida #FFF7F1.
-  - Por qué un gato negro como emblema.
-  - Diseño limpio para datos fríos y cariño real.
+  - Por qué un gato calico como emblema.
+  - Diseño limpio para datos y cariño real.
   - Qué transmite la marca.
 
 - **6.6 Qué se viene (roadmap)** — Mejoras y próximas funcionalidades.
@@ -463,6 +463,52 @@ Temas para derribar falsas creencias sobre gatos y el trabajo de calle.
   - La leche: por qué no es buena idea.
   - Restos de pescado y otros errores comunes.
   - Comedero fijo y limpio: la regla de oro.
+
+## 10. Si te encuentras un gato (ayuda inmediata)
+
+Temas prácticos para quien se cruza con un gato que necesita ayuda: primeros pasos, errores comunes y a quién pedir.
+
+- **10.1 Un gato herido en la calle** — Qué hacer (y qué no) en los primeros minutos.
+  - Antes que nada: comprobar si hay peligro para ti.
+  - Cómo acercarse sin asustarlo más.
+  - Qué no hacer: no moverlo si no corre peligro.
+  - Calmarlo, cubrirlo y llevarlo al veterinario.
+  - Avisar a la comunidad con una incidencia en la app.
+
+- **10.2 Una gata embarazada** — Cómo ayudarla sin manipularla.
+  - Cómo intuir que está gestante.
+  - Por qué no cogerla ni manipularla.
+  - Comida, agua y un sitio tranquilo: lo que sí puedes darle.
+  - Preparar el parto: dónde y cómo.
+  - Lo que toca después: CER en cuanto se destete.
+
+- 🔁 **10.3 Una camada delante de tu casa** — Qué no hacer y cuándo intervenir. *(usado el 2026-10-05)*
+  - Calma: lo primero es no coger a nadie.
+  - La madre casi siempre vuelve: cómo saber si está cerca.
+  - Señales de que sí están abandonados.
+  - Qué observar y cuánto esperar antes de actuar.
+  - Cuándo sí hay que intervenir: frío, hambre, peligro, madre herida.
+
+- **10.4 Un gato que se te aparece en la puerta** — ¿Está perdido o se ha quedado sin hogar?
+  - Primero, descartar que tenga chip (veterinario o protectora).
+  - Fotografías y aviso: cómo se comparte un gato encontrado.
+  - Pistas de que tiene hogar: aspecto, collar, confianza.
+  - Un gato sin hogar no es un gato abandonado.
+  - Apuntarlo en la app y avisar a tu colonia.
+
+- **10.5 Un gato asustado, arisco o atrapado** — Cómo acercarte sin ponerte en peligro.
+  - Por qué te muerde o araña: te está defendiendo.
+  - Nunca meter la mano sin protección.
+  - Un gato atrapado: coche, árbol, sótano o canalón.
+  - Darle espacio: la paciencia antes que la fuerza.
+  - Cuándo pedir ayuda profesional.
+
+- 🔁 **10.6 A quién pedir ayuda** — La red de apoyo cuando no puedes actuar tú.
+  - Protectoras y asociaciones de tu ciudad.
+  - El ayuntamiento y sus obligaciones (Ley 7/2023).
+  - El veterinario más cercano y las guardias.
+  - Avisar a la comunidad: incidencia con GPS en la app.
+  - Emergencias: cuándo corresponde llamar al 112.
 
 ---
 

@@ -1,0 +1,154 @@
+# Manifiesto de publicación — 2026-10-05 "Una camada delante de tu casa"
+#
+# Tema 10.3 del banco. Los .md legibles están en facebook/, instagram/,
+# linkedin/, x/, youtube/, tiktok/ y medium/ con la misma fecha.
+#
+# ESTADO REAL: los medios se preparan con preparar-medios.mjs (ver el final de
+# este archivo). El estado lo pone el usuario, nunca el agente.
+
+slug: "2026-10-05-camada-delante-de-casa"
+
+publicacion:
+  fecha: "2026-10-05"
+  tema: "10.3 Una camada delante de tu casa"
+  subtema: "No coger a nadie: cómo saber si la madre vuelve y cuándo sí
+    intervenir"
+  autor: "GeoGatos"
+  estado: "borrador"
+  hora: "10:00"
+  desfase_minutos: 5
+
+# -----------------------------------------------------------------------------
+# Contenido por red
+# -----------------------------------------------------------------------------
+# Los textos van SIN hashtags: van en el array `hashtags`, que es lo que
+# concatena el publicador. Ponerlos en ambos sitios duplica.
+# -----------------------------------------------------------------------------
+
+plataformas:
+
+  # --- Facebook: 2-3 párrafos + cierre, tono cercano ----------------------
+  facebook:
+    texto: |-
+      Tres cachorros en una caja de cartón delante de tu puerta. El impulso es cogerlos y llevártelos a casa. Ese impulso es el primer error. 🐈‍⬛
+
+      La madre casi siempre está fuera: comiendo, bebiendo o descansando donde no la molestan, y vuelve. Un cachorro caliente, con el vientre redondo y limpio, está bien alimentado, y eso significa que la gata está trabajando. No los toques ni los muevas de sitio: si cambias el nido, puede que ella ya no lo encuentre. Y no es cierto que los rechace porque huelas a humano: los gatos no abandonan a sus cachorros por eso.
+
+      Observa sin tocar: aparta a los perros y a los niños, no reordenes la caja y vuelve a comprobarlos cada un par de horas. Si están calientes y con la barriga llena, la madre ha pasado. Y si están fríos, no dejan de llorar, tienen el vientre hundido, están sucios o heridos o hay peligro, entonces sí hay que actuar: con guantes o con una toalla, a una caja ventilada y al calor de tu cuerpo, y al veterinario cuanto antes. No les des leche de vaca: les da diarrea.
+
+      Si hay una colonia en tu barrio, abre GeoGatos, búscala en el mapa y deja constancia de lo que has visto: un avistamiento o una incidencia con GPS, para que quien cuida de ellos sepa qué ha pasado y dónde. Si no hay colonia, créala. Ayuntamientos y protectoras gestionan las colonias con el método CER (Ley 7/2023), y una camada aparecida hoy casi siempre significa una gata por esterilizar.
+    hashtags:
+      [
+        "GeoGatos",
+        "ColoniasFelinas",
+        "GatosCallejeros",
+        "Gatitos",
+        "ProteccionAnimal",
+        "BienestarAnimal",
+        "CER",
+        "LeyAnimal"
+      ]
+    medios: ["facebook-01.jpg"]
+
+  # --- Instagram: 1 párrafo, carrusel de 3 --------------------------------
+  # La primera imagen fija el recorte de las otras dos.
+  instagram:
+    tipo: "carrusel"
+    texto: |-
+      Tres cachorros en una caja delante de tu puerta: no te los lleves. Si están calientes, con el vientre redondo y limpios, la madre está fuera comiendo y vuelve; si los cambias de sitio, puede que no los encuentre. Observa sin tocar: aparta a perros y niños, no muevas el nido y vuelve a comprobarlos cada un par de horas. Y no es cierto que los rechace porque huelas a humano. Sí hay que actuar si están fríos, si no dejan de llorar, si tienen el vientre hundido, si están sucios o heridos o si hay peligro: con guantes o una toalla, a una caja ventilada y al calor del cuerpo, y al veterinario. Déjalo todo registrado en GeoGatos con la ubicación, para que quien cuide de ellos sepa qué pasó y dónde. 🐈‍⬛
+    hashtags:
+      [
+        "GeoGatos",
+        "ColoniasFelinas",
+        "GatosCallejeros",
+        "Gatitos",
+        "ProteccionAnimal",
+        "BienestarAnimal",
+        "CER",
+        "Animalismo"
+      ]
+    medios:
+      - "instagram-01.jpg"
+      - "instagram-02.jpg"
+      - "instagram-03.jpg"
+
+  # --- LinkedIn: 3 párrafos, tono institucional (en standby) ---------------
+  linkedin:
+    texto: |-
+      Una camada aparecida en un portal no es un hallazgo casual: es, casi siempre, una colonia sin gestionar y una gata por esterilizar.
+
+      Lo que una persona encuentra en su puerta un martes por la mañana es una decisión que se toma en dos minutos, casi siempre a ciegas. El instinto es recoger a los cachorros y llevarlos a casa; la evidencia de campo dice que lo correcto, si están calientes y bien alimentados, es no tocarlos, porque la madre vuelve y un nido movido puede no ser encontrado. Cuando sí hay que intervenir, se hace sin protocolo: sin identificación, sin registro y sin trazabilidad de qué pasó, con quién y dónde.
+
+      Desde la gestión de colonias, ese momento contiene tres datos que casi nunca se capturan. El primero, si la camada corresponde a una colonia censada o a un foco nuevo. El segundo, el estado real de la gata madre, que es quien decide el resultado del caso. El tercero, el más determinante a medio plazo: una camada aparecida significa, en la práctica, una hembra sin esterilizar, y la Ley 7/2023 obliga a los municipios a gestionar las colonias felinas mediante el método CER (Capturar-Esterilizar-Retornar). Sin registro, esa obligación no se puede cumplir ni demostrar.
+
+      GeoGatos recoge ese momento como lo que es: un avistamiento o una incidencia con ubicación GPS y fotografías, ligado a la colonia y con responsable. El equipo que cuida de esa colonia ve el aviso en cuanto se registra, la colonia pasa a estar en el mapa con su color de atención y el caso queda trazado hasta que se resuelve. Lo que antes moría en un grupo de mensajes se convierte en un dato que un ayuntamiento o una protectora puede usar para planificar la siguiente operación CER.
+
+      Si trabajas con colonias felinas y necesitas que los hallazgos de calle terminen en un registro verificable, visita geogatos.com.
+    hashtags:
+      [
+        "GeoGatos",
+        "ColoniasFelinas",
+        "GestionDeColonias",
+        "Ley7_2023",
+        "CER",
+        "BienestarAnimal",
+        "ProteccionAnimal"
+      ]
+    medios: ["linkedin-01.jpg"]
+
+  # --- X: 1 párrafo, máximo 280 caracteres contando el hashtag -------------
+  # OJO: en self-serve X admite UN SOLO hashtag. El validador lo rechaza.
+  # Sin URL en el texto: las URLs cuentan como 23 caracteres fijos.
+  x:
+    texto: |-
+      Encuentras una camada en el portal: no te los lleves. Si están calientes y con el vientre redondo, la madre está fuera y vuelve. Si están fríos, no dejan de llorar o tienen el vientre hundido, entonces sí: veterinario y protectora. 🐈‍⬛
+    hashtags: ["GeoGatos"]
+    medios: ["x-01.jpg"]
+
+  # --- YouTube: título + descripción (en standby) --------------------------
+  youtube:
+    titulo: "Una camada delante de tu casa: qué no hacer y cuándo intervenir — GeoGatos"
+    texto: |-
+      Si aparece una camada de gatitos delante de tu casa, lo peor que puedes hacer es llevártelos: la madre casi siempre está fuera y vuelve, y un cachorro caliente y con el vientre redondo está bien alimentado. Observa sin tocar, aparta a perros y niños y vuelve a comprobarlos cada un par de horas. Hay que intervenir solo si están fríos, no dejan de llorar, tienen el vientre hundido, están sucios o heridos, o hay peligro: con guantes o una toalla, a una caja ventilada y al veterinario o a la protectora. Deja constancia de lo que has visto en GeoGatos, con la ubicación, para que quien cuida de esa colonia sepa qué ha pasado y dónde. Ayuntamientos y protectoras gestionan las colonias con el método CER (Ley 7/2023), y una camada aparecida hoy casi siempre significa una gata por esterilizar. Más en geogatos.com.
+    hashtags:
+      [
+        "GeoGatos",
+        "ColoniasFelinas",
+        "GatosCallejeros",
+        "Gatitos",
+        "ProteccionAnimal"
+      ]
+    medios: ["youtube-01.jpg"]
+
+  # --- TikTok: 1-2 frases para el texto en pantalla (en standby) ----------
+  tiktok:
+    texto: |-
+      Una camada en tu portal: no te los lleves. Si están calientes, la madre vuelve.
+    hashtags: ["GeoGatos", "gatos", "Gatitos", "ColoniasFelinas", "ProteccionAnimal"]
+    medios: ["tiktok-01.mp4"]
+
+  # --- Medium: artículo (en standby) ---------------------------------------
+  # Medium no lo publica el runner: su API está sin soporte oficial. El
+  # artículo se pega a mano en medium.com desde el -limpio.md de su carpeta,
+  # no desde este bloque.
+  medium:
+    titulo: "Una camada delante de tu casa: qué hacer y qué no hacer"
+    texto: |-
+      El artículo completo está en medium/2026-10-05-camada-delante-de-casa/.
+
+      Para publicarlo a mano: el título va en su campo, y el cuerpo se pega
+      desde el -limpio.md, que ya viene sin notas ni metadatos. El .md de la
+      misma carpeta es el original editable y la referencia de formato.
+
+      El -limpio.md incluye solo el título, el subtítulo y el contenido en
+      markdown limpio, listo para copiar y pegar en Supabase (módulo de
+      Educación de la app).
+
+      Si algún día se automatiza, el runner manda el campo `texto` de este
+      bloque como `contentFormat: markdown` y usa solo los 3 primeros tags.
+    hashtags: ["GeoGatos", "ColoniasFelinas", "GatosCallejeros"]
+    medios: ["medium-01.jpg"]
+
+opciones:
+  ante_error: "continuar_publicar"
+  permitir_sin_medios: true

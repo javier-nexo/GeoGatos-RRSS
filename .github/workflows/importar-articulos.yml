@@ -17,6 +17,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # fetch-depth: 2 permite comparar HEAD~1 con HEAD en pushes de
+          # un solo commit. La detección principal no depende de esto
+          # (usa el payload del push), pero sirve como fallback.
+          fetch-depth: 2
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -28,24 +33,35 @@ jobs:
 
       - name: Importar artículo (automático)
         if: github.event_name == 'push'
-        run: |
-          # Detectar qué -limpio.md se añadió o modificó
-          ARCHIVO=$(git diff --name-only HEAD~1 HEAD | grep '\-limpio\.md$' | head -1)
-          if [ -z "$ARCHIVO" ]; then
-            echo "No se detectó ningún -limpio.md nuevo."
-            exit 0
-          fi
-          SLUG=$(basename "$ARCHIVO" -limpio.md)
-          echo "Importando artículo: $SLUG"
-          node scripts/importar-articulo.mjs --slug="$SLUG"
         env:
+          COMMITS_JSON: ${{ toJson(github.event.commits) }}
           GEOGATOS_ADMIN_TOKEN: ${{ secrets.GEOGATOS_ADMIN_TOKEN }}
           GEOGATOS_API_URL: ${{ secrets.GEOGATOS_API_URL }}
+        run: |
+          # Detectar qué -limpio.md cambió usando el payload del push.
+          # github.event.commits trae added/modified/removed por commit,
+          # así que funciona con pushes de uno o varios commits.
+          ARCHIVO=$(echo "$COMMITS_JSON" | jq -r '.[] | .added[], .modified[]' \
+            | grep 'limpio\.md$' | head -1)
+
+          # Fallback: si el payload no lo trae, comparar contra el commit anterior.
+          if [ -z "$ARCHIVO" ]; then
+            ARCHIVO=$(git diff --name-only HEAD~1 HEAD 2>/dev/null | grep 'limpio\.md$' | head -1)
+          fi
+
+          if [ -z "$ARCHIVO" ]; then
+            echo "No se detectó ningún -limpio.md nuevo. Saliendo sin importar."
+            exit 0
+          fi
+
+          SLUG=$(basename "$ARCHIVO" -limpio.md)
+          echo "Detectado artículo: $SLUG (archivo: $ARCHIVO)"
+          node scripts/importar-articulo.mjs --slug="$SLUG"
 
       - name: Importar artículo (manual)
         if: github.event_name == 'workflow_dispatch'
-        run: |
-          node scripts/importar-articulo.mjs --slug="${{ github.event.inputs.slug }}"
         env:
           GEOGATOS_ADMIN_TOKEN: ${{ secrets.GEOGATOS_ADMIN_TOKEN }}
           GEOGATOS_API_URL: ${{ secrets.GEOGATOS_API_URL }}
+        run: |
+          node scripts/importar-articulo.mjs --slug="${{ github.event.inputs.slug }}"
