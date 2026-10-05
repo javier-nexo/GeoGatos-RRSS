@@ -17,6 +17,15 @@ publicacion:
   hora: "10:00"
   desfase_minutos: 5
   publicado_en: 2026-10-05T21:35:24.825Z
+  resultados:
+    - red: facebook
+      ok: true
+      url: null
+      id: null
+    - red: instagram
+      ok: true
+      url: null
+      id: null
 
 # -----------------------------------------------------------------------------
 # Contenido por red
