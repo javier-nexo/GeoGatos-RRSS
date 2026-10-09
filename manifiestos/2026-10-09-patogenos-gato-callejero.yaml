@@ -12,9 +12,11 @@ slug: "2026-10-09-patogenos-gato-callejero"
 publicacion:
   fecha: "2026-10-09"
   tema: "11.1 Patógenos más comunes en un gato callejero"
-  subtema: "Qué circula entre los gatos de la calle, cómo se reconoce y cuándo no hay que esperar"
+  subtema: "Qué circula entre los gatos de la calle, cómo se reconoce y cuándo no
+    hay que esperar"
   autor: "GeoGatos"
-  estado: "listo"
+  estado: "error"
+  publicado_en: 2026-10-09T22:11:06.028Z
 
 # -----------------------------------------------------------------------------
 # Contenido por red
@@ -103,8 +105,7 @@ plataformas:
 
   # --- YouTube: título + descripción (en standby) --------------------------
   youtube:
-    titulo: "Patógenos más comunes en un gato callejero: cómo reconocerlos —
-      GeoGatos"
+    titulo: "Patógenos más comunes en un gato callejero: cómo reconocerlos — GeoGatos"
     texto: |-
       El catarro felino, la panleucopenia, el FIV y el FeLV y el tiña son lo que de verdad circula entre los gatos que viven fuera. En este vídeo explicamos cómo se reconoce cada uno, qué tienen en común, por qué una colonia es un escenario donde las infecciones viajan rápido (el mismo comedero, el mismo agua y peleas que dejan heridas) y cómo distinguir un cuadro molesto de uno que no admite esperar: no comer, no moverse, respirar raro, vomitar o hinchar la cara. Nada de automedicación: ni antibióticos de la farmacia ni remedios de casa, eso lo decide el veterinario. Si ves a un gato que te preocupa, déjalo escrito en GeoGatos, con su ficha de salud y una incidencia con GPS para que quien cuide de esa colonia sepa qué le pasa y dónde está. La app está en Android (Play Store), en iOS y en la web: geogatos.com.
     hashtags:
@@ -121,7 +122,14 @@ plataformas:
   tiktok:
     texto: |-
       Estornudos en la colonia: casi siempre es catarro. Si no come, no se mueve o respira raro, no esperes.
-    hashtags: ["GeoGatos", "gatos", "ColoniasFelinas", "SaludFelina", "ProteccionAnimal"]
+    hashtags:
+      [
+        "GeoGatos",
+        "gatos",
+        "ColoniasFelinas",
+        "SaludFelina",
+        "ProteccionAnimal"
+      ]
     medios: ["tiktok-01.mp4"]
 
   # --- Medium: artículo (en standby) ---------------------------------------
