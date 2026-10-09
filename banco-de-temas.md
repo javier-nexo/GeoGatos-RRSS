@@ -510,6 +510,52 @@ Temas prácticos para quien se cruza con un gato que necesita ayuda: primeros pa
   - Avisar a la comunidad: incidencia con GPS en la app.
   - Emergencias: cuándo corresponde llamar al 112.
 
+## 11. Salud felina
+
+Temas de prevención y enfermedades en los gatos de calle y colonia: qué circula, cómo se evita y qué hacer cuando alguno se pone malo.
+
+- 🔁 **11.1 Patógenos más comunes en un gato callejero** — Qué enfermedades circulan en la calle y cómo se ven. *(usado el 2026-10-09)*
+  - Catarro felino: estornudos, ojos y nariz (herpesvirus y calicivirus).
+  - Panleucopenia: la que más se teme cuando hay muchos gatos juntos.
+  - FIV y FeLV en dos líneas: qué son y por qué se habla tanto de ellos.
+  - Tiña y problemas de piel: del gato a las personas.
+  - Resfriado o gato grave: las señales que no admiten esperar.
+
+- **11.2 Evitar enfermedades en colonias** — La prevención que sí está en la mano de quien cuida.
+  - Agua y comida limpias: la primera barrera.
+  - Lavar comederos y bebederos en cada visita.
+  - Refugio seco: la humedad y el frío como puerta de entrada.
+  - Esterilizar: menos peleas, menos mordeduras, menos contagios.
+  - El estado de salud de cada gato, anotado en su ficha de la app.
+
+- **11.3 Parásitos: internos, externos y zoonosis** — Bichos que empiezan en el gato y acaban importándote.
+  - Pulgas y garrapatas: de la colonia a casa en la ropa y el pelo.
+  - Lombrices intestinales: por qué importan también para las personas.
+  - Lo que se ve en la visita: pelo áspero, picor, adelgazamiento.
+  - Limpiar la zona sin quedarse: útiles, descanso y bordes del comedero.
+  - La desparasitación la fija el veterinario: nada de pautas caseras.
+
+- **11.4 Vacunas: qué cubren y cómo se gestionan en colonia** — Inmunizar a gatos que viven fuera.
+  - La trivalente: herpesvirus, calicivirus y panleucopenia.
+  - Por qué en la colonia la vacuna va ligada a la captura.
+  - Vacunas y refuerzos, registrados en la ficha de salud.
+  - Lo que una vacuna no evita: parásitos, malas heridas y peleas.
+  - El calendario lo fija el veterinario: cada colonia es un caso.
+
+- 🔁 **11.5 FIV y FeLV en la colonia** — Convivir con gatos que dan positivo.
+  - Qué significa el positivo: no es sentencia ni motivo de abandono.
+  - Cómo se transmite (mordeduras, madre y cría) y cómo no (mismo plato).
+  - Quién marca el protocolo: el veterinario de la captura del CER.
+  - Convivencia en la colonia: los criterios se fijan caso por caso.
+  - Registrar el resultado en la ficha y avisar a quien cuida con vosotros.
+
+- 🔁 **11.6 Un gato enfermo en la colonia** — Del primer signo a la incidencia.
+  - Qué mirar en cada visita: apetito, peso, pelaje, actitud.
+  - Señales de alerta: no come, no se ve, cojea, secreciones, herida.
+  - Mientras llega la ayuda: agua, sombra o calor y sitio tranquilo.
+  - La incidencia en la app: fotos, GPS y lo que has visto.
+  - Si nadie la cierra: las incidencias sin resolver caducan a las 48 h.
+
 ---
 
 ## Cómo usar el banco

@@ -31,12 +31,19 @@ publicacion:
   #   error            Algo falló. Revisa registro/publicaciones.jsonl.
   estado: "borrador"
 
-  # Franja horaria de publicación en formato 24h. Offset de Madrid.
-  # Stagger entre redes para que no publiquen en el mismo segundo.
+  # IMPORTANTE: el runner NO programa nada. Publicar se dispara en el segundo
+  # en que llega el push con `estado: listo`, a la hora que sea, y publica las
+  # redes seguidas, sin esperas entre ellas. No hay `schedule` en el workflow
+  # ni ninguna espera en `scripts/publicar.mjs`.
+  #
+  # Por eso los dos campos de abajo son SOLO documentales: los ignora el runner
+  # (ver docs/publicacion-automatica.md, sección 3.2). Puedes borrarlos sin
+  # que cambie nada; solo se valida que, si están, tengan formato válido.
+  #
+  # Hora de referencia del día, formato 24h, offset de Madrid.
   hora: "10:00"
 
-  # Desfase en minutos respecto a `hora`. Evita ráfagas simultáneas y da margen
-  # para que el rate limit de Instagram no acumule peticiones.
+  # Desfase en minutos respecto a `hora`. No hay desfase real entre redes.
   desfase_minutos: 5
 
 # -----------------------------------------------------------------------------

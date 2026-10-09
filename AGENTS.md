@@ -35,6 +35,21 @@ Assets/Tags/Notas. Solo lleva el título, el subtítulo y el contenido en
 markdown limpio, listo para copiar y pegar en la base de datos de Supabase.
 El `-limpio.md` no se edita a mano: si cambia el `.md`, se regenera.
 
+### Todo artículo de Medium termina en `### Referencias`
+
+El artículo de Medium es la fuente que se manda cuando alguien pregunta de
+dónde sale la información de cualquier red. Por eso las referencias van
+**dentro de `## Contenido`**, en un `### Referencias` final: si van en las
+notas del `.md`, se quedan fuera del `-limpio.md` y no llegan ni a Medium ni a
+la app.
+
+- Dos bloques: la documentación veterinaria de referencia (con enlace público)
+  y la documentación interna de GeoGatos (`docs/sobre-geogatos.md`).
+- Cada referencia va pegada al dato que sostiene, no en una lista suelta al
+  final. Si se cambia una afirmación, se revisa la referencia que la respalda.
+- Las URLs se comprueban antes de escribirlas: nada de enlaces de memoria.
+- Si una afirmación clínica no tiene fuente que la respalde, no se escribe.
+
 ## Manifiestos
 
 - Copia `manifiestos/_plantilla.yaml` como punto de partida; no escribas el

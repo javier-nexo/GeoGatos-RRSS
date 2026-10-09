@@ -48,6 +48,15 @@ Cierre y mensaje clave.
 
 Qué se quiere que haga la lectura: descargar la app, dejar un comentario, compartir, seguir...
 
+### Referencias
+
+Lo que sostiene cada afirmación, en dos bloques: documentación veterinaria de
+referencia (con enlace público) y documentación interna de GeoGatos
+(`../docs/sobre-geogatos.md`). **Va dentro de `## Contenido`,** no en las notas
+del final: solo lo que está aquí viaja al `-limpio.md` y aparece en la app. El
+artículo es lo que se manda si alguien pregunta de dónde sale la información de
+cualquier red. Ver `../AGENTS.md`.
+
 ## Assets
 
 Lista de archivos necesarios (imagen de portada, imágenes de apoyo):
