@@ -116,6 +116,9 @@ node scripts/importar-articulo.mjs --slug=<slug>
 **`importar-articulo.mjs`:**
 - Lee el `-limpio.md` de la carpeta del artículo
 - Extrae título, subtítulo y contenido
+- Si el manifiesto ya tiene `plataformas.medium.articulo_id`, **se salta**: crear
+  otro duplicaría la entrada en la app. Para reimportar un artículo cambiado,
+  borra esa línea del manifiesto y vuelve a lanzarlo.
 - Llama a `POST /api/v1/article` con un token JWT de Admin
 - Actualiza el manifiesto con el `articulo_id` creado
 
@@ -129,6 +132,12 @@ El script obtiene el token automáticamente de (en orden):
 No necesitas definir ninguna variable de entorno local. Si tienes GitHub CLI
 instalado y autenticado, el script obtiene el token de GitHub Secrets
 directamente.
+
+**El token caduca, y es lo que más falla.** Los JWT de la app valen **1 día**:
+la sección `Jwt` de `appsettings.json` no define `ExpireDays` y el código cae al
+default `?? "1"` (`GeoGatos.Infrastructure/Identity/IdentityService.cs`). Si el
+import muere en un segundo con `HTTP 401`, no es el workflow: genera un token
+nuevo de Admin y actualiza el secret `GEOGATOS_ADMIN_TOKEN`.
 
 **Automatización con GitHub Actions:**
 
@@ -179,6 +188,11 @@ Lo que el agente tiene que saber:
 
 - **El push es el disparador.** El workflow solo publica manifiestos en
   `estado: listo`. Cualquier otro push no hace nada.
+- **Los medios se esperan antes de publicar.** Meta descarga las imágenes por
+  URL en el momento de publicar, y Pages tarda más en desplegar que el
+  publicador en salir, así que el workflow espera a que sirvan los ficheros de
+  `medios/<slug>/` (hasta 4 minutos) antes de tocar ninguna red. Si se acaba el
+  presupuesto, no se publica nada y el manifiesto sigue en `listo`.
 - **Un manifiesto a medias queda en `estado: error`**, nunca en `publicado`, y
   no se reintenta solo. Volver a `listo` es del usuario.
 - **`registro/publicaciones.jsonl` se versiona a propósito.** `publicar.mjs` lo

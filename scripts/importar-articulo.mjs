@@ -89,6 +89,27 @@ if (!existsSync(limpioPath)) {
   process.exit(1);
 }
 
+// ─── ¿Ya importado? ─────────────────────────────────────────────────────────
+//
+// El guard va ANTES de la comprobación de token a propósito: saltar un artículo
+// ya importado es una decisión local sobre el manifiesto, y no debe exigir
+// credenciales válidas (el token de Admin caduca en un día y es lo que más
+// falla en el workflow).
+const manifiestoPath = join('manifiestos', `${slug}.yaml`);
+let articuloIdPrevio = null;
+
+if (existsSync(manifiestoPath)) {
+  const manifiesto = parse(readFileSync(manifiestoPath, 'utf-8'));
+  articuloIdPrevio = manifiesto?.plataformas?.medium?.articulo_id ?? null;
+}
+
+if (articuloIdPrevio) {
+  console.log(`✅ Este artículo ya está importado (articulo_id: ${articuloIdPrevio}).`);
+  console.log('   Nada que hacer: no se crea otro, porque duplicaría la entrada en la app.');
+  console.log('   Para importarlo de nuevo, borra la línea `articulo_id` del manifiesto.');
+  process.exit(0);
+}
+
 if (!ADMIN_TOKEN) {
   console.error('❌ Falta la variable de entorno GEOGATOS_ADMIN_TOKEN');
   console.error('   Genera un token JWT de Admin desde la app o la API.');
@@ -223,8 +244,6 @@ try {
 }
 
 // ─── Actualizar el manifiesto con el ID del artículo ─────────────────────────
-
-const manifiestoPath = join('manifiestos', `${slug}.yaml`);
 
 if (existsSync(manifiestoPath)) {
   console.log(`\n📝 Actualizando ${manifiestoPath}...`);

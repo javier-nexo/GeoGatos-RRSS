@@ -3,7 +3,7 @@
 # El disparador es un `push` a `main` que toca `manifiestos/*.yaml`, y el
 # filtro es `estado: "listo"`.
 #
-# Tres detalles de este fichero no son obvios y por eso están comentados:
+# Cuatro detalles de este fichero no son obvios y por eso están comentados:
 #
 #   1. El paso que registra lleva `if: always()`. Es lo que impide duplicar
 #      publicaciones. Sin él, un fallo a medias (Facebook sale, Instagram
@@ -14,6 +14,13 @@
 #   3. Un manifiesto que se publica a medias se marca `error`, no `publicado`.
 #      El registro ya impide repetir lo que sí salió, pero volver a poner el
 #      estado en `listo` tiene que ser decisión de una persona.
+#   4. Antes de publicar se espera a que Pages sirva las imágenes. Meta las
+#      descarga por URL en el momento, y si los .jpg suben en el mismo push que
+#      el `listo`, Pages aún no las sirve: Meta recibe un 404 y lo devuelve como
+#      HTTP 400 "Missing or invalid image file" (así salió fallida la del
+#      2026-10-09). Si se acaba el presupuesto de espera, el paso falla ANTES de
+#      tocar ninguna red, así que no se publica nada y el manifiesto sigue en
+#      `listo`: un push posterior reintenta.
 #
 # El commit de este bot no vuelve a disparar el workflow: GitHub no lanza
 # ejecuciones nuevas para pushes hechos con su propio GITHUB_TOKEN. Si algún
@@ -55,6 +62,93 @@ jobs:
           cache: npm
 
       - run: npm ci
+
+      # Meta descarga las imágenes por URL en el momento de publicar, así que
+      # tienen que estar desplegadas YA. Los builds de Pages tardan 27-50 s, y
+      # el publicador sale en ~15 s: si los .jpg y el `listo` vienen en el mismo
+      # push, Meta se encuentra un 404 y responde HTTP 400 "Missing or invalid
+      # image file" (publicación del 2026-10-09). Este paso espera, con
+      # presupuesto acotado, a que Pages sirva los ficheros de medios/<slug>/ de
+      # los manifiestos en `listo`. No publica ni modifica nada: solo mira.
+      - name: Esperar a que Pages sirva los medios
+        run: |
+          set -uo pipefail
+
+          # El dominio no va hardcodeado: sale de la misma configuración que lee
+          # publicar.mjs. Si algún día cambia el base_url, no hay nada que tocar
+          # aquí. El fichero se comprueba antes de leerlo: con `-e` (el modo por
+          # defecto de Actions) un sed sobre un fichero inexistente abortaría el
+          # paso aquí mismo y el mensaje de abajo nunca saldría.
+          if [ ! -f rrss.config.yaml ]; then
+            echo "::error::No se encuentra rrss.config.yaml"
+            exit 1
+          fi
+          base_url="$(sed -n 's/^[[:space:]]*base_url:[[:space:]]*"\([^"]*\)".*/\1/p' rrss.config.yaml | head -n 1)"
+          case "$base_url" in
+            https://*) ;;
+            *)
+              echo "::error::No se pudo leer medios.base_url de rrss.config.yaml"
+              exit 1
+              ;;
+          esac
+          base_url="${base_url%/}"
+
+          # Mismos filtros que el bucle de publicación: la plantilla y los
+          # manifiestos que no están en `listo` no esperan nada.
+          urls=()
+          for f in manifiestos/*.yaml; do
+            [ -e "$f" ] || continue
+            slug="$(basename "$f" .yaml)"
+            case "$slug" in _*) continue ;; esac
+            grep -qE 'estado:[[:space:]]*"?(listo)"?[[:space:]]*$' "$f" || continue
+
+            # Solo lo que preparó preparar-medios.mjs, que es exactamente lo que
+            # las redes activas van a mandar: los medios de standby no se copian
+            # a medios/<slug>/ y este paso no los espera.
+            [ -d "medios/$slug" ] || continue
+            for img in medios/"$slug"/*; do
+              [ -e "$img" ] || continue
+              urls+=("$base_url/$slug/$(basename "$img")")
+            done
+          done
+
+          if [ "${#urls[@]}" -eq 0 ]; then
+            echo "No hay medios que esperar."
+            exit 0
+          fi
+
+          # Presupuesto y espera configurables por entorno: sirven para simular
+          # este paso en local sin esperar cuatro minutos.
+          max_intentos="${MAX_INTENTOS:-24}"
+          espera="${ESPERA_SEGUNDOS:-10}"
+
+          echo "Esperando a que Pages sirva ${#urls[@]} fichero(s)..."
+          pendientes=()
+
+          for ((intento = 1; intento <= max_intentos; intento++)); do
+            pendientes=()
+            for url in "${urls[@]}"; do
+              codigo="$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 -I "$url" || true)"
+              [ "$codigo" = "200" ] || pendientes+=("$url ($codigo)")
+            done
+
+            if [ "${#pendientes[@]}" -eq 0 ]; then
+              echo "Todos los medios responden 200."
+              exit 0
+            fi
+
+            echo "  intento $intento/$max_intentos: faltan ${#pendientes[@]}"
+            if [ "$intento" -lt "$max_intentos" ]; then
+              sleep "$espera"
+            fi
+          done
+
+          # Se corta antes de publicar, no después: el manifiesto sigue en
+          # `listo`, no se ha tocado ninguna red y no hay nada que registrar.
+          for p in "${pendientes[@]}"; do
+            echo "::error::Pages no sirve $p. ¿Falta el fichero en el commit o Pages sigue desplegando?"
+          done
+          exit 1
 
       - name: Publicar los manifiestos en listo
         env:

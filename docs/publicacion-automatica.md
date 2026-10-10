@@ -222,6 +222,36 @@ Tres detalles del workflow que no son evidentes:
 | Sin reintentos automáticos | Publicar es irreversible. Si la respuesta se pierde, un retry puede dejar dos posts iguales. |
 | `git add -A` y no un pathspec | Si no se publicó nada, `registro/` no existe y `git add registro` aborta el paso con `set -e`, dejando el manifiesto sin marcar. |
 | El commit del bot no se re-dispara | GitHub no lanza ejecuciones para pushes hechos con su propio `GITHUB_TOKEN`. |
+| El paso que espera a Pages | Meta baja las imágenes por URL. Si Pages no las ha desplegado aún, responde `HTTP 400: Missing or invalid image file`. Ver el apartado siguiente. |
+
+#### Esperar a que Pages sirva las imágenes
+
+Meta no recibe los bytes del post: recibe una **URL** y baja la imagen ahí
+mismo, en el momento de publicar. Esa URL apunta a este repo servido por GitHub
+Pages, que tarda 27-50 s en desplegar un push, mientras que el publicador sale
+~15 s después.
+
+Si el manifiesto y los `.jpg` llegan en el **mismo push**, Meta se encuentra un
+404 y lo devuelve como `HTTP 400: Missing or invalid image file` (Facebook) y
+`Only photo or video can be accepted as media type` (Instagram). Pasó el
+2026-10-09: los dos fallos de esa noche eran esta carrera, no las credenciales
+ni los textos. El commit del bot la empeora, porque su registro dispara otro
+build de Pages que **cancela** el anterior a media despliegue.
+
+Por eso el workflow tiene un paso, *Esperar a que Pages sirva los medios*, que
+antes de publicar comprueba con `curl -I` que cada fichero de `medios/<slug>/`
+de los manifiestos en `listo` responde 200, esperando hasta 4 minutos
+(`MAX_INTENTOS` y `ESPERA_SEGUNDOS` permiten acortarlo al simular). No publica
+ni modifica nada: solo mira. Si se acaba el presupuesto, el paso falla
+**antes** de tocar ninguna red, el manifiesto sigue en `listo` y no hay nada
+que registrar: un push posterior reintenta.
+
+Dos consecuencias prácticas:
+
+- Un medio declarado pero sin commitear se descubre aquí, con la URL que falta
+  en el mensaje, y no en la respuesta críptica de Meta.
+- Si no se quiere esperar, sube los medios en un push y el `estado: listo` en
+  otro, como en 2026-10-02. El paso termina al primer intento.
 
 ### 3.2 Ajustes del runner
 
