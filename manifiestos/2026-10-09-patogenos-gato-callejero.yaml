@@ -15,8 +15,17 @@ publicacion:
   subtema: "Qué circula entre los gatos de la calle, cómo se reconoce y cuándo no
     hay que esperar"
   autor: "GeoGatos"
-  estado: "listo"
-  publicado_en: 2026-10-09T22:11:06.028Z
+  estado: "publicado"
+  publicado_en: 2026-10-10T08:24:45.675Z
+  resultados:
+    - red: facebook
+      ok: true
+      url: null
+      id: null
+    - red: instagram
+      ok: true
+      url: null
+      id: null
 
 # -----------------------------------------------------------------------------
 # Contenido por red
