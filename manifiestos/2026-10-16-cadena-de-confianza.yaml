@@ -1,0 +1,157 @@
+# Manifiesto de publicación — 2026-10-16 "La cadena de confianza"
+#
+# Tema 5.4 del banco (sección 5, Comunidad y voluntariado). Los .md legibles
+# están en facebook/, instagram/, linkedin/, x/, youtube/, tiktok/ y medium/
+# con la misma fecha.
+#
+# ESTADO: borrador. El estado lo pone el usuario, nunca el agente.
+
+slug: "2026-10-16-cadena-de-confianza"
+
+publicacion:
+  fecha: "2026-10-16"
+  tema: "5.4 La cadena de confianza"
+  subtema: "Invitaciones trazables, roles por código y red de relaciones:
+    por qué cada dato tiene una persona detrás"
+  autor: "GeoGatos"
+  estado: "listo"
+
+# -----------------------------------------------------------------------------
+# Contenido por red
+# -----------------------------------------------------------------------------
+# Los textos van SIN hashtags: van en el array `hashtags`, que es lo que
+# concatena el publicador. Ponerlos en ambos sitios duplica.
+# -----------------------------------------------------------------------------
+
+plataformas:
+
+  # --- Facebook: 2-3 párrafos + cierre, tono cercano ----------------------
+  facebook:
+    texto: |-
+      Puedes descargarte GeoGatos en un minuto. Pero sin código de confianza, entras como invitada: cuidas, registras y ayudas, pero no ves lo que suben los demás. Y ese es, precisamente, el motivo por el que existe la confianza.
+
+      El principal motivo de los códigos de confianza es crear una red de personas fiables y comprometidas con los animales, dejando fuera a quien pudiera entrar a la app para hacer daño a los gatos urbanos. Quien se descarga la aplicación sin código es una persona "invitada": puede registrar colonias, visitas e incidentes, pero no puede ver la información que suben los demás. Así evitamos que una mala persona sepa dónde están ubicadas las colonias y vaya a hacerles daño. Ese es el motivo más importante por el que establecimos los códigos de confianza.
+
+      En segundo lugar, los códigos determinan los roles de los distintos actores en la app: ayuntamiento, organización, veterinario, comercio aliado, voluntario o invitado. Cada uno ve y hace lo que le corresponde. En tercer lugar, tejen una red de relaciones entre personas, organizaciones, veterinarias y ayuntamientos: cada usuario llega avalado por otro, formando una cadena trazable hasta una organización verificada. Y cuando el rol lo exige, la identidad se comprueba de verdad con DNI, NIE o CIF y su carácter de control.
+
+      Aunque alguien intentara leer la base de datos por fuera de la app, la seguridad está dentro: cada usuario solo ve las filas que le tocan. Cada dato de la colonia tiene una persona detrás que responde de él, y por eso se puede confiar. La app está en Android (Play Store), en iOS y en la web: geogatos.com. 🐈‍⬛
+    hashtags:
+      [
+        "GeoGatos",
+        "ColoniasFelinas",
+        "GestionDeColonias",
+        "ProteccionAnimal",
+        "Ley7_2023",
+        "CER",
+        "Comunidad"
+      ]
+    medios: ["facebook-01.jpg"]
+
+  # --- Instagram: 1 párrafo, carrusel de 3 --------------------------------
+  instagram:
+    tipo: "carrusel"
+    texto: |-
+      ¿Y si el que busca la colonia no es un cuidador? En GeoGatos, quien se descarga la app sin código entra como invitada: puede registrar colonias, visitas e incidentes, pero no ve lo que suben los demás. Así evitamos que alguien malintencionado sepa dónde están las colonias y vaya a hacer daño a los gatos. Es el motivo principal de los códigos de confianza: una red de personas fiables y comprometidas con los animales. Además, los códigos determinan los roles de cada actor (ayuntamiento, organización, veterinario, comercio, voluntario) y tejen una red de relaciones entre personas, organizaciones, veterinarias y ayuntamientos. Cuando el rol lo pide, la identidad se comprueba con DNI, NIE o CIF y su carácter de control, y la base de datos solo deja ver a cada uno lo que le toca. Cada dato de la colonia tiene una persona detrás. Entra en la cadena: GeoGatos está en Android (Play Store), en iOS y en la web. 🐈‍⬛
+    hashtags:
+      [
+        "GeoGatos",
+        "ColoniasFelinas",
+        "GestionDeColonias",
+        "ProteccionAnimal",
+        "Ley7_2023",
+        "CER",
+        "Comunidad",
+        "GatosCallejeros"
+      ]
+    medios:
+      - "instagram-01.jpg"
+      - "instagram-02.jpg"
+      - "instagram-03.jpg"
+
+  # --- LinkedIn: 3 párrafos, tono institucional (en standby) ---------------
+  linkedin:
+    texto: |-
+      Un censo de colonias vale lo que valen las personas que hay detrás de cada dato. En GeoGatos no entra cualquiera a ver dónde están los gatos: quien se descarga la app sin código de confianza es una persona "invitada", que puede registrar colonias, visitas e incidentes, pero no puede ver la información que suben los demás. Así se evita que alguien con malas intenciones localice las colonias y haga daño a los animales. Ese es el motivo principal por el que existen los códigos de confianza: crear una red de personas fiables y comprometidas con los animales.
+
+      En segundo lugar, los códigos determinan los roles de los distintos actores en la app: ayuntamiento, organización, veterinario, comercio aliado, voluntario e invitado. Cada uno ve y gestiona lo que le corresponde. En tercer lugar, los códigos tejen una red de relaciones entre personas, organizaciones, veterinarias y ayuntamientos: cada usuario llega avalado por otro, formando una cadena trazable hasta una organización verificada, y cuando el rol lo exige la identidad se comprueba con DNI, NIE o CIF y su carácter de control.
+
+      El resultado es un registro auditable y seguro: cada colonia, visita e incidencia tiene detrás una persona identificada, y la seguridad a nivel de fila garantiza que cada usuario solo accede a lo que le corresponde, incluso si alguien intenta llegar a los datos por fuera de la app. Eso es lo que convierte un mapa en información en la que un ayuntamiento, una protectora o una clínica pueden apoyar una decisión. GeoGatos está disponible en Android, iOS y en la web (geogatos.com).
+    hashtags:
+      [
+        "GeoGatos",
+        "ColoniasFelinas",
+        "GestionDeColonias",
+        "Ley7_2023",
+        "CER",
+        "ProteccionAnimal",
+        "GobiernoLocal"
+      ]
+    medios: ["linkedin-01.jpg"]
+
+  # --- X: 1 párrafo, máximo 280 caracteres contando el hashtag -------------
+  x:
+    texto: |-
+      En GeoGatos quien entra sin código es invitada: cuida y registra, pero no ve dónde están las colonias. Así nadie las localiza para hacer daño. Los códigos definen roles y tejen la red entre personas, vets y ayuntamientos. 🐈‍⬛
+    hashtags: ["GeoGatos"]
+    medios: ["x-01.jpg"]
+
+  # --- YouTube: título + descripción (en standby) --------------------------
+  youtube:
+    titulo: "La cadena de confianza de GeoGatos: cada dato tiene una persona detrás"
+    texto: |-
+      En GeoGatos no entra cualquiera. Quien se descarga la app sin código de confianza es una persona "invitada": puede registrar colonias, visitas e incidentes, pero no puede ver la información que suben los demás. Así evitamos que alguien malintencionado localice las colonias y haga daño a los gatos. Ese es el motivo principal de los códigos de confianza: una red de personas fiables y comprometidas con los animales. Además, los códigos determinan los roles de los distintos actores en la app (ayuntamiento, organización, veterinario, comercio, voluntario) y tejen una red de relaciones entre personas, organizaciones, veterinarias y ayuntamientos. Cuando el rol lo exige, la identidad se comprueba con DNI, NIE o CIF y su carácter de control, y la seguridad a nivel de fila garantiza que cada usuario solo ve lo que le corresponde. La app está en Android (Play Store), en iOS y en la web: geogatos.com.
+    hashtags:
+      [
+        "GeoGatos",
+        "ColoniasFelinas",
+        "GestionDeColonias",
+        "ProteccionAnimal",
+        "Ley7_2023",
+        "CER"
+      ]
+    medios: ["youtube-01.jpg"]
+
+  # --- TikTok: 1-2 frases para el texto en pantalla (en standby) ----------
+  tiktok:
+    texto: |-
+      Entra solo quien otro avala. En GeoGatos quien no tiene código es invitada: cuida y registra, pero no ve dónde están las colonias. Así los gatos están protegidos. 🐈‍⬛
+    hashtags:
+      [
+        "GeoGatos",
+        "gatos",
+        "ColoniasFelinas",
+        "GestionDeColonias",
+        "ProteccionAnimal",
+        "Ley7_2023"
+      ]
+    medios: ["tiktok-01.mp4"]
+
+  # --- Medium: artículo (en standby) ---------------------------------------
+  medium:
+    titulo: "La cadena de confianza: por qué en GeoGatos cada dato tiene una persona detrás"
+    texto: |-
+      El artículo completo está en medium/2026-10-16-cadena-de-confianza/.
+
+      Para publicarlo a mano: el título va en su campo, y el cuerpo se pega
+      desde el -limpio.md, que ya viene sin notas ni metadatos. El .md de la
+      misma carpeta es el original editable y la referencia de formato.
+
+      El -limpio.md incluye solo el título, el subtítulo y el contenido en
+      markdown limpio, listo para copiar y pegar en Supabase (módulo de
+      Educación de la app).
+
+      Si algún día se automatiza, el runner manda el campo `texto` de este
+      bloque como `contentFormat: markdown` y usa solo los 3 primeros tags.
+    hashtags: ["GeoGatos", "ColoniasFelinas", "GestionDeColonias"]
+    medios: ["medium-01.jpg"]
+
+opciones:
+  ante_error: "continuar_publicar"
+  permitir_sin_medios: true
+
+# -----------------------------------------------------------------------------
+# Medios (preparados por preparar-medios.mjs)
+# -----------------------------------------------------------------------------
+# Reparto posicional desde entrada/: PENDIENTE — suelta los .jpg en entrada/ y
+# corre: node scripts/preparar-medios.mjs --slug=2026-10-16-cadena-de-confianza
+# -----------------------------------------------------------------------------
