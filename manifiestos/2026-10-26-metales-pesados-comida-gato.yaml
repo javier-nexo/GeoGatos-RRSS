@@ -93,6 +93,7 @@ plataformas:
       desde el -limpio.md, que ya viene sin notas ni metadatos.
     hashtags: ["GeoGatos", "ColoniasFelinas", "Alimentacion"]
     medios: ["medium-01.jpg"]
+    articulo_id: "8bc585d4-d387-40dc-ae30-4362d85a4834"
 
 opciones:
   ante_error: "continuar_publicar"
