@@ -227,6 +227,13 @@ Temas prácticos de salud y bienestar felino.
   - Problemas de salud típicos en invierno.
   - Cómo preparar la colonia para el frío.
 
+- **4.9 Metales pesados en la comida del gato** — Qué se ha encontrado en el pienso y cómo leer el riesgo sin alarmismo. *(usado el 2026-10-26)*
+  - Plomo, cadmio, arsénico y mercurio: qué son y por qué aparecen en los alimentos.
+  - Detectar un metal no es lo mismo que superar un límite legal.
+  - Pienso seco frente a húmedo: no hay una categoría siempre más segura.
+  - Qué dice la normativa europea sobre contaminantes en piensos para mascotas.
+  - Qué puede hacer el cuidador: variar con criterio, consultar al veterinario y no dar sobras.
+
 ## 5. Comunidad y voluntariado
 
 Temas emocionales y de comunidad: las personas detrás del cuidado de gatos.

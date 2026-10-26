@@ -1,0 +1,89 @@
+# Manifiesto de publicación — 2026-10-26 "Metales pesados en la comida del gato"
+#
+# Tema 4.9 del banco. Los .md legibles están en facebook/, instagram/,
+# linkedin/, x/, youtube/, tiktok/ y medium/ con la misma fecha.
+#
+# ESTADO: borrador. El usuario lo pasa a "listo" tras revisar los textos y
+# subir los medios a entrada/ y medios/.
+
+slug: "2026-10-26-metales-pesados-comida-gato"
+
+publicacion:
+  fecha: "2026-10-26"
+  tema: "4.9 Metales pesados en la comida del gato"
+  subtema: "Qué se ha encontrado en el pienso y cómo leer el riesgo sin alarmismo"
+  autor: "GeoGatos"
+  estado: "listo"
+  hora: "10:00"
+  desfase_minutos: 5
+
+plataformas:
+
+  facebook:
+    texto: |-
+      Plomo, cadmio, arsénico, mercurio. Son nombres que asustan, y varios estudios recientes han encontrado algunos de ellos en comida comercial para gatos.
+
+      Un trabajo con 45 alimentos felinos en China encontró cromo y arsénico en todas las muestras. Otro, con 75 productos en Líbano y 121 en Emiratos Árabes, halló más plomo en el pienso seco y más cadmio en el húmedo. Que aparezca un metal no quiere decir que el producto supere un límite legal. Importan la cantidad y cuánto come el animal con el tiempo.
+
+      Lo práctico: no hay un formato siempre más seguro, así que cambiar de seco a húmedo no lo resuelve. Varía la dieta con criterio, pregunta a tu veterinario y no des sobras. Si te preocupa una marca concreta, la pregunta correcta es para él.
+
+      Más en geogatos.com.
+    hashtags: ["GeoGatos", "ColoniasFelinas", "Alimentacion", "Salud"]
+    medios: ["facebook-01.jpg"]
+
+  instagram:
+    tipo: "carrusel"
+    texto: |-
+      Plomo, cadmio, arsénico, mercurio: aparecen en algunos piensos, según varios estudios recientes. Detectar un metal no es lo mismo que superar un límite legal. No hay un formato siempre más seguro: ni el seco ni el húmedo lo son por defecto. Varía la dieta con criterio, consulta a tu veterinario y no des sobras.
+    hashtags: ["GeoGatos", "ColoniasFelinas", "Alimentacion", "Salud"]
+    medios:
+      - "instagram-01.jpg"
+      - "instagram-02.jpg"
+      - "instagram-03.jpg"
+
+  linkedin:
+    texto: |-
+      Varios estudios de 2025 y 2026 han medido metales pesados en comida comercial para gatos: plomo, cadmio, arsénico y mercurio aparecen en distinto grado según el producto y el país.
+
+      El dato, por sí solo, pide matices. Encontrar un metal no equivale a superar un límite legal, y las muestras de cada estudio son distintas, así que sus cifras no se comparan entre sí. Tampoco hay un formato siempre más seguro: los trabajos citados encuentran metales distintos en el seco y en el húmedo.
+
+      Para quien gestiona colonias y cuida animales, la conclusión práctica es la de siempre: alimentación variada con criterio, revisión veterinaria y nada de sobras. Y, cuando hay datos de campo, registrarlos bien.
+
+      Más en geogatos.com.
+    hashtags: ["GeoGatos", "ColoniasFelinas", "BienestarAnimal"]
+    medios: ["linkedin-01.jpg"]
+
+  x:
+    texto: |-
+      Varios estudios recientes han hallado metales pesados en comida para gatos. Que aparezcan no significa superar un límite legal. Sin alarmismo: varía la dieta con criterio y consulta a tu veterinario. 🐈‍⬛
+    hashtags: ["GeoGatos"]
+    medios: ["x-01.jpg"]
+
+  youtube:
+    titulo: "Metales pesados en la comida del gato: qué dicen los estudios — GeoGatos"
+    texto: |-
+      Varios estudios recientes han medido plomo, cadmio, arsénico y mercurio en comida comercial para gatos. Encontrar un metal no equivale a superar un límite legal, y cada estudio usa muestras distintas. No hay un formato siempre más seguro. Consejo práctico: varía la dieta con criterio, consulta a tu veterinario y no des sobras. Más en geogatos.com.
+    hashtags: ["GeoGatos", "ColoniasFelinas", "Alimentacion"]
+    medios: ["youtube-01.jpg"]
+
+  tiktok:
+    texto: |-
+      Hay metales en algunos piensos. Que aparezcan no es lo mismo que superar un límite. Consulta a tu veterinario.
+    hashtags: ["GeoGatos", "gatos", "Alimentacion", "ColoniasFelinas"]
+    medios: ["tiktok-01.mp4"]
+
+  # Medium no lo publica el runner: el artículo se pega a mano en medium.com
+  # desde el -limpio.md de su carpeta.
+  medium:
+    titulo: "Metales pesados en la comida del gato: qué se ha encontrado y cómo leerlo"
+    texto: |-
+      El artículo completo está en medium/2026-10-26-metales-pesados-comida-gato/.
+
+      Para publicarlo a mano: el título va en su campo, y el cuerpo se pega
+      desde el -limpio.md, que ya viene sin notas ni metadatos.
+    hashtags: ["GeoGatos", "ColoniasFelinas", "Alimentacion"]
+    medios: ["medium-01.jpg"]
+
+opciones:
+  ante_error: "continuar_publicar"
+  permitir_sin_medios: true
