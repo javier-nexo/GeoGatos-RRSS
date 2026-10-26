@@ -11,10 +11,20 @@ slug: "2026-10-16-cadena-de-confianza"
 publicacion:
   fecha: "2026-10-16"
   tema: "5.4 La cadena de confianza"
-  subtema: "Invitaciones trazables, roles por código y red de relaciones:
-    por qué cada dato tiene una persona detrás"
+  subtema: "Invitaciones trazables, roles por código y red de relaciones: por qué
+    cada dato tiene una persona detrás"
   autor: "GeoGatos"
-  estado: "listo"
+  estado: "publicado"
+  publicado_en: 2026-10-17T08:31:05.764Z
+  resultados:
+    - red: facebook
+      ok: true
+      url: null
+      id: null
+    - red: instagram
+      ok: true
+      url: null
+      id: null
 
 # -----------------------------------------------------------------------------
 # Contenido por red
@@ -128,7 +138,8 @@ plataformas:
 
   # --- Medium: artículo (en standby) ---------------------------------------
   medium:
-    titulo: "La cadena de confianza: por qué en GeoGatos cada dato tiene una persona detrás"
+    titulo: "La cadena de confianza: por qué en GeoGatos cada dato tiene una persona
+      detrás"
     texto: |-
       El artículo completo está en medium/2026-10-16-cadena-de-confianza/.
 
