@@ -18,7 +18,7 @@ Que un análisis encuentre un metal no dice por sí solo que el producto sea pel
 
 ### Pienso seco y húmedo
 
-No hay una categoría siempre más segura. El estudio libanés-emiratí encontró más plomo en el seco y más cadmio en el húmedo. Por eso, cambiar de formato no resuelve el problema por sí solo. Además, ya vimos que a los gatos urbanos no se les debe dar pienso húmeor, pero por otros motivos.
+No hay una categoría siempre más segura. El estudio libanés-emiratí encontró más plomo en el seco y más cadmio en el húmedo. Por eso, cambiar de formato no resuelve el problema por sí solo. Además, ya vimos que a los gatos urbanos no se les debe dar pienso húmedo, pero por otros motivos.
 
 ### Qué puede hacer el cuidador
 
