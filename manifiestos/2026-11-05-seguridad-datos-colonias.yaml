@@ -13,9 +13,19 @@ publicacion:
   tema: "5.8 Seguridad de los datos de las colonias y gatos registrados en GeoGatos"
   subtema: "Sin código de confianza, el mapa aparece vacío"
   autor: "GeoGatos"
-  estado: "listo"
+  estado: "publicado"
   hora: "10:00"
   desfase_minutos: 5
+  publicado_en: 2026-11-05T17:54:41.868Z
+  resultados:
+    - red: facebook
+      ok: true
+      url: null
+      id: null
+    - red: instagram
+      ok: true
+      url: null
+      id: null
 
 # -----------------------------------------------------------------------------
 # Contenido por red
@@ -67,13 +77,7 @@ plataformas:
       El acceso se organiza con códigos de confianza. Cada usuario llega avalado por alguien que ya está dentro y responde de él, en una cadena trazable hasta una organización verificada; cuando el rol lo exige, la identidad se acredita con DNI, NIE o CIF. El código fija además el papel de cada actor (ayuntamiento, protectora, veterinaria, comercio aliado, voluntario) y la seguridad a nivel de fila limita cada consulta a lo que le corresponde.
 
       El resultado es un registro en el que cada visita e incidencia tiene autor, fecha y ubicación: datos con los que una administración puede justificar su gestión sin exponer dónde están los gatos. geogatos.com
-    hashtags:
-      [
-        "GeoGatos",
-        "ColoniasFelinas",
-        "Privacidad",
-        "GestionDeColonias"
-      ]
+    hashtags: ["GeoGatos", "ColoniasFelinas", "Privacidad", "GestionDeColonias"]
     medios: ["linkedin-01.jpg"]
 
   # --- X: 1 párrafo, máximo 280 caracteres contando el hashtag -------------
@@ -88,25 +92,14 @@ plataformas:
     titulo: "Sin código de confianza, el mapa de GeoGatos está vacío"
     texto: |-
       En GeoGatos no entra cualquiera a ver dónde están las colonias: quien descarga la app sin código de confianza abre el mapa y no encuentra datos de otros usuarios. No es un fallo, es la protección de la ubicación de los gatos. El código lo da alguien que ya está dentro y responde de ti, forma una cadena hasta una organización verificada y define tu papel en la app: ayuntamiento, protectora, veterinaria, comercio o voluntario. Cada visita e incidencia queda registrada con quién, cuándo y dónde. Más en geogatos.com.
-    hashtags:
-      [
-        "GeoGatos",
-        "ColoniasFelinas",
-        "Privacidad"
-      ]
+    hashtags: ["GeoGatos", "ColoniasFelinas", "Privacidad"]
     medios: ["youtube-01.jpg"]
 
   # --- TikTok: 1-2 frases para el texto en pantalla (en standby) ----------
   tiktok:
     texto: |-
       Te descargas GeoGatos y el mapa está vacío. Sin código de confianza no ves dónde están las colonias, y así nadie las usa para hacer daño. 🐈‍⬛
-    hashtags:
-      [
-        "GeoGatos",
-        "gatos",
-        "ColoniasFelinas",
-        "Privacidad"
-      ]
+    hashtags: ["GeoGatos", "gatos", "ColoniasFelinas", "Privacidad"]
     medios: ["tiktok-01.mp4"]
 
   # --- Medium: artículo (en standby) ---------------------------------------
