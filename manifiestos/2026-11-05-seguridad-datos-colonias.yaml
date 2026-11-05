@@ -1,0 +1,142 @@
+# Manifiesto de publicación — 2026-11-05 "Seguridad de los datos de las colonias"
+#
+# Tema 5.8 del banco (sección 5, Comunidad y voluntariado). Los .md legibles
+# están en facebook/, instagram/, linkedin/, x/, youtube/, tiktok/ y
+# medium/2026-11-05-seguridad-datos-colonias/.
+#
+# ESTADO: borrador. El estado lo pone el usuario, nunca el agente.
+
+slug: "2026-11-05-seguridad-datos-colonias"
+
+publicacion:
+  fecha: "2026-11-05"
+  tema: "5.8 Seguridad de los datos de las colonias y gatos registrados en GeoGatos"
+  subtema: "Sin código de confianza, el mapa aparece vacío"
+  autor: "GeoGatos"
+  estado: "listo"
+  hora: "10:00"
+  desfase_minutos: 5
+
+# -----------------------------------------------------------------------------
+# Contenido por red
+# -----------------------------------------------------------------------------
+# Los textos van SIN hashtags: van en el array `hashtags`, que es lo que
+# concatena el publicador. Ponerlos en ambos sitios duplica.
+# -----------------------------------------------------------------------------
+
+plataformas:
+
+  # --- Facebook: 2-3 párrafos + cierre, tono cercano ----------------------
+  facebook:
+    texto: |-
+      Te descargas GeoGatos, abres el mapa y no ves ninguna colonia. Si no tienes código de confianza, el mapa no te muestra datos: ni colonias, ni visitas, ni gatos. 🐈‍⬛
+
+      No es un fallo. Un mapa de colonias es, en la práctica, una lista de direcciones donde hay gatos que dependen de que alguien les lleve comida y agua cada día, y quien quisiera hacerles daño no encuentra nada. El código lo da alguien que ya está dentro y responde de ti: eso forma una red de personas fiables y, cuando el papel lo exige, la identidad se acredita con DNI, NIE o CIF. También sirve para saber qué papel tienes: ayuntamiento, protectora, veterinaria, comercio o voluntario. Y cada visita o incidencia queda registrada con quién, cuándo y dónde.
+
+      Si cuidas una colonia, pídele el código a tu veterinaria o a tu protectora si están asociados a GeoGatos; si no lo están, diles que se pongan en contacto con nosotros, que es gratis. Estamos en Android (Play Store), en iOS y en la web: geogatos.com.
+    hashtags:
+      [
+        "GeoGatos",
+        "ColoniasFelinas",
+        "Privacidad",
+        "GatosCallejeros",
+        "ProteccionAnimal"
+      ]
+    medios: ["facebook-01.jpg"]
+
+  # --- Instagram: 1 párrafo, imagen única vertical 4:5 ---------------------
+  instagram:
+    tipo: "imagen_unica"
+    texto: |-
+      Abres GeoGatos sin código de confianza y el mapa está vacío: no ves ninguna colonia, ni visitas, ni gatos. No es un fallo. Un mapa de colonias es, en la práctica, una lista de direcciones donde hay gatos que dependen de alguien cada día, y así nadie puede usarlo para hacerles daño. El código lo da una persona que ya está dentro y responde de ti; también define tu papel: ayuntamiento, protectora, veterinaria, comercio o voluntario. Y cada visita o incidencia queda registrada con quién, cuándo y dónde. ¿Cuidas una colonia? Pídele el código a tu veterinaria o a tu protectora si están asociados a GeoGatos. 🐈‍⬛
+    hashtags:
+      [
+        "GeoGatos",
+        "ColoniasFelinas",
+        "Privacidad",
+        "GatosCallejeros",
+        "ProteccionAnimal"
+      ]
+    medios: ["instagram-01.jpg"]
+
+  # --- LinkedIn: 3 párrafos, tono institucional (en standby) ---------------
+  linkedin:
+    texto: |-
+      Un censo de colonias felinas es, en la práctica, una lista de direcciones. Por eso en GeoGatos no lo ve cualquiera: quien descarga la aplicación sin código de confianza encuentra el mapa vacío, sin colonias ni gatos de otros usuarios.
+
+      El acceso se organiza con códigos de confianza. Cada usuario llega avalado por alguien que ya está dentro y responde de él, en una cadena trazable hasta una organización verificada; cuando el rol lo exige, la identidad se acredita con DNI, NIE o CIF. El código fija además el papel de cada actor (ayuntamiento, protectora, veterinaria, comercio aliado, voluntario) y la seguridad a nivel de fila limita cada consulta a lo que le corresponde.
+
+      El resultado es un registro en el que cada visita e incidencia tiene autor, fecha y ubicación: datos con los que una administración puede justificar su gestión sin exponer dónde están los gatos. geogatos.com
+    hashtags:
+      [
+        "GeoGatos",
+        "ColoniasFelinas",
+        "Privacidad",
+        "GestionDeColonias"
+      ]
+    medios: ["linkedin-01.jpg"]
+
+  # --- X: 1 párrafo, máximo 280 caracteres contando el hashtag -------------
+  x:
+    texto: |-
+      Abres GeoGatos sin código de confianza y el mapa está vacío: ninguna colonia, ningún gato. No es un fallo. Un mapa de colonias es una lista de direcciones, y así nadie puede usarlo para hacerles daño. 🐈‍⬛
+    hashtags: ["GeoGatos"]
+    medios: ["x-01.jpg"]
+
+  # --- YouTube: título + descripción (en standby) --------------------------
+  youtube:
+    titulo: "Sin código de confianza, el mapa de GeoGatos está vacío"
+    texto: |-
+      En GeoGatos no entra cualquiera a ver dónde están las colonias: quien descarga la app sin código de confianza abre el mapa y no encuentra datos de otros usuarios. No es un fallo, es la protección de la ubicación de los gatos. El código lo da alguien que ya está dentro y responde de ti, forma una cadena hasta una organización verificada y define tu papel en la app: ayuntamiento, protectora, veterinaria, comercio o voluntario. Cada visita e incidencia queda registrada con quién, cuándo y dónde. Más en geogatos.com.
+    hashtags:
+      [
+        "GeoGatos",
+        "ColoniasFelinas",
+        "Privacidad"
+      ]
+    medios: ["youtube-01.jpg"]
+
+  # --- TikTok: 1-2 frases para el texto en pantalla (en standby) ----------
+  tiktok:
+    texto: |-
+      Te descargas GeoGatos y el mapa está vacío. Sin código de confianza no ves dónde están las colonias, y así nadie las usa para hacer daño. 🐈‍⬛
+    hashtags:
+      [
+        "GeoGatos",
+        "gatos",
+        "ColoniasFelinas",
+        "Privacidad"
+      ]
+    medios: ["tiktok-01.mp4"]
+
+  # --- Medium: artículo (en standby) ---------------------------------------
+  medium:
+    titulo: "Por qué el mapa de GeoGatos está vacío si no tienes código de confianza"
+    texto: |-
+      El artículo completo está en
+      medium/2026-11-05-seguridad-datos-colonias/.
+
+      Para publicarlo a mano: el título va en su campo, y el cuerpo se pega
+      desde el -limpio.md, que ya viene sin notas ni metadatos. El .md de la
+      misma carpeta es el original editable y la referencia de formato.
+
+      El -limpio.md incluye solo el título, el subtítulo y el contenido en
+      markdown limpio, listo para copiar y pegar en Supabase (módulo de
+      Educación de la app).
+
+      Si algún día se automatiza, el runner manda el campo `texto` de este
+      bloque como `contentFormat: markdown` y usa solo los 3 primeros tags.
+    hashtags: ["GeoGatos", "ColoniasFelinas", "Privacidad"]
+    medios: ["medium-01.jpg"]
+
+opciones:
+  ante_error: "continuar_publicar"
+  permitir_sin_medios: true
+
+# -----------------------------------------------------------------------------
+# Medios (preparados por preparar-medios.mjs)
+# -----------------------------------------------------------------------------
+# Reparto desde entrada/: la bandeja traía una infografía vertical (PNG). Se
+# exportó a JPEG porque Instagram solo admite JPEG, así que hay una sola
+# imagen, que va a facebook-01.jpg e instagram-01.jpg.
+# -----------------------------------------------------------------------------
