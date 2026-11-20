@@ -92,6 +92,15 @@ son obligatorios. El estado y el motivo de cada red están en
 `rrss.config.yaml`; para activar una, se quita su línea `standby` y no hay que
 tocar ningún manifiesto.
 
+### Artículos solo-web (SEO)
+
+Algunos artículos se escriben para técnicos de medio ambiente y responsables
+municipales, y solo tienen sentido en el blog. Se marcan en la base de datos
+con `VisibleInApp = false`: la app no los muestra y el generador del blog sí
+los publica. **No llevan manifiesto** en `manifiestos/` ni `.md` por red, así
+que no salen en redes sociales. El detalle del flujo está en la regla de
+`AGENTS.md` y en el README de `GeoGatos-Web`.
+
 La guía completa, con el workflow de publicación, las credenciales que hay que
 pedir en cada plataforma y los bloqueos de cada red, está en
 [`docs/publicacion-automatica.md`](docs/publicacion-automatica.md).

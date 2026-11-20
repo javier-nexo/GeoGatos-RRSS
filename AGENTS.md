@@ -52,6 +52,12 @@ la app.
 
 ## Manifiestos
 
+- **Artículos solo-web: no crees manifiesto.** Los artículos con
+  `VisibleInApp = false` están pensados únicamente para el blog
+  (`geogatos.com/blog`) porque buscan SEO entre técnicos y responsables
+  municipales. No generan publicación en redes: no escribas su `.yaml` en
+  `manifiestos/`, ni sus `.md` por red. Si dudas, pregunta antes de crear el
+  manifiesto.
 - Copia `manifiestos/_plantilla.yaml` como punto de partida; no escribas el
   YAML de memoria, la plantilla lleva los comentarios que explican cada campo.
 - `slug` = `AAAA-MM-DD-slug-del-tema`. Debe coincidir con el nombre del
