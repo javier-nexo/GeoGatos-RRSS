@@ -13,9 +13,19 @@ publicacion:
   tema: "2.5 Cómo saber si un gato ya está esterilizado"
   subtema: "Oreja marcada y microchip: dos señales que evitan una segunda operación"
   autor: "GeoGatos"
-  estado: "listo"
+  estado: "publicado"
   hora: "10:00"
   desfase_minutos: 5
+  publicado_en: 2026-11-24T19:38:08.188Z
+  resultados:
+    - red: facebook
+      ok: true
+      url: null
+      id: null
+    - red: instagram
+      ok: true
+      url: null
+      id: null
 
 # -----------------------------------------------------------------------------
 # Contenido por red
@@ -34,14 +44,7 @@ plataformas:
       La oreja se ve de lejos, pero no lo dice todo. El microchip es la prueba que no se ve: un dispositivo del tamaño de un grano de arroz, bajo la piel, que se lee con un lector y devuelve un número de 15 dígitos. Ese número está en el registro y es lo que identifica al gato sin dudas. Si la oreja no está clara, o el gato se deja tocar, que lo lea un veterinario: son segundos.
 
       Y si no tiene ni marca ni chip, no des nada por hecho: obsérvalo, consúltalo y, si toca, inclúyelo en la siguiente operación CER. En GeoGatos anota las dos cosas en la ficha del gato, oreja marcada y microchip, para que el siguiente voluntario no repita el trabajo. Estamos en Android, iOS y en geogatos.com.
-    hashtags:
-      [
-        "GeoGatos",
-        "ColoniasFelinas",
-        "CER",
-        "GatosUrbanos",
-        "Esterilizacion"
-      ]
+    hashtags: ["GeoGatos", "ColoniasFelinas", "CER", "GatosUrbanos", "Esterilizacion"]
     medios: ["facebook-01.jpg"]
 
   # --- Instagram: carrusel de 3 imágenes horizontales ---------------------
