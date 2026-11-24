@@ -1,0 +1,133 @@
+# Manifiesto de publicación — 2026-11-24 "Cómo saber si un gato ya está esterilizado"
+#
+# Tema 2.5 del banco (sección 2, CER y colonias felinas). Los .md legibles
+# están en facebook/, instagram/, linkedin/, x/, youtube/, tiktok/ y
+# medium/2026-11-24-gato-esterilizado-oreja-microchip/.
+#
+# ESTADO: borrador. El estado lo pone el usuario, nunca el agente.
+
+slug: "2026-11-24-gato-esterilizado-oreja-microchip"
+
+publicacion:
+  fecha: "2026-11-24"
+  tema: "2.5 Cómo saber si un gato ya está esterilizado"
+  subtema: "Oreja marcada y microchip: dos señales que evitan una segunda operación"
+  autor: "GeoGatos"
+  estado: "listo"
+  hora: "10:00"
+  desfase_minutos: 5
+
+# -----------------------------------------------------------------------------
+# Contenido por red
+# -----------------------------------------------------------------------------
+# Los textos van SIN hashtags: van en el array `hashtags`, que es lo que
+# concatena el publicador. Ponerlos en ambos sitios duplica.
+# -----------------------------------------------------------------------------
+
+plataformas:
+
+  # --- Facebook: 2-3 párrafos + cierre, tono cercano ----------------------
+  facebook:
+    texto: |-
+      Una marca en la oreja, como un bocado. No es una herida de pelea: es la marca de que ese gato ya está esterilizado. Se hace en la misma operación, con el gato dormido: se quitan unos 10 mm de la punta de la oreja izquierda, el corte queda limpio y cura en pocos días. No le afecta al oído y a nosotros nos evita volver a atraparlo para nada. 🐈‍⬛
+
+      La oreja se ve de lejos, pero no lo dice todo. El microchip es la prueba que no se ve: un dispositivo del tamaño de un grano de arroz, bajo la piel, que se lee con un lector y devuelve un número de 15 dígitos. Ese número está en el registro y es lo que identifica al gato sin dudas. Si la oreja no está clara, o el gato se deja tocar, que lo lea un veterinario: son segundos.
+
+      Y si no tiene ni marca ni chip, no des nada por hecho: obsérvalo, consúltalo y, si toca, inclúyelo en la siguiente operación CER. En GeoGatos anota las dos cosas en la ficha del gato, oreja marcada y microchip, para que el siguiente voluntario no repita el trabajo. Estamos en Android, iOS y en geogatos.com.
+    hashtags:
+      [
+        "GeoGatos",
+        "ColoniasFelinas",
+        "CER",
+        "GatosUrbanos",
+        "Esterilizacion"
+      ]
+    medios: ["facebook-01.jpg"]
+
+  # --- Instagram: carrusel de 3 imágenes horizontales ---------------------
+  instagram:
+    tipo: "carrusel"
+    texto: |-
+      Esa punta de oreja cortada no es una herida: es la marca de que el gato ya está esterilizado. Se hace con el gato dormido, en la misma operación: se quitan unos 10 mm de la punta de la oreja izquierda y cura en pocos días, sin afectar al oído. Sirve para que nadie lo vuelva a atrapar para operarlo. Pero la oreja no lo dice todo: el microchip, del tamaño de un grano de arroz, guarda un número de 15 dígitos que se lee con un lector y confirma la identificación en el registro. Si dudas, que lo lea un veterinario. Y si no tiene ni marca ni chip, no lo des por hecho: obsérvalo y consulta. Anota las dos señales en la ficha de GeoGatos y te ahorras una segunda captura. 🐈‍⬛
+    hashtags:
+      [
+        "GeoGatos",
+        "ColoniasFelinas",
+        "CER",
+        "Esterilizacion",
+        "Microchip",
+        "GatosUrbanos",
+        "GatosComunitarios",
+        "ProteccionAnimal"
+      ]
+    medios:
+      - "instagram-01.jpg"
+      - "instagram-02.jpg"
+      - "instagram-03.jpg"
+
+  # --- LinkedIn: 3 párrafos, tono institucional (en standby) ---------------
+  linkedin:
+    texto: |-
+      En una colonia, saber de un vistazo si un gato ya está esterilizado ahorra capturas, estrés y dinero. Por eso los programas CER marcan la oreja: durante la propia anestesia de la cirugía se retira el extremo de la oreja izquierda, unos 10 mm, con un corte recto que se ve a distancia y no afecta al oído. Las guías veterinarias de referencia lo consideran el estándar aceptado para los gatos comunitarios, precisamente porque permite identificarles sin manipularlos.
+
+      La oreja, sin embargo, no es un registro. La identificación individual en España es el microchip: la Ley 7/2023 obliga a identificarlo en perros, gatos y hurones, y el Real Decreto 986/2026, en vigor el 2 de enero de 2027, unifica el sistema de registro y contempla la categoría de gato comunitario. Los transpondedores deben cumplir las normas ISO 11784, ISO 11785 e ISO 24631-1, en HDX o FDX-B, y se leen a 134,2 kHz devolviendo un número de 15 dígitos.
+
+      Para una administración o una protectora, la consecuencia práctica es doble: la oreja evita reoperaciones y el chip sostiene la trazabilidad individual. Cuando ambos datos están en la ficha del gato, cualquier voluntario sabe qué ha pasado con ese animal y el censo sirve para justificar la gestión. Es lo que hace GeoGatos con cada colonia. geogatos.com
+    hashtags: ["GeoGatos", "ColoniasFelinas", "GestionDeColonias", "BienestarAnimal"]
+    medios: ["linkedin-01.jpg"]
+
+  # --- X: 1 párrafo, máximo 280 caracteres contando el hashtag -------------
+  x:
+    texto: |-
+      Punta de oreja cortada: no es una herida, es la marca de que ese gato ya está esterilizado. Se hace en la misma operación, con el gato dormido. El microchip de 15 dígitos lo confirma. 🐈‍⬛
+    hashtags: ["GeoGatos"]
+    medios: ["x-01.jpg"]
+
+  # --- YouTube: título + descripción (en standby) --------------------------
+  youtube:
+    titulo: "Oreja marcada y microchip: cómo saber si un gato ya está esterilizado"
+    texto: |-
+      Una punta de oreja recta no es una herida: es la marca de que ese gato ya está esterilizado. Se hace con el gato dormido, durante la propia cirugía, y se ve a distancia sin tener que tocarlo. El microchip añade lo que la oreja no puede dar: un número de 15 dígitos que se lee con un lector y queda en el registro. Las dos señales juntas evitan capturas innecesarias y segundas operaciones. Si no tiene ni marca ni chip, no des nada por hecho: obsérvalo, consulta con un veterinario y, si toca, inclúyelo en la siguiente operación CER. En GeoGatos anotas oreja y microchip en la ficha de cada gato. Más en geogatos.com.
+    hashtags: ["GeoGatos", "ColoniasFelinas", "CER", "Esterilizacion"]
+    medios: ["youtube-01.jpg"]
+
+  # --- TikTok: 1-2 frases para el texto en pantalla (en standby) ----------
+  tiktok:
+    texto: |-
+      Punta de oreja recta no es una herida: es que ese gato ya está esterilizado. Y el microchip de 15 dígitos lo confirma. 🐈‍⬛
+    hashtags: ["GeoGatos", "gatos", "ColoniasFelinas", "CER"]
+    medios: ["tiktok-01.mp4"]
+
+  # --- Medium: artículo (en standby) --------------------------------------
+  medium:
+    titulo: "Cómo saber si un gato ya está esterilizado: la oreja y el microchip"
+    texto: |-
+      El artículo completo está en
+      medium/2026-11-24-gato-esterilizado-oreja-microchip/.
+
+      Para publicarlo a mano: el título va en su campo, y el cuerpo se pega
+      desde el -limpio.md, que ya viene sin notas ni metadatos. El .md de la
+      misma carpeta es el original editable y la referencia de formato.
+
+      El -limpio.md incluye solo el título, el subtítulo y el contenido en
+      markdown limpio (con sus Referencias), listo para copiar y pegar en
+      Supabase (módulo de Educación de la app).
+
+      Si algún día se automatiza, el runner manda el campo `texto` de este
+      bloque como `contentFormat: markdown` y usa solo los 3 primeros tags.
+    hashtags: ["GeoGatos", "ColoniasFelinas", "CER"]
+    medios: ["medium-01.jpg"]
+
+opciones:
+  ante_error: "continuar_publicar"
+  permitir_sin_medios: true
+
+# -----------------------------------------------------------------------------
+# Medios (preparados por preparar-medios.mjs)
+# -----------------------------------------------------------------------------
+# Reparto desde entrada/: tres JPEG horizontales. La 1ª (atigrado sentado) va
+# a facebook-01 e instagram-01 y fija el recorte del carrusel; la 2ª (retrato
+# atigrado con pecho blanco) a instagram-02; la 3ª (gato crema en un tronco) a
+# instagram-03. La 2ª es 1920x1333 y la 3ª 2528x1684, así que Instagram las
+# recortará al centro. Los medios de las redes en standby no se preparan.
+# -----------------------------------------------------------------------------

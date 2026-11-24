@@ -108,7 +108,7 @@ Temas educativos sobre el método **Capturar-Esterilizar-Retornar** y la gestió
   - Por qué alimentar en horarios fijos y puntos limpios.
   - Cómo dar de alta una colonia en la app.
   - La colonia como ecosistema con vecinos implicados.
-- **2.5 Cómo saber si un gato ya está esterilizado** — Oreja marcada y microchip (15 dígitos ISO).
+- **2.5 Cómo saber si un gato ya está esterilizado** — Oreja marcada y microchip (15 dígitos ISO). *(usado el 2026-11-24)*
 
   - La marca en la oreja: qué es y cómo se ve (ojo, diferenciar sexado).
   - El microchip de 15 dígitos ISO: cómo leerlo.
